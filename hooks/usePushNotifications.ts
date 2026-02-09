@@ -1,0 +1,84 @@
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'expo-router';
+import {
+  registerForPushNotifications,
+  savePushTokenToServer,
+  removePushTokenFromServer,
+  addNotificationReceivedListener,
+  addNotificationResponseListener,
+} from '@/services/pushNotifications';
+import { useAuth } from '@/context/AuthContext';
+
+/**
+ * Hook that manages push notification registration and response handling.
+ * - Registers for push notifications when the user is authenticated.
+ * - Saves the push token to the backend.
+ * - Handles notification taps to navigate to relevant screens.
+ */
+export function usePushNotifications() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+  const [pushToken, setPushToken] = useState<string | null>(null);
+  const tokenSentRef = useRef(false);
+
+  // Register for push notifications when authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      tokenSentRef.current = false;
+      return;
+    }
+
+    let cancelled = false;
+
+    async function register() {
+      const token = await registerForPushNotifications();
+      if (cancelled || !token) return;
+
+      setPushToken(token);
+
+      // Only send to server once per session
+      if (!tokenSentRef.current) {
+        await savePushTokenToServer(token);
+        tokenSentRef.current = true;
+      }
+    }
+
+    register();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated]);
+
+  // Listen for notification taps and navigate
+  useEffect(() => {
+    const responseSubscription = addNotificationResponseListener((response) => {
+      const data = response.notification.request.content.data;
+
+      if (data?.type === 'appointment' && data?.appointmentId) {
+        // Navigate to calendar view (appointments are shown on the calendar)
+        router.push('/(tabs)/calendar');
+      }
+    });
+
+    const receivedSubscription = addNotificationReceivedListener((notification) => {
+      console.info('[push] Notification received in foreground:', notification.request.content.title);
+    });
+
+    return () => {
+      responseSubscription.remove();
+      receivedSubscription.remove();
+    };
+  }, [router]);
+
+  return {
+    pushToken,
+    removePushToken: async () => {
+      if (pushToken) {
+        await removePushTokenFromServer(pushToken);
+        setPushToken(null);
+        tokenSentRef.current = false;
+      }
+    },
+  };
+}
