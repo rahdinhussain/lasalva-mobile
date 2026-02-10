@@ -23,6 +23,9 @@ export const Input = forwardRef<TextInput, InputProps>(
   ({ label, error, leftIcon, rightIcon, containerClassName = '', secureTextEntry, style, multiline, component: Component = TextInput, ...props }, ref) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
+    const { ref: _ref, ...restProps } = props as InputProps & { ref?: React.Ref<TextInput> };
+    const inputProps = restProps as Omit<InputProps, 'ref' | 'label' | 'error' | 'leftIcon' | 'rightIcon' | 'containerClassName' | 'component'>;
+    const RefComponent = Component as React.ForwardRefExoticComponent<TextInputProps & React.RefAttributes<TextInput>>;
 
     const isPassword = secureTextEntry !== undefined;
     const showPassword = isPassword && isPasswordVisible;
@@ -40,7 +43,7 @@ export const Input = forwardRef<TextInput, InputProps>(
           style={{ minHeight: 52 }}
         >
           {leftIcon && <View className="mr-2">{leftIcon}</View>}
-          <Component
+          <RefComponent
             ref={ref}
             className="flex-1"
             style={[
@@ -61,7 +64,7 @@ export const Input = forwardRef<TextInput, InputProps>(
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             multiline={multiline}
-            {...props}
+            {...inputProps}
           />
           {isPassword ? (
             <TouchableOpacity

@@ -182,14 +182,21 @@ npm run lint
 
 ## Building for Production
 
+The app is configured for **phones only** (no tablets). See **[docs/PUBLISH_STEPS.md](docs/PUBLISH_STEPS.md)** for full App Store and Google Play publish steps.
+
+### One-time setup
+```bash
+eas build:configure   # link project to EAS / create project
+```
+
 ### iOS
 ```bash
-eas build --platform ios
+eas build --platform ios --profile production
 ```
 
 ### Android
 ```bash
-eas build --platform android
+eas build --platform android --profile production
 ```
 
 ## License

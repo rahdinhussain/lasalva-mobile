@@ -40,7 +40,7 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
   await setUserId(String(userId));
   // Store lasalva_auth when present so backend runs same email path as web (cookie or body for mobile)
   const fromHeader = parseLasalvaAuthFromSetCookie(
-    res.headers.get?.('set-cookie') ?? (res.headers as Record<string, string>)?.['set-cookie'] ?? null
+    res.headers.get?.('set-cookie') ?? (res.headers as unknown as Record<string, string>)?.['set-cookie'] ?? null
   );
   const fromBody = (data as { lasalva_auth?: string; cookieToken?: string }).lasalva_auth
     ?? (data as { lasalva_auth?: string; cookieToken?: string }).cookieToken;
@@ -77,7 +77,7 @@ export async function refreshAuthToken(): Promise<string | null> {
   const newToken = String(data.token);
   await setAuthToken(newToken);
   const fromHeader = parseLasalvaAuthFromSetCookie(
-    res.headers.get?.('set-cookie') ?? (res.headers as Record<string, string>)?.['set-cookie'] ?? null
+    res.headers.get?.('set-cookie') ?? (res.headers as unknown as Record<string, string>)?.['set-cookie'] ?? null
   );
   const fromBody = (data as { lasalva_auth?: string }).lasalva_auth ?? null;
   const lasalvaAuth = fromHeader ?? fromBody ?? null;
