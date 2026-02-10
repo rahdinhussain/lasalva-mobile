@@ -61,7 +61,7 @@ export function DatePicker({
       case 'day':
         return formatInTimeZoneSafe(currentDate, timeZone, 'EEEE, MMM d');
       case 'list':
-        return 'All Appointments';
+        return '';
     }
   };
 
@@ -139,7 +139,7 @@ export function DatePicker({
         <Text className="text-lg font-semibold text-slate-900">
           {getLabel()}
         </Text>
-        {(viewMode === 'day' || viewMode === 'list') &&
+        {viewMode === 'day' &&
           appointmentCount !== undefined &&
           appointmentCount > 0 && (
             <View className="bg-indigo-100 px-2 py-0.5 rounded-full">

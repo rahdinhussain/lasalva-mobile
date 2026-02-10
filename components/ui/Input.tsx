@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   TextInputProps,
+  Platform,
 } from 'react-native';
 import { Eye, EyeOff } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
@@ -19,7 +20,7 @@ interface InputProps extends TextInputProps {
 }
 
 export const Input = forwardRef<TextInput, InputProps>(
-  ({ label, error, leftIcon, rightIcon, containerClassName = '', secureTextEntry, component: Component = TextInput, ...props }, ref) => {
+  ({ label, error, leftIcon, rightIcon, containerClassName = '', secureTextEntry, style, multiline, component: Component = TextInput, ...props }, ref) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
 
@@ -36,15 +37,30 @@ export const Input = forwardRef<TextInput, InputProps>(
             flex-row items-center bg-white rounded-xl border px-3
             ${isFocused ? 'border-indigo-500' : error ? 'border-rose-500' : 'border-slate-200'}
           `}
+          style={{ minHeight: 52 }}
         >
           {leftIcon && <View className="mr-2">{leftIcon}</View>}
           <Component
             ref={ref}
-            className="flex-1 py-3 text-base text-slate-900"
+            className="flex-1"
+            style={[
+              {
+                paddingTop: 14,
+                paddingBottom: 16,
+                fontSize: 16,
+                color: '#0f172a',
+              },
+              Platform.OS === 'android' && {
+                textAlignVertical: multiline ? 'top' : 'center',
+                includeFontPadding: false,
+              },
+              style,
+            ]}
             placeholderTextColor={colors.slate[500]}
             secureTextEntry={isPassword && !showPassword}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            multiline={multiline}
             {...props}
           />
           {isPassword ? (

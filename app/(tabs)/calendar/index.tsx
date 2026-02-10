@@ -143,21 +143,19 @@ export default function CalendarScreen() {
         />
       </View>
 
-      {/* Date Picker / Navigation */}
-      <DatePicker
-        currentDate={currentDate}
-        onDateChange={setCurrentDate}
-        onTodayPress={handleToday}
-        viewMode={viewMode}
-        timeZone={timeZone}
-        appointmentCount={
-          viewMode === 'day'
-            ? dayAppointmentCount
-            : viewMode === 'list'
-            ? appointments?.length ?? 0
-            : undefined
-        }
-      />
+      {/* Date Picker / Navigation (hidden in list view) */}
+      {viewMode !== 'list' && (
+        <DatePicker
+          currentDate={currentDate}
+          onDateChange={setCurrentDate}
+          onTodayPress={handleToday}
+          viewMode={viewMode}
+          timeZone={timeZone}
+          appointmentCount={
+            viewMode === 'day' ? dayAppointmentCount : undefined
+          }
+        />
+      )}
 
       {/* Content */}
       {viewMode === 'month' && (

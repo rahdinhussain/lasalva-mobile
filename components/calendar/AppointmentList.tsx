@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import { format, parseISO } from 'date-fns';
 import { Search, Calendar } from 'lucide-react-native';
@@ -238,16 +239,18 @@ export function AppointmentList({
     <View className="flex-1">
       {/* Search bar */}
       <View className="px-4 py-3 bg-white">
-        <View className="flex-row items-center bg-slate-100 rounded-lg px-3 py-2">
+        <View className="flex-row items-center bg-slate-100 rounded-lg px-3 min-h-[44px]">
           <Search size={18} color={colors.slate[400]} />
           <TextInput
-            className="flex-1 ml-2 text-sm text-slate-900"
+            className="flex-1 ml-2 text-sm text-slate-900 py-2.5"
             placeholder="Search by name, service, or staff..."
             placeholderTextColor={colors.slate[400]}
             value={searchQuery}
             onChangeText={setSearchQuery}
             autoCapitalize="none"
             autoCorrect={false}
+            style={Platform.OS === 'android' ? { paddingVertical: 10 } : undefined}
+            {...(Platform.OS === 'android' ? { includeFontPadding: false } : {})}
           />
         </View>
       </View>

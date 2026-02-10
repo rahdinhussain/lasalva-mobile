@@ -16,7 +16,7 @@ import Animated, {
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
-type ButtonVariant = 'primary' | 'secondary' | 'destructive' | 'ghost';
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'destructive' | 'ghost';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
@@ -38,6 +38,10 @@ const variantStyles: Record<ButtonVariant, { container: string; text: string }> 
   },
   secondary: {
     container: 'bg-white border border-slate-200 active:bg-slate-50',
+    text: 'text-slate-700 font-medium',
+  },
+  outline: {
+    container: 'bg-transparent border border-slate-300 active:bg-slate-50',
     text: 'text-slate-700 font-medium',
   },
   destructive: {
@@ -123,7 +127,7 @@ export function Button({
     >
       {loading ? (
         <ActivityIndicator
-          color={variant === 'secondary' || variant === 'ghost' ? '#4f46e5' : '#ffffff'}
+          color={variant === 'secondary' || variant === 'outline' || variant === 'ghost' ? '#4f46e5' : '#ffffff'}
           size="small"
         />
       ) : (

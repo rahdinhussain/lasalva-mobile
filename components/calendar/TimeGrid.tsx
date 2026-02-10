@@ -1,8 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import { format } from 'date-fns';
+import { isToday } from 'date-fns';
 import { colors } from '@/constants/colors';
-import { getDateKeyInTimeZone } from '@/utils/dateUtils';
 
 const HOUR_HEIGHT = 60; // px per hour
 const TIME_LABEL_WIDTH = 52;
@@ -35,12 +34,11 @@ export function TimeGrid({
 
   // Auto-scroll to 7 AM (or current time if today)
   useEffect(() => {
-    // Use raw Date for todayKey (single TZ conversion), and format() for zoned dates from parent
-    const todayKey = getDateKeyInTimeZone(new Date(), timeZone);
-    const hasToday = dates.some((d) => format(d, 'yyyy-MM-dd') === todayKey);
+    // Use isToday to check against local time (matching how grid days are generated)
+    const viewHasToday = dates.some((d) => isToday(d));
     // Use device local time for scroll position to match the current time indicator
     const localHour = new Date().getHours();
-    const scrollToHour = hasToday ? Math.max(localHour - 1, 0) : 7;
+    const scrollToHour = viewHasToday ? Math.max(localHour - 1, 0) : 7;
 
     setTimeout(() => {
       scrollRef.current?.scrollTo({
@@ -48,7 +46,7 @@ export function TimeGrid({
         animated: false,
       });
     }, 100);
-  }, [dates, timeZone]);
+  }, [dates]);
 
   // Current time position - use device local time so the indicator shows "now" 
   // relative to the user's actual day, regardless of business timezone
@@ -57,10 +55,9 @@ export function TimeGrid({
   const nowMinutes = now.getMinutes();
   const currentTimeTop = nowHours * HOUR_HEIGHT + (nowMinutes / 60) * HOUR_HEIGHT;
 
-  // Use raw Date for todayKey (single TZ conversion), and format() for zoned dates from parent
-  const todayKey = getDateKeyInTimeZone(new Date(), timeZone);
-  const hasToday = dates.some((d) => format(d, 'yyyy-MM-dd') === todayKey);
-  const todayIndex = dates.findIndex((d) => format(d, 'yyyy-MM-dd') === todayKey);
+  // Use isToday to check against local time (matching how grid days are generated)
+  const hasToday = dates.some((d) => isToday(d));
+  const todayIndex = dates.findIndex((d) => isToday(d));
 
   return (
     <ScrollView
