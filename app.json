@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "scheme": "lasalva",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -17,10 +17,6 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.lasalva.mobile",
       "associatedDomains": [
-        "applinks:lasalva.com",
-        "applinks:www.lasalva.com",
-        "applinks:lasalva.com",
-        "applinks:www.lasalva.com",
         "applinks:lasalva.com",
         "applinks:www.lasalva.com"
       ],
@@ -55,30 +51,9 @@
             "BROWSABLE",
             "DEFAULT"
           ]
-        },
-        {
-          "action": "VIEW",
-          "autoVerify": true,
-          "data": [
-            {
-              "scheme": "https",
-              "host": "lasalva.com",
-              "pathPrefix": "/reset-password"
-            },
-            {
-              "scheme": "https",
-              "host": "lasalva.com",
-              "pathPrefix": "/verify"
-            }
-          ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
         }
       ],
       "permissions": [
-        "android.permission.RECORD_AUDIO",
         "android.permission.RECORD_AUDIO"
       ]
     },
