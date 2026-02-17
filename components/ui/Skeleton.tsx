@@ -1,12 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, ViewProps } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  interpolate,
-} from 'react-native-reanimated';
+import React, { useRef, useEffect } from 'react';
+import { View, ViewProps, Animated } from 'react-native';
 
 interface SkeletonProps extends ViewProps {
   width?: number | string;
@@ -23,20 +16,26 @@ export function Skeleton({
   style,
   ...props
 }: SkeletonProps) {
-  const shimmer = useSharedValue(0);
+  const opacity = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
-    shimmer.value = withRepeat(
-      withTiming(1, { duration: 1500 }),
-      -1,
-      false
+    const anim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 0.7,
+          duration: 750,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0.3,
+          duration: 750,
+          useNativeDriver: true,
+        }),
+      ])
     );
+    anim.start();
+    return () => anim.stop();
   }, []);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(shimmer.value, [0, 0.5, 1], [0.3, 0.7, 0.3]);
-    return { opacity };
-  });
 
   return (
     <Animated.View
@@ -45,8 +44,8 @@ export function Skeleton({
           width: typeof width === 'number' ? width : undefined,
           height: typeof height === 'number' ? height : undefined,
           borderRadius,
+          opacity,
         },
-        animatedStyle,
         style,
       ]}
       className={`bg-slate-200 ${className}`}
@@ -55,7 +54,6 @@ export function Skeleton({
   );
 }
 
-// Pre-built skeleton components
 export function SkeletonText({ lines = 1, className = '' }: { lines?: number; className?: string }) {
   return (
     <View className={`gap-2 ${className}`}>

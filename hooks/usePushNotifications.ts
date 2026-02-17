@@ -31,15 +31,18 @@ export function usePushNotifications() {
     let cancelled = false;
 
     async function register() {
-      const token = await registerForPushNotifications();
-      if (cancelled || !token) return;
+      try {
+        const token = await registerForPushNotifications();
+        if (cancelled || !token) return;
 
-      setPushToken(token);
+        setPushToken(token);
 
-      // Only send to server once per session
-      if (!tokenSentRef.current) {
-        await savePushTokenToServer(token);
-        tokenSentRef.current = true;
+        if (!tokenSentRef.current) {
+          await savePushTokenToServer(token);
+          tokenSentRef.current = true;
+        }
+      } catch (e) {
+        console.warn('[push] Failed to register for push notifications:', e);
       }
     }
 
@@ -53,16 +56,18 @@ export function usePushNotifications() {
   // Listen for notification taps and navigate
   useEffect(() => {
     const responseSubscription = addNotificationResponseListener((response) => {
-      const data = response.notification.request.content.data;
-
-      if (data?.type === 'appointment' && data?.appointmentId) {
-        // Navigate to calendar view (appointments are shown on the calendar)
-        router.push('/(tabs)/calendar');
+      try {
+        const data = response?.notification?.request?.content?.data;
+        if (data?.type === 'appointment' && data?.appointmentId) {
+          router.push('/(tabs)/calendar');
+        }
+      } catch (e) {
+        console.warn('[push] Error handling notification response:', e);
       }
     });
 
     const receivedSubscription = addNotificationReceivedListener((notification) => {
-      console.info('[push] Notification received in foreground:', notification.request.content.title);
+      console.info('[push] Notification received:', notification?.request?.content?.title);
     });
 
     return () => {

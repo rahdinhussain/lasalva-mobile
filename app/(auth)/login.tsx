@@ -113,15 +113,6 @@ export default function LoginScreen() {
             </Link>
 
             <Button
-              variant="secondary"
-              fullWidth
-              onPress={() => Linking.openURL(WEB_SIGNUP_URL)}
-              className="mb-4"
-            >
-              Sign up (web)
-            </Button>
-
-            <Button
               variant="primary"
               fullWidth
               loading={isLoading}
@@ -129,6 +120,15 @@ export default function LoginScreen() {
             >
               Log in
             </Button>
+
+            <TouchableOpacity
+              onPress={() => Linking.openURL(WEB_SIGNUP_URL)}
+              className="mt-12 items-center"
+            >
+              <Text className="text-indigo-600 text-sm font-medium">
+                Sign up (web)
+              </Text>
+            </TouchableOpacity>
           </Card>
         </View>
       </KeyboardAvoidingView>

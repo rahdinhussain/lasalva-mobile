@@ -35,14 +35,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Initialize auth state from secure storage
   useEffect(() => {
+    let isMounted = true;
+
     async function loadStoredAuth() {
       try {
-        const [token, userId] = await Promise.all([getAuthToken(), getUserId()]);
+        // Wrapped in try-catch to handle SecureStore errors in release builds
+        let token: string | null = null;
+        let userId: string | null = null;
+        
+        try {
+          [token, userId] = await Promise.all([getAuthToken(), getUserId()]);
+        } catch (storageError) {
+          console.warn('[Auth] Failed to read from secure storage:', storageError);
+          // Continue with null values - user will need to log in again
+        }
+
+        if (!isMounted) return;
 
         if (token && userId) {
           // Try to fetch user profile
           try {
             const profile = await getProfile();
+            if (!isMounted) return;
             setState({
               user: profile,
               token,
@@ -51,8 +65,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
               isAuthenticated: true,
             });
           } catch (error) {
+            if (!isMounted) return;
             // Token might be expired, clear auth
-            await clearAllAuth();
+            try {
+              await clearAllAuth();
+            } catch {
+              // Ignore clearAllAuth errors
+            }
             setState({
               user: null,
               token: null,
@@ -62,6 +81,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             });
           }
         } else {
+          if (!isMounted) return;
           setState({
             user: null,
             token: null,
@@ -70,7 +90,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
             isAuthenticated: false,
           });
         }
-      } catch {
+      } catch (e) {
+        console.warn('[Auth] Unexpected error during auth initialization:', e);
+        if (!isMounted) return;
         setState({
           user: null,
           token: null,
@@ -82,6 +104,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     loadStoredAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials): Promise<AuthResponse> => {

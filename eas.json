@@ -1,7 +1,7 @@
 {
   "cli": {
     "version": ">= 12.0.0",
-    "appVersionSource": "remote"
+    "appVersionSource": "local"
   },
   "build": {
     "development": {
@@ -9,6 +9,9 @@
       "distribution": "internal",
       "ios": {
         "simulator": true
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://lasalva.com"
       }
     },
     "preview": {
@@ -19,7 +22,10 @@
       "android": {
         "buildType": "apk"
       },
-      "channel": "preview"
+      "channel": "preview",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://lasalva.com"
+      }
     },
     "production": {
       "distribution": "store",
@@ -30,7 +36,9 @@
         "buildType": "app-bundle"
       },
       "channel": "production",
-      "autoIncrement": true
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://lasalva.com"
+      }
     }
   },
   "submit": {

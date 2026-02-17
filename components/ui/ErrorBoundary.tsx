@@ -9,6 +9,7 @@ interface Props {
 
 interface State {
   hasError: boolean;
+  errorMessage?: string;
 }
 
 /**
@@ -18,19 +19,18 @@ interface State {
 export class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false };
 
-  static getDerivedStateFromError(): State {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, errorMessage: error?.message };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.error('[ErrorBoundary]', error, errorInfo.componentStack);
-    }
+    // Always log errors in production for crash diagnostics via Xcode/Console
+    console.error('[ErrorBoundary] Caught error:', error?.message, error?.name);
+    console.error('[ErrorBoundary] Component stack:', errorInfo?.componentStack);
   }
 
   handleReset = (): void => {
-    this.setState({ hasError: false });
+    this.setState({ hasError: false, errorMessage: undefined });
     this.props.onReset?.();
   };
 

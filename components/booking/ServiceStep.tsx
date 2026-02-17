@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Image } from 'expo-image';
 import { Clock, DollarSign, Check } from 'lucide-react-native';
 import { useServicesList } from '@/hooks/useServices';
@@ -83,11 +82,15 @@ export function ServiceStep({ selectedService, onSelect, onNext }: ServiceStepPr
   const { activeServices, isLoading, error, refetch } = useServicesList();
 
   if (error) {
-    return <ErrorState message="Failed to load services" onRetry={refetch} />;
+    return (
+      <View style={{ flex: 1, paddingHorizontal: 16 }}>
+        <ErrorState message="Failed to load services" onRetry={refetch} />
+      </View>
+    );
   }
 
   return (
-    <View className="flex-1 px-4">
+    <View style={{ flex: 1, paddingHorizontal: 16 }}>
       <Text className="text-lg font-semibold text-slate-900 mb-3">
         Select a Service
       </Text>
@@ -99,24 +102,30 @@ export function ServiceStep({ selectedService, onSelect, onNext }: ServiceStepPr
           <SkeletonCard />
         </View>
       ) : activeServices.length === 0 ? (
-        <EmptyState
-          title="No services available"
-          description="Add services in the Services tab to start booking."
-        />
+        <View style={{ flex: 1 }}>
+          <EmptyState
+            title="No services available"
+            description="Add services in the Services tab to start booking."
+          />
+        </View>
       ) : (
-        <BottomSheetScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 8, gap: 10 }}
-        >
-          {activeServices.map((item) => (
-            <ServiceCard
-              key={item.id}
-              service={item}
-              isSelected={selectedService?.id === item.id}
-              onPress={() => onSelect(item)}
-            />
-          ))}
-        </BottomSheetScrollView>
+        <View style={{ flex: 1, minHeight: 200 }}>
+          <ScrollView
+            style={{ flex: 1 }}
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={{ paddingBottom: 16 }}
+          >
+            {activeServices.map((item) => (
+              <View key={item.id} style={{ marginBottom: 10 }}>
+                <ServiceCard
+                  service={item}
+                  isSelected={selectedService?.id === item.id}
+                  onPress={() => onSelect(item)}
+                />
+              </View>
+            ))}
+          </ScrollView>
+        </View>
       )}
 
       <View className="pt-4 pb-2">

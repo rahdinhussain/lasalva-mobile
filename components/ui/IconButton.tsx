@@ -1,13 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Platform, TouchableOpacityProps } from 'react-native';
+import { TouchableOpacity, Platform, TouchableOpacityProps, StyleSheet } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
-
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 type IconButtonVariant = 'default' | 'primary' | 'ghost';
 type IconButtonSize = 'sm' | 'md' | 'lg';
@@ -20,16 +13,16 @@ interface IconButtonProps extends Omit<TouchableOpacityProps, 'style'> {
   className?: string;
 }
 
-const variantStyles: Record<IconButtonVariant, string> = {
-  default: 'bg-slate-100 active:bg-slate-200',
-  primary: 'bg-indigo-600 active:bg-indigo-700',
-  ghost: 'bg-transparent active:bg-slate-100',
+const variantConfig = {
+  default: { bg: '#f1f5f9' },
+  primary: { bg: '#4f46e5' },
+  ghost: { bg: 'transparent' },
 };
 
-const sizeStyles: Record<IconButtonSize, string> = {
-  sm: 'w-8 h-8',
-  md: 'w-10 h-10',
-  lg: 'w-12 h-12',
+const sizeConfig = {
+  sm: 32,
+  md: 40,
+  lg: 48,
 };
 
 export function IconButton({
@@ -37,24 +30,9 @@ export function IconButton({
   variant = 'default',
   size = 'md',
   disabled = false,
-  className = '',
   onPress,
   ...props
 }: IconButtonProps) {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.9, { damping: 15, stiffness: 400 });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 400 });
-  };
-
   const handlePress = (event: any) => {
     if (Platform.OS !== 'web') {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -62,24 +40,33 @@ export function IconButton({
     onPress?.(event);
   };
 
+  const dimension = sizeConfig[size];
+
   return (
-    <AnimatedTouchable
-      style={animatedStyle}
+    <TouchableOpacity
       onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
       disabled={disabled}
-      activeOpacity={0.8}
-      className={`
-        items-center justify-center rounded-xl
-        ${variantStyles[variant]}
-        ${sizeStyles[size]}
-        ${disabled ? 'opacity-50' : ''}
-        ${className}
-      `}
+      activeOpacity={0.7}
+      style={[
+        styles.button,
+        {
+          backgroundColor: variantConfig[variant].bg,
+          width: dimension,
+          height: dimension,
+          opacity: disabled ? 0.5 : 1,
+        },
+      ]}
       {...props}
     >
       {icon}
-    </AnimatedTouchable>
+    </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+  },
+});

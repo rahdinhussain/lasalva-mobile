@@ -1,13 +1,6 @@
-import React from 'react';
-import { View, Text, Pressable, Platform } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  interpolateColor,
-} from 'react-native-reanimated';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, Pressable, Platform, Animated } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { colors } from '@/constants/colors';
 
 interface ToggleProps {
   value: boolean;
@@ -26,23 +19,16 @@ export function Toggle({
   disabled = false,
   className = '',
 }: ToggleProps) {
-  const toggleValue = useSharedValue(value ? 1 : 0);
+  const thumbPos = useRef(new Animated.Value(value ? 20 : 0)).current;
 
-  React.useEffect(() => {
-    toggleValue.value = withSpring(value ? 1 : 0, { damping: 15, stiffness: 200 });
+  useEffect(() => {
+    Animated.spring(thumbPos, {
+      toValue: value ? 20 : 0,
+      useNativeDriver: true,
+      speed: 100,
+      bounciness: 6,
+    }).start();
   }, [value]);
-
-  const trackStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(
-      toggleValue.value,
-      [0, 1],
-      [colors.slate[200], colors.indigo[600]]
-    ),
-  }));
-
-  const thumbStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: toggleValue.value * 20 }],
-  }));
 
   const handlePress = () => {
     if (disabled) return;
@@ -68,15 +54,25 @@ export function Toggle({
           )}
         </View>
       )}
-      <Animated.View
-        style={trackStyle}
-        className="w-12 h-7 rounded-full p-1"
+      <View
+        className="w-12 h-7 rounded-full p-1 justify-center"
+        style={{ backgroundColor: value ? '#4f46e5' : '#e2e8f0' }}
       >
         <Animated.View
-          style={thumbStyle}
-          className="w-5 h-5 bg-white rounded-full shadow-sm"
+          style={{
+            width: 20,
+            height: 20,
+            borderRadius: 10,
+            backgroundColor: '#fff',
+            transform: [{ translateX: thumbPos }],
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.2,
+            shadowRadius: 2,
+            elevation: 2,
+          }}
         />
-      </Animated.View>
+      </View>
     </Pressable>
   );
 }

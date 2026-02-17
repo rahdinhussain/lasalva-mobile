@@ -16,13 +16,8 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.lasalva.mobile",
-      "associatedDomains": [
-        "applinks:lasalva.com",
-        "applinks:www.lasalva.com"
-      ],
-      "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
+      "infoPlist": { "ITSAppUsesNonExemptEncryption": false },
+      "buildNumber": "29"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,70 +25,32 @@
         "backgroundColor": "#4f46e5"
       },
       "package": "com.lasalva.mobile",
+      "versionCode": 29,
       "edgeToEdgeEnabled": true,
       "intentFilters": [
         {
           "action": "VIEW",
           "autoVerify": true,
           "data": [
-            {
-              "scheme": "https",
-              "host": "lasalva.com",
-              "pathPrefix": "/reset-password"
-            },
-            {
-              "scheme": "https",
-              "host": "lasalva.com",
-              "pathPrefix": "/verify"
-            }
+            { "scheme": "https", "host": "lasalva.com", "pathPrefix": "/reset-password" },
+            { "scheme": "https", "host": "lasalva.com", "pathPrefix": "/verify" }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ],
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-router",
-      "expo-secure-store",
-      "expo-web-browser",
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/icon.png",
-          "color": "#4f46e5"
-        }
-      ],
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos for profile and service images.",
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera for profile photos."
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true
-    },
+    "plugins": ["expo-router"],
+    "experiments": { "typedRoutes": true },
     "extra": {
       "router": {},
-      "eas": {
-        "projectId": "d7651007-d765-4ca7-9f98-23ecdbf53d9e"
-      }
+      "eas": { "projectId": "2be54d6d-9286-4ef4-b974-2b8797c6cf64" }
     },
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/d7651007-d765-4ca7-9f98-23ecdbf53d9e"
-    }
+    "updates": { "enabled": false },
+    "owner": "rahdin"
   }
 }

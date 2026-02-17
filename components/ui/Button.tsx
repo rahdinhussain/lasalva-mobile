@@ -6,15 +6,9 @@ import {
   View,
   TouchableOpacityProps,
   Platform,
+  StyleSheet,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
-
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'destructive' | 'ghost';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -31,42 +25,48 @@ interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
   className?: string;
 }
 
-const variantStyles: Record<ButtonVariant, { container: string; text: string }> = {
+const variantConfig = {
   primary: {
-    container: 'bg-indigo-600 active:bg-indigo-700',
-    text: 'text-white font-semibold',
+    bg: '#4f46e5',
+    activeBg: '#4338ca',
+    textColor: '#ffffff',
+    fontWeight: '600' as const,
+    borderColor: undefined,
   },
   secondary: {
-    container: 'bg-white border border-slate-200 active:bg-slate-50',
-    text: 'text-slate-700 font-medium',
+    bg: '#ffffff',
+    activeBg: '#f8fafc',
+    textColor: '#334155',
+    fontWeight: '500' as const,
+    borderColor: '#e2e8f0',
   },
   outline: {
-    container: 'bg-transparent border border-slate-300 active:bg-slate-50',
-    text: 'text-slate-700 font-medium',
+    bg: 'transparent',
+    activeBg: '#f8fafc',
+    textColor: '#334155',
+    fontWeight: '500' as const,
+    borderColor: '#cbd5e1',
   },
   destructive: {
-    container: 'bg-rose-600 active:bg-rose-700',
-    text: 'text-white font-semibold',
+    bg: '#e11d48',
+    activeBg: '#be123c',
+    textColor: '#ffffff',
+    fontWeight: '600' as const,
+    borderColor: undefined,
   },
   ghost: {
-    container: 'bg-transparent active:bg-slate-100',
-    text: 'text-indigo-600 font-medium',
+    bg: 'transparent',
+    activeBg: '#f1f5f9',
+    textColor: '#4f46e5',
+    fontWeight: '500' as const,
+    borderColor: undefined,
   },
 };
 
-const sizeStyles: Record<ButtonSize, { container: string; text: string }> = {
-  sm: {
-    container: 'py-2 px-3',
-    text: 'text-sm',
-  },
-  md: {
-    container: 'py-3 px-4',
-    text: 'text-base',
-  },
-  lg: {
-    container: 'py-4 px-6',
-    text: 'text-lg',
-  },
+const sizeConfig = {
+  sm: { paddingVertical: 8, paddingHorizontal: 12, fontSize: 14 },
+  md: { paddingVertical: 12, paddingHorizontal: 16, fontSize: 16 },
+  lg: { paddingVertical: 16, paddingHorizontal: 24, fontSize: 18 },
 };
 
 export function Button({
@@ -82,20 +82,6 @@ export function Button({
   onPress,
   ...props
 }: ButtonProps) {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.96, { damping: 15, stiffness: 400 });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 400 });
-  };
-
   const handlePress = (event: any) => {
     if (Platform.OS !== 'web') {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -104,25 +90,26 @@ export function Button({
   };
 
   const isDisabled = disabled || loading;
-  const variantStyle = variantStyles[variant];
-  const sizeStyle = sizeStyles[size];
+  const config = variantConfig[variant];
+  const sizeConf = sizeConfig[size];
 
   return (
-    <AnimatedTouchable
-      style={animatedStyle}
+    <TouchableOpacity
       onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
       disabled={isDisabled}
-      activeOpacity={0.8}
-      className={`
-        flex-row items-center justify-center rounded-xl
-        ${variantStyle.container}
-        ${sizeStyle.container}
-        ${fullWidth ? 'w-full' : ''}
-        ${isDisabled ? 'opacity-50' : ''}
-        ${className}
-      `}
+      activeOpacity={0.7}
+      style={[
+        styles.button,
+        {
+          backgroundColor: config.bg,
+          paddingVertical: sizeConf.paddingVertical,
+          paddingHorizontal: sizeConf.paddingHorizontal,
+          borderWidth: config.borderColor ? 1 : 0,
+          borderColor: config.borderColor,
+          opacity: isDisabled ? 0.5 : 1,
+        },
+        fullWidth && styles.fullWidth,
+      ]}
       {...props}
     >
       {loading ? (
@@ -131,14 +118,52 @@ export function Button({
           size="small"
         />
       ) : (
-        <View className="flex-row items-center gap-2">
-          {icon && iconPosition === 'left' && icon}
-          <Text className={`${variantStyle.text} ${sizeStyle.text}`}>
+        <View style={styles.content}>
+          {icon && iconPosition === 'left' && (
+            <View style={styles.iconLeft}>{icon}</View>
+          )}
+          <Text
+            style={[
+              styles.text,
+              {
+                color: config.textColor,
+                fontSize: sizeConf.fontSize,
+                fontWeight: config.fontWeight,
+              },
+            ]}
+          >
             {children}
           </Text>
-          {icon && iconPosition === 'right' && icon}
+          {icon && iconPosition === 'right' && (
+            <View style={styles.iconRight}>{icon}</View>
+          )}
         </View>
       )}
-    </AnimatedTouchable>
+    </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+  },
+  fullWidth: {
+    width: '100%',
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  text: {
+    textAlign: 'center',
+  },
+  iconLeft: {
+    marginRight: 8,
+  },
+  iconRight: {
+    marginLeft: 8,
+  },
+});

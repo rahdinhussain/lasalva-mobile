@@ -1,14 +1,15 @@
 export * from './colors';
 
-export const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+// Production URLs - hardcoded to ensure they work in all build configurations
+// Environment variables from process.env.EXPO_PUBLIC_* are checked first,
+// with reliable production fallbacks
+export const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://lasalva.com';
 
 /** Base URL for public booking pages (e.g. https://lasalva.com). Link is BOOKING_BASE_URL/slug. */
-export const BOOKING_BASE_URL =
-  process.env.EXPO_PUBLIC_BOOKING_BASE_URL || API_URL;
+export const BOOKING_BASE_URL = process.env.EXPO_PUBLIC_BOOKING_BASE_URL || API_URL;
 
 /** Web signup page URL. Users sign up and verify on the web; open this from the app login screen. */
-export const WEB_SIGNUP_URL =
-  process.env.EXPO_PUBLIC_WEB_SIGNUP_URL || `${BOOKING_BASE_URL.replace(/\/$/, '')}/signup`;
+export const WEB_SIGNUP_URL = process.env.EXPO_PUBLIC_WEB_SIGNUP_URL || `${BOOKING_BASE_URL.replace(/\/$/, '')}/signup`;
 
 export const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',

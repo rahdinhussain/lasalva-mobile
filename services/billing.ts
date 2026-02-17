@@ -1,8 +1,16 @@
 import api from './api';
 import { BillingSummary } from '@/types';
-import * as WebBrowser from 'expo-web-browser';
+import { Linking } from 'react-native';
 import { API_URL } from '@/constants';
 import { getAuthToken } from '@/utils/storage';
+
+// Lazy load expo-web-browser to prevent native crashes
+let WebBrowser: typeof import('expo-web-browser') | null = null;
+try {
+  WebBrowser = require('expo-web-browser');
+} catch (e) {
+  console.warn('[billing] expo-web-browser not available');
+}
 
 interface BillingSummaryResponse {
   success?: boolean;
@@ -22,8 +30,13 @@ export async function openBillingPortal(returnPath: string = '/settings/billing'
   const token = await getAuthToken();
   const url = `${API_URL}/api/billing/portal?return=${encodeURIComponent(returnPath)}`;
   
-  await WebBrowser.openBrowserAsync(url, {
-    showTitle: true,
-    enableBarCollapsing: true,
-  });
+  // Use expo-web-browser if available, otherwise fall back to Linking
+  if (WebBrowser) {
+    await WebBrowser.openBrowserAsync(url, {
+      showTitle: true,
+      enableBarCollapsing: true,
+    });
+  } else {
+    await Linking.openURL(url);
+  }
 }

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
-import { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { View, Text, ScrollView } from 'react-native';
 import { User, Mail, Phone, Clock, DollarSign, Calendar } from 'lucide-react-native';
 import { Service, AvailabilitySlot } from '@/types';
 import { formatCurrency, formatDuration } from '@/utils/formatters';
@@ -68,7 +67,7 @@ export function CustomerDetailsStep({
   };
 
   return (
-    <BottomSheetScrollView
+    <ScrollView
       contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 8 }}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
@@ -155,7 +154,6 @@ export function CustomerDetailsStep({
           error={errors.customerName}
           leftIcon={<User size={18} color={colors.slate[400]} />}
           autoCapitalize="words"
-          component={BottomSheetTextInput}
         />
 
         <Input
@@ -170,7 +168,6 @@ export function CustomerDetailsStep({
           leftIcon={<Mail size={18} color={colors.slate[400]} />}
           keyboardType="email-address"
           autoCapitalize="none"
-          component={BottomSheetTextInput}
         />
 
         <Input
@@ -180,7 +177,6 @@ export function CustomerDetailsStep({
           onChangeText={(v) => onFieldChange('customerPhone', v)}
           leftIcon={<Phone size={18} color={colors.slate[400]} />}
           keyboardType="phone-pad"
-          component={BottomSheetTextInput}
         />
       </View>
 
@@ -198,6 +194,6 @@ export function CustomerDetailsStep({
           Confirm Booking
         </Button>
       </View>
-    </BottomSheetScrollView>
+    </ScrollView>
   );
 }
