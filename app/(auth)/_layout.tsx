@@ -1,11 +1,21 @@
 import { Stack, Redirect } from 'expo-router';
+import { View, ActivityIndicator } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 
 export default function AuthLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, isHydrated } = useAuth();
 
-  // Redirect to calendar if already authenticated (and not loading)
-  if (!isLoading && isAuthenticated) {
+  // Wait for auth hydration to complete before making routing decisions
+  if (isLoading || !isHydrated) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8fafc' }}>
+        <ActivityIndicator size="large" color="#4f46e5" />
+      </View>
+    );
+  }
+
+  // Redirect to calendar if already authenticated
+  if (isAuthenticated) {
     return <Redirect href="/(tabs)/calendar" />;
   }
 

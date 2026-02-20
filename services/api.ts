@@ -15,8 +15,36 @@ const api: AxiosInstance = axios.create({
   },
 });
 
-// Flag to prevent multiple redirects
-let isRedirecting = false;
+// Auth state listener for notifying context when 401 occurs
+type AuthInvalidatedCallback = () => void;
+let onAuthInvalidated: AuthInvalidatedCallback | null = null;
+
+// Flag to indicate if auth system is ready to handle 401s
+// During initial hydration, we should NOT auto-logout on 401
+let isAuthReady = false;
+
+// Grace period timestamp - 401s are ignored until this time passes
+// Used to prevent logout immediately after login
+let graceUntil = 0;
+
+// Register callback to be notified when auth is invalidated due to 401
+export function setAuthInvalidatedCallback(callback: AuthInvalidatedCallback | null): void {
+  onAuthInvalidated = callback;
+}
+
+// Called by AuthContext when hydration is complete and 401 handling is safe
+export function setAuthReady(ready: boolean): void {
+  isAuthReady = ready;
+}
+
+// Set a grace period during which 401s will not trigger logout
+// Used after login to prevent race conditions with stale requests
+export function setAuthGracePeriod(durationMs: number): void {
+  graceUntil = Date.now() + durationMs;
+}
+
+// Flag to prevent multiple simultaneous auth clear operations
+let isHandling401 = false;
 
 // Request interceptor: send Bearer token and, if present, lasalva_auth cookie (fallback so backend runs same email path as web)
 api.interceptors.request.use(
@@ -59,20 +87,47 @@ api.interceptors.response.use(
     if (status === 401 && config) {
       const retry401 = (config as InternalAxiosRequestConfig & { __retry401?: boolean }).__retry401;
       if (!retry401) {
-        const { refreshAuthToken } = await import('@/services/auth');
-        const newToken = await refreshAuthToken();
-        if (newToken) {
-          (config as InternalAxiosRequestConfig & { __retry401?: boolean }).__retry401 = true;
-          return api(config);
+        try {
+          const { refreshAuthToken } = await import('@/services/auth');
+          const newToken = await refreshAuthToken();
+          if (newToken) {
+            (config as InternalAxiosRequestConfig & { __retry401?: boolean }).__retry401 = true;
+            return api(config);
+          }
+        } catch (refreshError) {
+          console.warn('[API] Token refresh failed:', refreshError);
         }
       }
 
-      if (!isRedirecting) {
-        isRedirecting = true;
-        await clearAllAuth();
-        setTimeout(() => {
-          isRedirecting = false;
-        }, 1000);
+      // Token refresh failed or was already attempted
+      // ONLY clear auth if:
+      // 1. Auth system is ready (hydration complete)
+      // 2. Not in grace period (just after login)
+      // 3. Not already handling a 401
+      const inGracePeriod = Date.now() < graceUntil;
+      if (isAuthReady && !inGracePeriod && !isHandling401) {
+        isHandling401 = true;
+        try {
+          // Double-check we still have a token before clearing
+          // This prevents clearing during hydration race conditions
+          const currentToken = await getAuthToken();
+          if (currentToken) {
+            await clearAllAuth();
+            // Notify auth context that auth was invalidated
+            if (onAuthInvalidated) {
+              onAuthInvalidated();
+            }
+          }
+        } catch (clearError) {
+          console.warn('[API] Failed to clear auth:', clearError);
+        } finally {
+          // Reset flag after a delay to prevent rapid-fire clears
+          setTimeout(() => {
+            isHandling401 = false;
+          }, 1000);
+        }
+      } else if (inGracePeriod) {
+        console.warn('[API] 401 ignored - in grace period after login');
       }
 
       const apiError: ApiError = {

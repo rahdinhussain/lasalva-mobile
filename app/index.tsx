@@ -3,9 +3,11 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 
 export default function Index() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, isHydrated } = useAuth();
 
-  if (isLoading) {
+  // Wait for auth state to be fully hydrated before routing
+  // This prevents accidental redirects during app initialization
+  if (isLoading || !isHydrated) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#4f46e5" />

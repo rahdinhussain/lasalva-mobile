@@ -1,14 +1,24 @@
 import React from 'react';
 import { Tabs, Redirect } from 'expo-router';
+import { View, ActivityIndicator } from 'react-native';
 import { Calendar, Users, Briefcase, Settings } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 import { useAuth } from '@/context/AuthContext';
 
 export default function TabsLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, isHydrated } = useAuth();
 
-  // Redirect to login if not authenticated (and not loading)
-  if (!isLoading && !isAuthenticated) {
+  // Wait for auth hydration to complete before making routing decisions
+  if (isLoading || !isHydrated) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8fafc' }}>
+        <ActivityIndicator size="large" color="#4f46e5" />
+      </View>
+    );
+  }
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
     return <Redirect href="/(auth)/login" />;
   }
 

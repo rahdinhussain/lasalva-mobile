@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { getAuthToken, getUserId, clearAllAuth, setAuthToken, setUserId } from '@/utils/storage';
 import { login as loginApi, logout as logoutApi, LoginCredentials } from '@/services/auth';
 import { getProfile } from '@/services/profile';
-import { Profile, AuthResponse } from '@/types';
+import { setAuthInvalidatedCallback, setAuthReady, setAuthGracePeriod } from '@/services/api';
+import { Profile, AuthResponse, ApiError } from '@/types';
 
 interface AuthState {
   user: Profile | null;
@@ -10,12 +11,14 @@ interface AuthState {
   userId: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isHydrated: boolean;
 }
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<AuthResponse>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  forceLogout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,15 +34,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     userId: null,
     isLoading: true,
     isAuthenticated: false,
+    isHydrated: false,
   });
+  
+  const isMountedRef = useRef(true);
 
   // Initialize auth state from secure storage
   useEffect(() => {
-    let isMounted = true;
+    isMountedRef.current = true;
+    
+    // Mark auth as NOT ready during hydration - prevents 401 interceptor from auto-logout
+    setAuthReady(false);
 
     async function loadStoredAuth() {
       try {
-        // Wrapped in try-catch to handle SecureStore errors in release builds
         let token: string | null = null;
         let userId: string | null = null;
         
@@ -47,71 +55,157 @@ export function AuthProvider({ children }: AuthProviderProps) {
           [token, userId] = await Promise.all([getAuthToken(), getUserId()]);
         } catch (storageError) {
           console.warn('[Auth] Failed to read from secure storage:', storageError);
-          // Continue with null values - user will need to log in again
         }
 
-        if (!isMounted) return;
+        if (!isMountedRef.current) return;
 
+        // If we have a stored token and userId, trust them and set authenticated
+        // This prevents logout on network errors during app startup
         if (token && userId) {
-          // Try to fetch user profile
+          setState({
+            user: null,
+            token,
+            userId,
+            isLoading: false,
+            isAuthenticated: true,
+            isHydrated: true,
+          });
+          
+          // Mark auth as ready AFTER setting authenticated state
+          // This enables 401 handling in the API interceptor
+          setAuthReady(true);
+          
+          // Fetch profile in background - don't logout on failure during hydration
+          // Network errors should NOT cause logout
           try {
             const profile = await getProfile();
-            if (!isMounted) return;
-            setState({
+            if (!isMountedRef.current) return;
+            setState((prev) => ({
+              ...prev,
               user: profile,
-              token,
-              userId,
-              isLoading: false,
-              isAuthenticated: true,
-            });
+            }));
           } catch (error) {
-            if (!isMounted) return;
-            // Token might be expired, clear auth
-            try {
-              await clearAllAuth();
-            } catch {
-              // Ignore clearAllAuth errors
+            // During hydration, we don't auto-logout on errors
+            // The user has a valid stored token, so keep them logged in
+            // Only explicit manual logout or post-hydration 401s should logout
+            const apiError = error as ApiError;
+            if (apiError?.status === 401 || apiError?.code === 'UNAUTHORIZED') {
+              // 401 during profile fetch - check if storage was cleared
+              // (It won't be, because isAuthReady was just set to true after state update)
+              // We intentionally keep the user logged in and let them retry
+              console.warn('[Auth] Profile fetch returned 401 during hydration, keeping session');
+            } else {
+              // Network error or other non-auth error - definitely keep user logged in
+              console.warn('[Auth] Profile fetch failed (non-auth error), keeping session:', error);
             }
-            setState({
-              user: null,
-              token: null,
-              userId: null,
-              isLoading: false,
-              isAuthenticated: false,
-            });
           }
         } else {
-          if (!isMounted) return;
+          // No stored credentials
+          if (!isMountedRef.current) return;
           setState({
             user: null,
             token: null,
             userId: null,
             isLoading: false,
             isAuthenticated: false,
+            isHydrated: true,
           });
+          // Auth is ready but user is not authenticated
+          setAuthReady(true);
         }
       } catch (e) {
         console.warn('[Auth] Unexpected error during auth initialization:', e);
-        if (!isMounted) return;
+        if (!isMountedRef.current) return;
+        // On unexpected errors, check if we have stored credentials
+        // Don't logout blindly - preserve session if possible
+        try {
+          const [token, userId] = await Promise.all([getAuthToken(), getUserId()]);
+          if (token && userId) {
+            setState({
+              user: null,
+              token,
+              userId,
+              isLoading: false,
+              isAuthenticated: true,
+              isHydrated: true,
+            });
+            setAuthReady(true);
+            return;
+          }
+        } catch {
+          // Storage also failed
+        }
         setState({
           user: null,
           token: null,
           userId: null,
           isLoading: false,
           isAuthenticated: false,
+          isHydrated: true,
         });
+        setAuthReady(true);
       }
     }
 
     loadStoredAuth();
 
     return () => {
-      isMounted = false;
+      isMountedRef.current = false;
+      // Reset auth ready state on unmount
+      setAuthReady(false);
     };
   }, []);
 
+  // Register callback for API 401 handling - only after hydration
+  useEffect(() => {
+    // Only register callback when hydrated to prevent race conditions
+    if (!state.isHydrated) return;
+    
+    const handleAuthInvalidated = async () => {
+      // CRITICAL: Verify auth is actually cleared before updating state
+      // This prevents race conditions where:
+      // 1. User logs in (new token stored)
+      // 2. Old/stale request returns 401
+      // 3. Interceptor clears auth, but new login already stored new token
+      // 4. Callback fires - we should NOT logout if new token exists
+      try {
+        const currentToken = await getAuthToken();
+        if (currentToken) {
+          // A new token exists - likely a recent login
+          // Do NOT logout, the 401 was from a stale request
+          console.warn('[Auth] Auth invalidated callback skipped - new token exists');
+          return;
+        }
+      } catch {
+        // Storage error - proceed with logout
+      }
+      
+      if (isMountedRef.current) {
+        setState({
+          user: null,
+          token: null,
+          userId: null,
+          isLoading: false,
+          isAuthenticated: false,
+          isHydrated: true,
+        });
+      }
+    };
+
+    setAuthInvalidatedCallback(handleAuthInvalidated);
+
+    return () => {
+      setAuthInvalidatedCallback(null);
+    };
+  }, [state.isHydrated]);
+
   const login = useCallback(async (credentials: LoginCredentials): Promise<AuthResponse> => {
+    if (!isMountedRef.current) throw new Error('Component unmounted');
     setState((prev) => ({ ...prev, isLoading: true }));
+    
+    // Disable 401 auto-logout during login to prevent race conditions
+    // (e.g., getProfile() failing before new token is fully recognized)
+    setAuthReady(false);
     
     try {
       const response = await loginApi(credentials);
@@ -121,69 +215,116 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         profile = await getProfile();
       } catch {
-        // getProfile may have failed with 401, and the interceptor clears auth.
-        // Re-store tokens from the successful login so the session isn't lost.
-        await setAuthToken(response.token);
-        await setUserId(response.userId);
+        // getProfile failed - likely 401 or network error
+        // Since we disabled 401 handling, tokens are still stored
+        // Just continue without profile - auto-retry will fetch it later
+        console.warn('[Auth] Profile fetch after login failed, continuing without profile');
       }
 
+      if (!isMountedRef.current) throw new Error('Component unmounted');
+      
       setState({
         user: profile,
         token: response.token,
         userId: response.userId,
         isLoading: false,
         isAuthenticated: true,
+        isHydrated: true,
       });
+      
+      // Re-enable 401 handling now that login is complete
+      setAuthReady(true);
+      
+      // Set a grace period to ignore 401s from queries that fire immediately
+      // after isAuthenticated becomes true (e.g., BusinessContext queries)
+      // These queries might get 401 if the token isn't recognized yet
+      setAuthGracePeriod(5000); // 5 second grace period
 
       return response;
     } catch (error) {
-      setState((prev) => ({ ...prev, isLoading: false }));
+      // Re-enable 401 handling even on login failure
+      setAuthReady(true);
+      
+      if (isMountedRef.current) {
+        setState((prev) => ({ ...prev, isLoading: false }));
+      }
       throw error;
     }
   }, []);
 
   const logout = useCallback(async () => {
+    if (!isMountedRef.current) return;
     setState((prev) => ({ ...prev, isLoading: true }));
     
     try {
       await logoutApi();
     } finally {
+      if (isMountedRef.current) {
+        setState({
+          user: null,
+          token: null,
+          userId: null,
+          isLoading: false,
+          isAuthenticated: false,
+          isHydrated: true,
+        });
+      }
+    }
+  }, []);
+
+  // Force logout - called when API returns 401 and refresh fails
+  const forceLogout = useCallback(async () => {
+    if (!isMountedRef.current) return;
+    try {
+      await clearAllAuth();
+    } catch {
+      // Ignore storage errors during force logout
+    }
+    if (isMountedRef.current) {
       setState({
         user: null,
         token: null,
         userId: null,
         isLoading: false,
         isAuthenticated: false,
+        isHydrated: true,
       });
     }
   }, []);
 
   const refreshUser = useCallback(async () => {
-    if (!state.token) return;
+    if (!state.token || !isMountedRef.current) return;
 
     try {
       const profile = await getProfile();
-      setState((prev) => ({ ...prev, user: profile }));
-    } catch {
-      // Profile refresh failed (e.g. network); keep existing state
+      if (isMountedRef.current) {
+        setState((prev) => ({ ...prev, user: profile }));
+      }
+    } catch (error) {
+      // Don't logout on profile refresh errors
+      // The API interceptor handles 401s centrally when isAuthReady is true
+      // If it cleared auth, the callback will update state
+      // For non-auth errors (network, etc.), keep existing state
+      console.warn('[Auth] Profile refresh failed, keeping session:', error);
     }
   }, [state.token]);
 
   // Auto-retry profile fetch when authenticated but profile is missing
   useEffect(() => {
-    if (state.isAuthenticated && !state.user && state.token && !state.isLoading) {
+    if (state.isAuthenticated && !state.user && state.token && !state.isLoading && state.isHydrated) {
       const timer = setTimeout(() => {
         refreshUser();
-      }, 1000);
+      }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [state.isAuthenticated, state.user, state.token, state.isLoading, refreshUser]);
+  }, [state.isAuthenticated, state.user, state.token, state.isLoading, state.isHydrated, refreshUser]);
 
   const value: AuthContextType = {
     ...state,
     login,
     logout,
     refreshUser,
+    forceLogout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
