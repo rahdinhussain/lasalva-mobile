@@ -1,6 +1,8 @@
 import '../global.css';
 import React from 'react';
 import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/context/AuthContext';
 import { BusinessProvider } from '@/context/BusinessContext';
@@ -10,8 +12,10 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+    <SafeAreaProvider>
+      <StatusBar style="dark" backgroundColor="#ffffff" translucent={false} />
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
         <BusinessProvider>
           <ErrorBoundary>
             <Stack screenOptions={{ headerShown: false }}>
@@ -22,6 +26,7 @@ export default function RootLayout() {
           </ErrorBoundary>
         </BusinessProvider>
       </AuthProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </SafeAreaProvider>
   );
 }

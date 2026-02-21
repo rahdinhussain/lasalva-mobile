@@ -1,6 +1,10 @@
 {
   "expo": {
     "name": "Lasalva",
+    "statusBar": {
+      "style": "dark",
+      "backgroundColor": "#ffffff"
+    },
     "slug": "lasalva-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
