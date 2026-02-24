@@ -21,7 +21,7 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.lasalva.mobile",
       "infoPlist": { "ITSAppUsesNonExemptEncryption": false },
-      "buildNumber": "29"
+      "buildNumber": "30"
     },
     "android": {
       "adaptiveIcon": {
