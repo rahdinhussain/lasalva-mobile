@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { getAuthToken, getUserId, clearAllAuth, setAuthToken, setUserId } from '@/utils/storage';
 import { login as loginApi, logout as logoutApi, LoginCredentials } from '@/services/auth';
 import { getProfile } from '@/services/profile';
-import { setAuthInvalidatedCallback, setAuthReady, setAuthGracePeriod } from '@/services/api';
+import { setAuthInvalidatedCallback, setAuthReady, setAuthGracePeriod, isInGracePeriod } from '@/services/api';
 import { Profile, AuthResponse, ApiError } from '@/types';
 
 interface AuthState {
@@ -162,17 +162,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!state.isHydrated) return;
     
     const handleAuthInvalidated = async () => {
-      // CRITICAL: Verify auth is actually cleared before updating state
-      // This prevents race conditions where:
-      // 1. User logs in (new token stored)
-      // 2. Old/stale request returns 401
-      // 3. Interceptor clears auth, but new login already stored new token
-      // 4. Callback fires - we should NOT logout if new token exists
+      // Defense-in-depth: if we're in the post-login grace period, never logout
+      if (isInGracePeriod()) {
+        console.warn('[Auth] Auth invalidated callback skipped - in grace period');
+        return;
+      }
+
+      // Verify auth is actually cleared before updating state.
+      // This prevents race conditions where a stale 401 fires after a fresh login.
       try {
         const currentToken = await getAuthToken();
         if (currentToken) {
-          // A new token exists - likely a recent login
-          // Do NOT logout, the 401 was from a stale request
           console.warn('[Auth] Auth invalidated callback skipped - new token exists');
           return;
         }
@@ -210,6 +210,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const response = await loginApi(credentials);
 
+      // Token is now stored in SecureStore by loginApi().
+      // Start the grace period NOW so that any queries triggered by
+      // isAuthenticated becoming true won't cause a 401-driven logout.
+      setAuthGracePeriod(15000);
+
       // Fetch user profile after login
       let profile: Profile | null = null;
       try {
@@ -232,18 +237,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         isHydrated: true,
       });
       
-      // Re-enable 401 handling now that login is complete
+      // Re-enable 401 handling now that login is complete.
+      // Grace period is active, so any 401s from post-login queries are safely ignored.
       setAuthReady(true);
-      
-      // Set a grace period to ignore 401s from queries that fire immediately
-      // after isAuthenticated becomes true (e.g., BusinessContext queries)
-      // These queries might get 401 if the token isn't recognized yet
-      setAuthGracePeriod(5000); // 5 second grace period
 
       return response;
     } catch (error) {
       // Re-enable 401 handling even on login failure
       setAuthReady(true);
+      setAuthGracePeriod(0);
       
       if (isMountedRef.current) {
         setState((prev) => ({ ...prev, isLoading: false }));

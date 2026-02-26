@@ -43,6 +43,11 @@ export function setAuthGracePeriod(durationMs: number): void {
   graceUntil = Date.now() + durationMs;
 }
 
+// Check if we're currently in the post-login grace period
+export function isInGracePeriod(): boolean {
+  return Date.now() < graceUntil;
+}
+
 // Flag to prevent multiple simultaneous auth clear operations
 let isHandling401 = false;
 
@@ -83,8 +88,37 @@ api.interceptors.response.use(
       }
     }
 
-    // Handle 401 Unauthorized: try token refresh once, then clear and reject
+    // Handle 401 Unauthorized
     if (status === 401 && config) {
+      // Skip ALL 401 handling when auth system is not ready (during login/hydration).
+      // No refresh attempt, no clear, no callback -- just reject.
+      if (!isAuthReady) {
+        const apiError: ApiError = {
+          message:
+            error.response?.data?.message ||
+            error.response?.data?.error ||
+            'Authentication error',
+          code: 'UNAUTHORIZED',
+          status: 401,
+        };
+        return Promise.reject(apiError);
+      }
+
+      // Skip 401 handling during post-login grace period
+      const inGracePeriod = Date.now() < graceUntil;
+      if (inGracePeriod) {
+        const apiError: ApiError = {
+          message:
+            error.response?.data?.message ||
+            error.response?.data?.error ||
+            'Authentication error',
+          code: 'UNAUTHORIZED',
+          status: 401,
+        };
+        return Promise.reject(apiError);
+      }
+
+      // Auth is ready and grace period has passed -- attempt token refresh once
       const retry401 = (config as InternalAxiosRequestConfig & { __retry401?: boolean }).__retry401;
       if (!retry401) {
         try {
@@ -99,21 +133,13 @@ api.interceptors.response.use(
         }
       }
 
-      // Token refresh failed or was already attempted
-      // ONLY clear auth if:
-      // 1. Auth system is ready (hydration complete)
-      // 2. Not in grace period (just after login)
-      // 3. Not already handling a 401
-      const inGracePeriod = Date.now() < graceUntil;
-      if (isAuthReady && !inGracePeriod && !isHandling401) {
+      // Token refresh failed or was already attempted -- clear auth and notify
+      if (!isHandling401) {
         isHandling401 = true;
         try {
-          // Double-check we still have a token before clearing
-          // This prevents clearing during hydration race conditions
           const currentToken = await getAuthToken();
           if (currentToken) {
             await clearAllAuth();
-            // Notify auth context that auth was invalidated
             if (onAuthInvalidated) {
               onAuthInvalidated();
             }
@@ -121,13 +147,10 @@ api.interceptors.response.use(
         } catch (clearError) {
           console.warn('[API] Failed to clear auth:', clearError);
         } finally {
-          // Reset flag after a delay to prevent rapid-fire clears
           setTimeout(() => {
             isHandling401 = false;
           }, 1000);
         }
-      } else if (inGracePeriod) {
-        console.warn('[API] 401 ignored - in grace period after login');
       }
 
       const apiError: ApiError = {

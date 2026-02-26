@@ -26,19 +26,35 @@ export interface ResetPasswordData {
 
 /** Login using fetch so we can read Set-Cookie and store lasalva_auth for cookie-based API fallback. */
 export async function login(credentials: LoginCredentials): Promise<AuthResponse> {
-  const res = await fetch(`${API_URL}/api/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials),
-  });
-  const data = (await res.json()) as AuthResponse & { error?: string; message?: string };
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials),
+    });
+  } catch (networkError: any) {
+    throw new Error(networkError?.message || 'Network error. Please check your connection.');
+  }
+
+  let data: AuthResponse & { error?: string; message?: string };
+  try {
+    data = (await res.json()) as AuthResponse & { error?: string; message?: string };
+  } catch {
+    throw new Error(
+      res.ok ? 'Unexpected server response. Please try again.' : `Login failed (${res.status})`
+    );
+  }
+
   if (!res.ok) {
     throw new Error(data.error ?? data.message ?? 'Login failed');
   }
   const { token, userId, checkoutUrl } = data;
+  if (!token || !userId) {
+    throw new Error('Login succeeded but server returned incomplete data. Please try again.');
+  }
   await setAuthToken(String(token));
   await setUserId(String(userId));
-  // Store lasalva_auth when present so backend runs same email path as web (cookie or body for mobile)
   const fromHeader = parseLasalvaAuthFromSetCookie(
     res.headers.get?.('set-cookie') ?? (res.headers as unknown as Record<string, string>)?.['set-cookie'] ?? null
   );
@@ -67,11 +83,23 @@ export async function refreshAuthToken(): Promise<string | null> {
   const token = await getAuthToken();
   if (!token) return null;
 
-  const res = await fetch(`${API_URL}/api/auth/refresh`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const data = (await res.json()) as { token?: string; error?: string };
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/api/auth/refresh`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch {
+    return null;
+  }
+
+  let data: { token?: string; error?: string; lasalva_auth?: string };
+  try {
+    data = (await res.json()) as { token?: string; error?: string; lasalva_auth?: string };
+  } catch {
+    return null;
+  }
+
   if (!res.ok || !data.token) return null;
 
   const newToken = String(data.token);
@@ -79,7 +107,7 @@ export async function refreshAuthToken(): Promise<string | null> {
   const fromHeader = parseLasalvaAuthFromSetCookie(
     res.headers.get?.('set-cookie') ?? (res.headers as unknown as Record<string, string>)?.['set-cookie'] ?? null
   );
-  const fromBody = (data as { lasalva_auth?: string }).lasalva_auth ?? null;
+  const fromBody = data.lasalva_auth ?? null;
   const lasalvaAuth = fromHeader ?? fromBody ?? null;
   if (lasalvaAuth) await setAuthCookie(lasalvaAuth);
   return newToken;

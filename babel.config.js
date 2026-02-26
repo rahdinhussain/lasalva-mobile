@@ -1,6 +1,6 @@
 // NativeWind uses react-native-css-interop which adds "react-native-worklets/plugin".
-// Worklets require New Architecture; we use Old Architecture to avoid crashes.
-// So we replicate the NativeWind/CSS-interop Babel setup without the worklets plugin.
+// The worklets Babel plugin can cause build failures, so we replicate the
+// NativeWind/CSS-interop Babel setup without it. New Architecture stays enabled in app.json.
 function nativewindPresetWithoutWorklets() {
   return {
     plugins: [

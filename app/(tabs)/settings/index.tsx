@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { 
@@ -100,7 +100,8 @@ export default function SettingsScreen() {
         </TouchableOpacity>
 
         {/* Admin Menu Items */}
-        {(canManageBusiness || canViewBilling) && (
+        {/* Note: Billing is hidden on iOS per App Store guidelines (3.1.1) - subscriptions managed via web */}
+        {(canManageBusiness || (canViewBilling && Platform.OS !== 'ios')) && (
           <Card className="px-4 mb-6">
             {canManageBusiness && (
               <MenuItem
@@ -110,11 +111,11 @@ export default function SettingsScreen() {
               />
             )}
             
-            {canManageBusiness && canViewBilling && (
+            {canManageBusiness && canViewBilling && Platform.OS !== 'ios' && (
               <View className="h-px bg-slate-100" />
             )}
             
-            {canViewBilling && (
+            {canViewBilling && Platform.OS !== 'ios' && (
               <MenuItem
                 icon={<CreditCard size={20} color={colors.slate[600]} />}
                 label="Billing"

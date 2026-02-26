@@ -8,7 +8,14 @@ import { AuthProvider } from '@/context/AuthContext';
 import { BusinessProvider } from '@/context/BusinessContext';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      retryDelay: 1000,
+    },
+  },
+});
 
 export default function RootLayout() {
   return (

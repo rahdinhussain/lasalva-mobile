@@ -35,6 +35,7 @@ export default function LoginScreen() {
   };
 
   const handleLogin = async () => {
+    if (isLoading) return;
     if (!validate()) return;
 
     setIsLoading(true);

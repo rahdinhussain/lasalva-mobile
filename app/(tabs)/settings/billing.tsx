@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Linking, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Redirect } from 'expo-router';
 import { 
   CreditCard, 
   Calendar, 
@@ -27,6 +28,11 @@ const statusConfig: Record<string, { color: string; bgColor: string; icon: typeo
 };
 
 export default function BillingSettingsScreen() {
+  // Redirect iOS users - billing is managed via web per App Store guidelines (3.1.1)
+  if (Platform.OS === 'ios') {
+    return <Redirect href="/(tabs)/settings" />;
+  }
+
   const { business } = useBusiness();
   const { billing, isLoading, error, refetch } = useBillingSummary();
 
