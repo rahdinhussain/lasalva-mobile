@@ -11,7 +11,7 @@
     "icon": "./assets/icon.png",
     "scheme": "lasalva",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -21,7 +21,7 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.lasalva.mobile",
       "infoPlist": { "ITSAppUsesNonExemptEncryption": false },
-      "buildNumber": "30"
+      "buildNumber": "31"
     },
     "android": {
       "adaptiveIcon": {
@@ -48,7 +48,7 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": ["expo-router"],
+    "plugins": ["expo-router", "./plugins/withFollyCoroutinesFix.js"],
     "experiments": { "typedRoutes": true },
     "extra": {
       "router": {},
