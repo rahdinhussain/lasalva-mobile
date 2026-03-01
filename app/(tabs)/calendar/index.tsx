@@ -7,7 +7,7 @@ import { Appointment } from '@/types';
 import {
   getMonthGridRange,
   getDateKeyInTimeZone,
-  getNowInTimeZone,
+  getTodayDateInTimeZone,
 } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
 import { ErrorState } from '@/components/ui';
@@ -49,7 +49,7 @@ function getFetchRange(date: Date, viewMode: ViewMode) {
 export default function CalendarScreen() {
   const { business } = useBusiness();
   const timeZone = business?.timezone ?? null;
-  const [currentDate, setCurrentDate] = useState(() => getNowInTimeZone(timeZone));
+  const [currentDate, setCurrentDate] = useState(() => getTodayDateInTimeZone(timeZone));
 
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -86,7 +86,7 @@ export default function CalendarScreen() {
   }, [refetch]);
 
   const handleToday = () => {
-    setCurrentDate(getNowInTimeZone(timeZone));
+    setCurrentDate(getTodayDateInTimeZone(timeZone));
   };
 
   const handleAppointmentPress = (appointment: Appointment) => {

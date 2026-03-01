@@ -22,7 +22,7 @@ import {
   setMinutes,
   getDay,
 } from 'date-fns';
-import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
+import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz';
 
 export function formatDate(date: string | Date, formatStr: string = 'MMM d, yyyy'): string {
   const d = parseDateInput(date);
@@ -173,6 +173,19 @@ export function getHoursMinutesInTimeZone(
 
 export function getNowInTimeZone(timeZone?: string | null): Date {
   return toTimeZoneDate(new Date(), timeZone);
+}
+
+/**
+ * Returns a Date representing noon on "today" in the business timezone.
+ * Use this for calendar "Today" so the displayed day never jumps to tomorrow
+ * when the device timezone is behind the business timezone.
+ */
+export function getTodayDateInTimeZone(timeZone?: string | null): Date {
+  const tz = resolveTimeZone(timeZone);
+  const todayKey = formatInTimeZone(new Date(), tz, 'yyyy-MM-dd');
+  const [year, month, day] = todayKey.split('-').map(Number);
+  const localNoon = new Date(year, month - 1, day, 12, 0, 0);
+  return fromZonedTime(localNoon, tz);
 }
 
 export function getTimeSlotPosition(time: string | Date, startHour: number = 6): number {
