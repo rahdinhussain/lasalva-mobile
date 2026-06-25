@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import { isToday } from 'date-fns';
+import { getDateKeyInTimeZone, getHoursMinutesInTimeZone } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
 
 const HOUR_HEIGHT = 60; // px per hour
@@ -32,32 +32,38 @@ export function TimeGrid({
 }: TimeGridProps) {
   const scrollRef = useRef<ScrollView>(null);
 
-  // Auto-scroll to 7 AM (or current time if today)
+  // Tick every minute so the current-time indicator moves over time.
+  const [now, setNow] = useState(() => new Date());
   useEffect(() => {
-    // Use isToday to check against local time (matching how grid days are generated)
-    const viewHasToday = dates.some((d) => isToday(d));
-    // Use device local time for scroll position to match the current time indicator
-    const localHour = new Date().getHours();
-    const scrollToHour = viewHasToday ? Math.max(localHour - 1, 0) : 7;
+    const interval = setInterval(() => setNow(new Date()), 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
-    setTimeout(() => {
+  // Resolve "today" and the current-time position in the BUSINESS timezone so
+  // that the now-indicator lines up with appointment blocks (which are also
+  // positioned using getHoursMinutesInTimeZone).
+  const todayKey = getDateKeyInTimeZone(now, timeZone);
+  const hasToday = dates.some((d) => getDateKeyInTimeZone(d, timeZone) === todayKey);
+  const todayIndex = dates.findIndex((d) => getDateKeyInTimeZone(d, timeZone) === todayKey);
+
+  const { hours: nowHours, minutes: nowMinutes } = getHoursMinutesInTimeZone(now, timeZone);
+  const currentTimeTop = nowHours * HOUR_HEIGHT + (nowMinutes / 60) * HOUR_HEIGHT;
+
+  // Auto-scroll to 7 AM (or one hour before "now" when today is in view).
+  useEffect(() => {
+    const viewHasToday = dates.some((d) => getDateKeyInTimeZone(d, timeZone) === todayKey);
+    const scrollToHour = viewHasToday ? Math.max(nowHours - 1, 0) : 7;
+
+    const timeout = setTimeout(() => {
       scrollRef.current?.scrollTo({
         y: scrollToHour * HOUR_HEIGHT,
         animated: false,
       });
     }, 100);
-  }, [dates]);
-
-  // Current time position - use device local time so the indicator shows "now" 
-  // relative to the user's actual day, regardless of business timezone
-  const now = new Date();
-  const nowHours = now.getHours();
-  const nowMinutes = now.getMinutes();
-  const currentTimeTop = nowHours * HOUR_HEIGHT + (nowMinutes / 60) * HOUR_HEIGHT;
-
-  // Use isToday to check against local time (matching how grid days are generated)
-  const hasToday = dates.some((d) => isToday(d));
-  const todayIndex = dates.findIndex((d) => isToday(d));
+    return () => clearTimeout(timeout);
+    // Only re-run when the visible days change, not every minute.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dates, timeZone]);
 
   return (
     <ScrollView

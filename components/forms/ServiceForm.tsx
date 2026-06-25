@@ -61,16 +61,27 @@ export function ServiceForm({ initialData, isEditing = false, onSubmit, isLoadin
       newErrors.name = 'Service name is required';
     }
 
-    if (formData.price && isNaN(parseFloat(formData.price))) {
-      newErrors.price = 'Invalid price';
+    if (formData.price) {
+      const price = parseFloat(formData.price);
+      if (isNaN(price) || price < 0) {
+        newErrors.price = 'Enter a valid price';
+      }
     }
 
-    if (formData.tax && isNaN(parseFloat(formData.tax))) {
-      newErrors.tax = 'Invalid tax percentage';
+    if (formData.tax) {
+      const tax = parseFloat(formData.tax);
+      if (isNaN(tax) || tax < 0 || tax > 100) {
+        newErrors.tax = 'Enter a tax percentage between 0 and 100';
+      }
     }
 
-    if (formData.deposit_required && !formData.deposit_amount) {
-      newErrors.deposit_amount = 'Deposit amount is required';
+    if (formData.deposit_required) {
+      const deposit = parseFloat(formData.deposit_amount);
+      if (!formData.deposit_amount) {
+        newErrors.deposit_amount = 'Deposit amount is required';
+      } else if (isNaN(deposit) || deposit < 0) {
+        newErrors.deposit_amount = 'Enter a valid deposit amount';
+      }
     }
 
     setErrors(newErrors);
@@ -79,7 +90,7 @@ export function ServiceForm({ initialData, isEditing = false, onSubmit, isLoadin
 
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [16, 9],
       quality: 0.8,

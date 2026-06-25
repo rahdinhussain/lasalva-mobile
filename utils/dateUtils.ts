@@ -188,14 +188,6 @@ export function getTodayDateInTimeZone(timeZone?: string | null): Date {
   return fromZonedTime(localNoon, tz);
 }
 
-export function getTimeSlotPosition(time: string | Date, startHour: number = 6): number {
-  const d = parseDateInput(time);
-  if (!d) return 0;
-  const hours = d.getHours();
-  const minutes = d.getMinutes();
-  return (hours - startHour) * 60 + minutes;
-}
-
 export function parseTimeString(timeStr: string): { hours: number; minutes: number } {
   const [hours, minutes] = timeStr.split(':').map(Number);
   return { hours, minutes };

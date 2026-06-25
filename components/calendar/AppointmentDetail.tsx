@@ -61,6 +61,7 @@ export function AppointmentDetail({
     mutationFn: (data: RescheduleAppointmentData) => rescheduleAppointment(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.APPOINTMENTS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.AVAILABILITY });
     },
   });
 
@@ -156,6 +157,15 @@ export function AppointmentDetail({
                 Confirm
               </Button>
             </View>
+            <Button
+              variant="secondary"
+              fullWidth
+              icon={<CalendarDays size={18} color={colors.indigo[600]} />}
+              onPress={handleOpenReschedule}
+              disabled={updateStatus.isPending || rescheduleMutation.isPending}
+            >
+              Reschedule
+            </Button>
           </View>
         );
       case 'CONFIRMED':
@@ -189,6 +199,15 @@ export function AppointmentDetail({
               disabled={rescheduleMutation.isPending}
             >
               Complete
+            </Button>
+            <Button
+              variant="secondary"
+              fullWidth
+              icon={<CalendarDays size={18} color={colors.indigo[600]} />}
+              onPress={handleOpenReschedule}
+              disabled={updateStatus.isPending || rescheduleMutation.isPending}
+            >
+              Reschedule
             </Button>
           </View>
         );

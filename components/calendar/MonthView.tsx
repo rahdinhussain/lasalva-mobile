@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { format, parseISO, isToday } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Appointment } from '@/types';
 import { formatInTimeZoneSafe, getDateKeyInTimeZone, getMonthGridDays } from '@/utils/dateUtils';
 import { statusColors } from '@/constants/colors';
@@ -27,6 +27,7 @@ export function MonthView({
 
   const safeAppointments = Array.isArray(appointments) ? appointments : [];
   const currentMonthKey = formatInTimeZoneSafe(currentDate, timeZone, 'yyyy-MM');
+  const todayKey = getDateKeyInTimeZone(new Date(), timeZone);
 
   // Group appointments by date string for fast lookup
   const appointmentsByDate = useMemo(() => {
@@ -44,7 +45,7 @@ export function MonthView({
       );
     }
     return map;
-  }, [safeAppointments]);
+  }, [safeAppointments, timeZone]);
 
   if (isLoading) {
     return (
@@ -80,7 +81,7 @@ export function MonthView({
             const dateKey = getDateKeyInTimeZone(day, timeZone);
             const dayAppts = appointmentsByDate[dateKey] || [];
             const isCurrentMonth = dateKey.startsWith(currentMonthKey);
-            const isTodayDate = isToday(day);
+            const isTodayDate = dateKey === todayKey;
             const displayDate = parseISO(dateKey);
 
             return (

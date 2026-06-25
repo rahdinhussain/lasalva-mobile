@@ -28,13 +28,14 @@ const statusConfig: Record<string, { color: string; bgColor: string; icon: typeo
 };
 
 export default function BillingSettingsScreen() {
-  // Redirect iOS users - billing is managed via web per App Store guidelines (3.1.1)
+  const { business } = useBusiness();
+  const { billing, isLoading, error, refetch } = useBillingSummary();
+
+  // Redirect iOS users - billing is managed via web per App Store guidelines (3.1.1).
+  // Hooks are called above this guard to keep hook order stable (Rules of Hooks).
   if (Platform.OS === 'ios') {
     return <Redirect href="/(tabs)/settings" />;
   }
-
-  const { business } = useBusiness();
-  const { billing, isLoading, error, refetch } = useBillingSummary();
 
   const handleOpenPortal = async () => {
     try {

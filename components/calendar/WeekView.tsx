@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
-import { format, parseISO, isToday } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Appointment } from '@/types';
 import {
   formatInTimeZoneSafe,
@@ -71,6 +71,7 @@ export function WeekView({
   const { width: screenWidth } = useWindowDimensions();
   const weekDays = useMemo(() => getWeekDays(currentDate), [currentDate]);
   const columnWidth = (screenWidth - TIME_LABEL_WIDTH) / 7;
+  const todayKey = getDateKeyInTimeZone(new Date(), timeZone);
 
   const safeAppointments = Array.isArray(appointments) ? appointments : [];
 
@@ -103,7 +104,7 @@ export function WeekView({
         <View style={{ width: TIME_LABEL_WIDTH }} />
         {weekDays.map((day) => {
           const dayKey = getDateKeyInTimeZone(day, timeZone);
-          const isTodayDate = isToday(day);
+          const isTodayDate = dayKey === todayKey;
           const displayDate = parseISO(dayKey);
           return (
             <TouchableOpacity

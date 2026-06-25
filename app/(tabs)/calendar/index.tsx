@@ -99,13 +99,11 @@ export default function CalendarScreen() {
     setTimeout(() => setSelectedAppointment(null), 300);
   };
 
-  // Month view: tap a day
+  // Month view: tap a day. A single appointment opens its detail directly;
+  // otherwise jump to the day view for that date.
   const handleMonthDayPress = (date: Date, dayAppointments: Appointment[]) => {
     if (dayAppointments.length === 1) {
       handleAppointmentPress(dayAppointments[0]);
-    } else if (dayAppointments.length > 1) {
-      setCurrentDate(date);
-      setViewMode('day');
     } else {
       setCurrentDate(date);
       setViewMode('day');
