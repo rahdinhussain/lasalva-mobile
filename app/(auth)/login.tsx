@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { Link } from 'expo-router';
-import { WEB_SIGNUP_URL } from '@/constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mail, Lock } from 'lucide-react-native';
 import { useAuth } from '@/context/AuthContext';
@@ -121,15 +120,6 @@ export default function LoginScreen() {
             >
               Log in
             </Button>
-
-            <TouchableOpacity
-              onPress={() => Linking.openURL(WEB_SIGNUP_URL)}
-              className="mt-12 items-center"
-            >
-              <Text className="text-indigo-600 text-sm font-medium">
-                Sign up (web)
-              </Text>
-            </TouchableOpacity>
           </Card>
         </View>
       </KeyboardAvoidingView>

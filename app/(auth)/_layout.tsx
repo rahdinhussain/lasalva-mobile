@@ -3,10 +3,12 @@ import { View, ActivityIndicator } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 
 export default function AuthLayout() {
-  const { isAuthenticated, isLoading, isHydrated } = useAuth();
+  const { isAuthenticated, isHydrated } = useAuth();
 
-  // Wait for auth hydration to complete before making routing decisions
-  if (isLoading || !isHydrated) {
+  // Wait for auth hydration only. Do NOT gate on isLoading: during an in-progress
+  // login the auth screen must stay mounted so the login form (and any error) is
+  // visible with its own button spinner, instead of a full-screen spinner takeover.
+  if (!isHydrated) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8fafc' }}>
         <ActivityIndicator size="large" color="#4f46e5" />

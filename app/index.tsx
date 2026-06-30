@@ -3,11 +3,13 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 
 export default function Index() {
-  const { isAuthenticated, isLoading, isHydrated } = useAuth();
+  const { isAuthenticated, isHydrated } = useAuth();
 
-  // Wait for auth state to be fully hydrated before routing
-  // This prevents accidental redirects during app initialization
-  if (isLoading || !isHydrated) {
+  // Wait for auth state to be fully hydrated before routing.
+  // Gate ONLY on hydration -- not on isLoading -- so an in-progress login/logout
+  // (isLoading=true while already hydrated) does not replace the screen with a
+  // full-screen spinner. The login button shows its own loading state.
+  if (!isHydrated) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#4f46e5" />

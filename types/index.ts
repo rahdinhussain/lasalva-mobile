@@ -139,7 +139,6 @@ export interface BusinessHour {
 export interface AuthResponse {
   token: string;
   userId: string;
-  checkoutUrl?: string;
 }
 
 export interface ApiError {

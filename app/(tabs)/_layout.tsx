@@ -6,10 +6,11 @@ import { colors } from '@/constants/colors';
 import { useAuth } from '@/context/AuthContext';
 
 export default function TabsLayout() {
-  const { isAuthenticated, isLoading, isHydrated } = useAuth();
+  const { isAuthenticated, isHydrated } = useAuth();
 
-  // Wait for auth hydration to complete before making routing decisions
-  if (isLoading || !isHydrated) {
+  // Wait for auth hydration only -- not isLoading -- to avoid a full-screen spinner
+  // takeover during an in-progress login/logout.
+  if (!isHydrated) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8fafc' }}>
         <ActivityIndicator size="large" color="#4f46e5" />

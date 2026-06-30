@@ -49,7 +49,7 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
   if (!res.ok) {
     throw new Error(data.error ?? data.message ?? 'Login failed');
   }
-  const { token, userId, checkoutUrl } = data;
+  const { token, userId } = data;
   if (!token || !userId) {
     throw new Error('Login succeeded but server returned incomplete data. Please try again.');
   }
@@ -64,7 +64,7 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
   if (lasalvaAuth) {
     await setAuthCookie(lasalvaAuth);
   }
-  return { token: String(token), userId: String(userId), checkoutUrl };
+  return { token: String(token), userId: String(userId) };
 }
 
 export async function logout(): Promise<void> {
@@ -119,45 +119,4 @@ export async function forgotPassword(data: ForgotPasswordData): Promise<void> {
 
 export async function resetPassword(data: ResetPasswordData): Promise<void> {
   await api.post('/auth/reset-password', data);
-}
-
-// --- Signup & OTP ---
-
-export interface SignupData {
-  name: string;
-  email: string;
-  password: string;
-}
-
-export interface SignupResponse {
-  ok: boolean;
-  userId: string;
-  requiresOtp: boolean;
-}
-
-export async function signup(data: SignupData): Promise<SignupResponse> {
-  const response = await api.post<SignupResponse>('/auth/signup', data);
-  return response.data;
-}
-
-export interface VerifyOtpData {
-  userId: string;
-  otp: string;
-  businessName?: string;
-  planName?: string;
-}
-
-export interface VerifyOtpResponse {
-  success: boolean;
-  userId: string;
-  token: string;
-  checkoutUrl?: string;
-}
-
-export async function verifyOtp(data: VerifyOtpData): Promise<VerifyOtpResponse> {
-  const response = await api.post<VerifyOtpResponse>('/auth/verify-otp', data);
-  const { token, userId } = response.data;
-  await setAuthToken(token);
-  await setUserId(userId);
-  return response.data;
 }

@@ -20,8 +20,10 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.lasalva.mobile",
-      "infoPlist": { "ITSAppUsesNonExemptEncryption": false },
-      "buildNumber": "31"
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "buildNumber": "32"
     },
     "android": {
       "adaptiveIcon": {
@@ -36,25 +38,48 @@
           "action": "VIEW",
           "autoVerify": true,
           "data": [
-            { "scheme": "https", "host": "lasalva.com", "pathPrefix": "/reset-password" },
-            { "scheme": "https", "host": "lasalva.com", "pathPrefix": "/verify" }
+            {
+              "scheme": "https",
+              "host": "lasalva.com",
+              "pathPrefix": "/reset-password"
+            },
+            {
+              "scheme": "https",
+              "host": "lasalva.com",
+              "pathPrefix": "/verify"
+            }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ],
-      "permissions": ["android.permission.RECORD_AUDIO"]
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": ["expo-router", "./plugins/withFollyCoroutinesFix.js"],
-    "experiments": { "typedRoutes": true },
+    "plugins": [
+      "expo-router",
+      "./plugins/withFollyCoroutinesFix.js",
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
     "extra": {
       "router": {},
-      "eas": { "projectId": "2be54d6d-9286-4ef4-b974-2b8797c6cf64" }
+      "eas": {
+        "projectId": "2be54d6d-9286-4ef4-b974-2b8797c6cf64"
+      }
     },
-    "updates": { "enabled": false },
+    "updates": {
+      "enabled": false
+    },
     "owner": "rahdin"
   }
 }
