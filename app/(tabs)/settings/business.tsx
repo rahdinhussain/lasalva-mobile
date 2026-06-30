@@ -69,11 +69,12 @@ export default function BusinessSettingsScreen() {
   });
   const [logoUri, setLogoUri] = useState<string | null>(null);
   const [logoFile, setLogoFile] = useState<{ uri: string; type: string; name: string } | null>(null);
-  // Initialize hours with defaults for all days
+  // Initialize all days closed so the screen reflects the true "not set" state
+  // until real hours load from the API (or the user sets and saves them).
   const [hours, setHours] = useState<Record<number, { open: string; close: string; closed: boolean }>>(() => {
     const defaultHours: Record<number, { open: string; close: string; closed: boolean }> = {};
     for (let i = 0; i < 7; i++) {
-      defaultHours[i] = { open: '09:00', close: '17:00', closed: i === 0 }; // Sunday closed by default
+      defaultHours[i] = { open: '09:00', close: '17:00', closed: true };
     }
     return defaultHours;
   });
@@ -126,8 +127,9 @@ export default function BusinessSettingsScreen() {
           // API data loaded but this day is not in it = closed
           hoursMap[i] = { open: '09:00', close: '17:00', closed: true };
         } else {
-          // No API data yet, use defaults
-          hoursMap[i] = { open: '09:00', close: '17:00', closed: i === 0 || i === 6 };
+          // No saved hours for this business yet — show the day as closed so the
+          // screen reflects the true (unset) state instead of implying 9–5 is set.
+          hoursMap[i] = { open: '09:00', close: '17:00', closed: true };
         }
       }
       setHours(hoursMap);

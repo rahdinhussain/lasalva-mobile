@@ -92,7 +92,10 @@ export function getDeviceTimeZone(): string {
 }
 
 export function resolveTimeZone(timeZone?: string | null): string {
-  return timeZone || getDeviceTimeZone() || DEFAULT_TIMEZONE;
+  // Fall back to UTC (not the device timezone) to stay consistent with the
+  // web/backend, which default a missing business timezone to UTC. Using the
+  // device zone here would make mobile show different times than web.
+  return timeZone || DEFAULT_TIMEZONE;
 }
 
 function parseDateInput(date: string | Date | null | undefined): Date | null {

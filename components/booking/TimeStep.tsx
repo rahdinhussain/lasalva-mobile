@@ -43,12 +43,15 @@ export function TimeStep({
       <Text className="text-lg font-semibold text-slate-900 mb-1">
         Select a Time
       </Text>
-      <View className="flex-row items-center gap-1.5 mb-4">
+      <View className="flex-row items-center gap-1.5 mb-1">
         <Clock size={14} color={colors.slate[400]} />
         <Text className="text-sm text-slate-500">
           {formatDate(date, 'EEEE, MMMM d, yyyy')}
         </Text>
       </View>
+      <Text className="text-[11px] text-slate-400 mb-4">
+        Times shown in {(timeZone || 'UTC').replace(/_/g, ' ')}
+      </Text>
 
       {isLoading ? (
         <View className="flex-row flex-wrap gap-2">

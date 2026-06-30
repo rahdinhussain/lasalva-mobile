@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppointments } from '@/hooks/useAppointments';
 import { useBusiness } from '@/context/BusinessContext';
@@ -139,6 +139,9 @@ export default function CalendarScreen() {
           activeMode={viewMode}
           onModeChange={handleViewModeChange}
         />
+        <Text className="text-[11px] text-slate-400 mt-1.5 text-center">
+          Times shown in {(timeZone || 'UTC').replace(/_/g, ' ')}
+        </Text>
       </View>
 
       {/* Date Picker / Navigation (hidden in list view) */}
