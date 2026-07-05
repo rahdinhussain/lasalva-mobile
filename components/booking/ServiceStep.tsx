@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { themeColor } from '@/utils/themeColor';
 
 interface ServiceStepProps {
   selectedService: Service | null;
@@ -30,8 +31,8 @@ function ServiceCard({
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
-      className={`bg-white rounded-xl border p-3 flex-row items-center gap-3 ${
-        isSelected ? 'border-2 border-indigo-600' : 'border-slate-200'
+      className={`bg-white dark:bg-slate-800 rounded-xl border p-3 flex-row items-center gap-3 ${
+        isSelected ? 'border-2 border-indigo-600' : 'border-slate-200 dark:border-slate-700'
       }`}
     >
       {service.image_url ? (
@@ -43,25 +44,25 @@ function ServiceCard({
           />
         </View>
       ) : (
-        <View className="w-12 h-12 rounded-lg bg-indigo-50 items-center justify-center">
-          <Text className="text-indigo-600 font-semibold text-lg">
+        <View className="w-12 h-12 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 items-center justify-center">
+          <Text className="text-indigo-600 dark:text-indigo-400 font-semibold text-lg">
             {getInitials(service.name)}
           </Text>
         </View>
       )}
 
       <View className="flex-1">
-        <Text className="text-base font-medium text-slate-900">{service.name}</Text>
+        <Text className="text-base font-medium text-slate-900 dark:text-slate-50">{service.name}</Text>
         <View className="flex-row items-center gap-3 mt-1">
           <View className="flex-row items-center gap-1">
-            <Clock size={13} color={colors.slate[400]} />
-            <Text className="text-xs text-slate-500">
+            <Clock size={13} color={themeColor().iconMuted} />
+            <Text className="text-xs text-slate-500 dark:text-slate-400">
               {formatDuration(service.duration_minutes)}
             </Text>
           </View>
           <View className="flex-row items-center gap-1">
-            <DollarSign size={13} color={colors.slate[400]} />
-            <Text className="text-xs text-slate-500">
+            <DollarSign size={13} color={themeColor().iconMuted} />
+            <Text className="text-xs text-slate-500 dark:text-slate-400">
               {formatCurrency(service.price)}
               {service.tax ? ` + ${service.tax}% tax` : ''}
             </Text>
@@ -91,7 +92,7 @@ export function ServiceStep({ selectedService, onSelect, onNext }: ServiceStepPr
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 16 }}>
-      <Text className="text-lg font-semibold text-slate-900 mb-3">
+      <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-3">
         Select a Service
       </Text>
 

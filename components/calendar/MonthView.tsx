@@ -64,19 +64,19 @@ export function MonthView({
   }
 
   return (
-    <ScrollView className="flex-1 bg-white" showsVerticalScrollIndicator={false}>
+    <ScrollView className="flex-1 bg-white dark:bg-slate-800" showsVerticalScrollIndicator={false}>
       {/* Weekday headers */}
-      <View className="flex-row border-b border-slate-100">
+      <View className="flex-row border-b border-slate-100 dark:border-slate-800">
         {WEEKDAY_LABELS.map((label) => (
           <View key={label} className="flex-1 items-center py-2">
-            <Text className="text-xs font-medium text-slate-500">{label}</Text>
+            <Text className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</Text>
           </View>
         ))}
       </View>
 
       {/* Calendar grid */}
       {weeks.map((week, weekIndex) => (
-        <View key={weekIndex} className="flex-row border-b border-slate-100">
+        <View key={weekIndex} className="flex-row border-b border-slate-100 dark:border-slate-800">
           {week.map((day) => {
             const dateKey = getDateKeyInTimeZone(day, timeZone);
             const dayAppts = appointmentsByDate[dateKey] || [];
@@ -87,12 +87,12 @@ export function MonthView({
             return (
               <TouchableOpacity
                 key={dateKey}
-                className={`flex-1 min-h-[80px] p-1 border-r border-slate-100 ${
+                className={`flex-1 min-h-[80px] p-1 border-r border-slate-100 dark:border-slate-800 ${
                   isTodayDate
-                    ? 'bg-indigo-50'
+                    ? 'bg-indigo-50 dark:bg-indigo-500/20'
                     : isCurrentMonth
-                    ? 'bg-white'
-                    : 'bg-slate-50/50'
+                    ? 'bg-white dark:bg-slate-800'
+                    : 'bg-slate-50/50 dark:bg-slate-900/50'
                 }`}
                 style={!isCurrentMonth ? { opacity: 0.4 } : undefined}
                 activeOpacity={0.6}
@@ -110,8 +110,8 @@ export function MonthView({
                         isTodayDate
                           ? 'text-white'
                           : isCurrentMonth
-                          ? 'text-slate-900'
-                          : 'text-slate-400'
+                          ? 'text-slate-900 dark:text-slate-50'
+                          : 'text-slate-400 dark:text-slate-500'
                       }`}
                     >
                       {format(displayDate, 'd')}
@@ -143,7 +143,7 @@ export function MonthView({
                   })}
                   {dayAppts.length > 3 && (
                     <Text
-                      className="text-slate-500 font-medium"
+                      className="text-slate-500 dark:text-slate-400 font-medium"
                       style={{ fontSize: 9 }}
                     >
                       +{dayAppts.length - 3}

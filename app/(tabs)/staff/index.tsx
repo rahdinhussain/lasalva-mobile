@@ -8,6 +8,7 @@ import { useRoleAccess } from '@/hooks/useRoleAccess';
 import { StaffCard } from '@/components/staff';
 import { IconButton, ErrorState, EmptyState, SkeletonCard } from '@/components/ui';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 export default function StaffListScreen() {
   const router = useRouter();
@@ -29,9 +30,9 @@ export default function StaffListScreen() {
 
   if (error) {
     return (
-      <SafeAreaView className="flex-1 bg-slate-50">
-        <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-slate-100">
-          <Text className="text-2xl font-bold text-slate-900">Staff</Text>
+      <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
+        <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
+          <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Staff</Text>
         </View>
         <ErrorState message="Failed to load staff" onRetry={refetch} />
       </SafeAreaView>
@@ -39,10 +40,10 @@ export default function StaffListScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-slate-100">
-        <Text className="text-2xl font-bold text-slate-900">Staff</Text>
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
+        <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Staff</Text>
         {canManageStaff && (
           <IconButton
             icon={<Plus size={22} color={colors.indigo[600]} />}
@@ -73,7 +74,7 @@ export default function StaffListScreen() {
         </View>
       ) : staff.length === 0 ? (
         <EmptyState
-          icon={<Users size={48} color={colors.slate[300]} />}
+          icon={<Users size={48} color={themeColor().iconMuted} />}
           title="No staff members"
           description="Add staff members to manage your team"
           actionLabel={canManageStaff ? 'Add Staff' : undefined}

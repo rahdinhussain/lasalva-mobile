@@ -8,6 +8,7 @@ import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
 import { Header } from '@/components/layout';
 import { Button, Input, Card, Toggle, Avatar, SkeletonCard, ErrorState } from '@/components/ui';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 export default function ProfileSettingsScreen() {
   const { profile, isLoading, error, refetch } = useProfile();
@@ -92,7 +93,7 @@ export default function ProfileSettingsScreen() {
 
   if (error) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Profile" showBack />
         <ErrorState message="Failed to load profile" onRetry={refetch} />
       </SafeAreaView>
@@ -101,7 +102,7 @@ export default function ProfileSettingsScreen() {
 
   if (isLoading || !profile) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Profile" showBack />
         <View className="p-4">
           <SkeletonCard />
@@ -111,7 +112,7 @@ export default function ProfileSettingsScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       <Header title="Profile" showBack />
       
       <ScrollView 
@@ -136,7 +137,7 @@ export default function ProfileSettingsScreen() {
               <Camera size={16} color="white" />
             </View>
           </TouchableOpacity>
-          <Text className="text-sm text-slate-500 mt-2">Tap to change photo</Text>
+          <Text className="text-sm text-slate-500 dark:text-slate-400 mt-2">Tap to change photo</Text>
         </View>
 
         {/* Form */}
@@ -146,7 +147,7 @@ export default function ProfileSettingsScreen() {
             placeholder="Enter your name"
             value={formData.name}
             onChangeText={(text) => handleChange('name', text)}
-            leftIcon={<User size={20} color={colors.slate[500]} />}
+            leftIcon={<User size={20} color={themeColor().textMuted} />}
             containerClassName="mb-4"
           />
 
@@ -157,7 +158,7 @@ export default function ProfileSettingsScreen() {
             onChangeText={(text) => handleChange('email', text)}
             keyboardType="email-address"
             autoCapitalize="none"
-            leftIcon={<Mail size={20} color={colors.slate[500]} />}
+            leftIcon={<Mail size={20} color={themeColor().textMuted} />}
             containerClassName="mb-4"
           />
 
@@ -166,12 +167,12 @@ export default function ProfileSettingsScreen() {
             placeholder="e.g., Stylist, Manager"
             value={formData.designation}
             onChangeText={(text) => handleChange('designation', text)}
-            leftIcon={<Briefcase size={20} color={colors.slate[500]} />}
+            leftIcon={<Briefcase size={20} color={themeColor().textMuted} />}
           />
         </Card>
 
         <Card className="p-4 mb-4">
-          <Text className="text-sm font-medium text-slate-700 mb-3">Notifications</Text>
+          <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Notifications</Text>
           <Toggle
             label="Appointment notifications"
             description="Receive notifications for your appointments"
@@ -190,7 +191,7 @@ export default function ProfileSettingsScreen() {
         {/* Public Booking (Admin Only) */}
         {isAdmin && (
           <Card className="p-4 mb-6">
-            <Text className="text-sm font-medium text-slate-700 mb-3">Public Booking</Text>
+            <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Public Booking</Text>
             <Toggle
               label="Available for public booking"
               description="When enabled, customers can book appointments with you"

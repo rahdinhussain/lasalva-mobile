@@ -7,6 +7,7 @@ import { Service, Profile } from '@/types';
 import { Card, AvatarGroup } from '@/components/ui';
 import { formatCurrency, formatDuration } from '@/utils/formatters';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 interface ServiceCardProps {
   service: Service;
@@ -43,23 +44,23 @@ export function ServiceCard({ service, assignedStaff = [] }: ServiceCardProps) {
       )}
 
       <View className="p-3">
-        <Text className="text-base font-semibold text-slate-900" numberOfLines={1}>
+        <Text className="text-base font-semibold text-slate-900 dark:text-slate-50" numberOfLines={1}>
           {service.name}
         </Text>
 
         <View className="flex-row items-center gap-4 mt-2">
           {/* Duration */}
           <View className="flex-row items-center gap-1">
-            <Clock size={14} color={colors.slate[500]} />
-            <Text className="text-sm text-slate-500">
+            <Clock size={14} color={themeColor().textMuted} />
+            <Text className="text-sm text-slate-500 dark:text-slate-400">
               {formatDuration(service.duration_minutes)}
             </Text>
           </View>
 
           {/* Price */}
           <View className="flex-row items-center gap-1">
-            <DollarSign size={14} color={colors.slate[500]} />
-            <Text className="text-sm text-slate-500">
+            <DollarSign size={14} color={themeColor().textMuted} />
+            <Text className="text-sm text-slate-500 dark:text-slate-400">
               {service.price ? formatCurrency(service.price) : '—'}
             </Text>
           </View>
@@ -69,7 +70,7 @@ export function ServiceCard({ service, assignedStaff = [] }: ServiceCardProps) {
         {service.deposit_required && (
           <View className="flex-row items-center gap-1 mt-2">
             <CreditCard size={14} color={colors.amber[500]} />
-            <Text className="text-xs text-amber-600">
+            <Text className="text-xs text-amber-600 dark:text-amber-400">
               Deposit required
             </Text>
           </View>
@@ -77,7 +78,7 @@ export function ServiceCard({ service, assignedStaff = [] }: ServiceCardProps) {
 
         {/* Assigned Staff */}
         {assignedStaff.length > 0 && (
-          <View className="mt-3 pt-3 border-t border-slate-100">
+          <View className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
             <AvatarGroup
               avatars={assignedStaff.map((s) => ({
                 source: s.profile_photo_url,

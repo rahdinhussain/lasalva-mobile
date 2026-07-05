@@ -7,3 +7,4 @@ export * from './useBusiness';
 export * from './useBilling';
 export * from './useBooking';
 export * from './usePushNotifications';
+export * from './useThemeColors';

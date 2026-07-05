@@ -43,7 +43,7 @@ export default function EditStaffScreen() {
 
   if (error) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Edit Staff" showBack />
         <ErrorState message="Failed to load staff details" onRetry={refetch} />
       </SafeAreaView>
@@ -52,7 +52,7 @@ export default function EditStaffScreen() {
 
   if (isLoading || !staff) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Edit Staff" showBack />
         <View className="p-4">
           <SkeletonCard />
@@ -62,7 +62,7 @@ export default function EditStaffScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       <Header title="Edit Staff" showBack />
       <StaffForm
         initialData={staff}

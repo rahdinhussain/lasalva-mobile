@@ -24,6 +24,7 @@ import { DateStep } from './DateStep';
 import { TimeStep } from './TimeStep';
 import { CustomerDetailsStep } from './CustomerDetailsStep';
 import { ConfirmationStep } from './ConfirmationStep';
+import { themeColor } from '@/utils/themeColor';
 
 type BookingStep = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -201,7 +202,7 @@ export function BookingModal({ visible, onClose, initialDate }: BookingModalProp
       >
         <Pressable
           style={{
-            backgroundColor: '#fff',
+            backgroundColor: themeColor().surface,
             borderTopLeftRadius: 24,
             borderTopRightRadius: 24,
             height: modalHeight,
@@ -209,11 +210,11 @@ export function BookingModal({ visible, onClose, initialDate }: BookingModalProp
           }}
           onPress={(e) => e.stopPropagation()}
         >
-          <View className="flex-row items-center justify-between px-4 pt-3 pb-2 border-b border-slate-100">
+          <View className="flex-row items-center justify-between px-4 pt-3 pb-2 border-b border-slate-100 dark:border-slate-800">
             <View style={{ width: 32 }} />
-            <View className="w-10 h-1 rounded-full bg-slate-200" />
+            <View className="w-10 h-1 rounded-full bg-slate-200 dark:bg-slate-700" />
             <TouchableOpacity onPress={handleDismiss} className="p-2" hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
-              <X size={24} color={colors.slate[600]} />
+              <X size={24} color={themeColor().icon} />
             </TouchableOpacity>
           </View>
 

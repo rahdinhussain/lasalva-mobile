@@ -9,6 +9,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'destructive' | 'ghost';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -63,6 +64,28 @@ const variantConfig = {
   },
 };
 
+// Dark-scheme overrides for the neutral variants. Accent variants (primary,
+// destructive) read well on both themes and are intentionally omitted.
+const darkVariantOverrides: Partial<
+  Record<ButtonVariant, Partial<(typeof variantConfig)[ButtonVariant]>>
+> = {
+  secondary: {
+    bg: '#1e293b', // slate-800
+    activeBg: '#334155', // slate-700
+    textColor: '#e2e8f0', // slate-200
+    borderColor: '#334155', // slate-700
+  },
+  outline: {
+    activeBg: '#1e293b', // slate-800
+    textColor: '#e2e8f0', // slate-200
+    borderColor: '#475569', // slate-600
+  },
+  ghost: {
+    activeBg: '#1e293b', // slate-800
+    textColor: '#818cf8', // indigo-400
+  },
+};
+
 const sizeConfig = {
   sm: { paddingVertical: 8, paddingHorizontal: 12, fontSize: 14 },
   md: { paddingVertical: 12, paddingHorizontal: 16, fontSize: 16 },
@@ -89,8 +112,12 @@ export function Button({
     onPress?.(event);
   };
 
+  const { scheme } = useThemeColors();
   const isDisabled = disabled || loading;
-  const config = variantConfig[variant];
+  const config =
+    scheme === 'dark'
+      ? { ...variantConfig[variant], ...darkVariantOverrides[variant] }
+      : variantConfig[variant];
   const sizeConf = sizeConfig[size];
 
   return (

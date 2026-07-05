@@ -36,7 +36,7 @@ export default function EditServiceScreen() {
 
   if (error) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Edit Service" showBack />
         <ErrorState message="Failed to load service details" onRetry={refetch} />
       </SafeAreaView>
@@ -45,7 +45,7 @@ export default function EditServiceScreen() {
 
   if (isLoading || !service) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Edit Service" showBack />
         <View className="p-4">
           <SkeletonCard />
@@ -55,7 +55,7 @@ export default function EditServiceScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       <Header title="Edit Service" showBack />
       <ServiceForm
         initialData={service}

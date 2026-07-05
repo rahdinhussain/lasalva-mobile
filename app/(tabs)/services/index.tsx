@@ -8,6 +8,7 @@ import { useRoleAccess } from '@/hooks/useRoleAccess';
 import { ServiceCard } from '@/components/services';
 import { IconButton, ErrorState, EmptyState, SkeletonCard } from '@/components/ui';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 export default function ServicesListScreen() {
   const router = useRouter();
@@ -30,9 +31,9 @@ export default function ServicesListScreen() {
 
   if (error) {
     return (
-      <SafeAreaView className="flex-1 bg-slate-50">
-        <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-slate-100">
-          <Text className="text-2xl font-bold text-slate-900">Services</Text>
+      <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
+        <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
+          <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Services</Text>
         </View>
         <ErrorState message="Failed to load services" onRetry={refetch} />
       </SafeAreaView>
@@ -43,10 +44,10 @@ export default function ServicesListScreen() {
   const hasNoServices = activeServices.length === 0 && inactiveServices.length === 0;
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-slate-100">
-        <Text className="text-2xl font-bold text-slate-900">Services</Text>
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
+        <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Services</Text>
         {canManageServices && (
           <IconButton
             icon={<Plus size={22} color={colors.indigo[600]} />}
@@ -69,7 +70,7 @@ export default function ServicesListScreen() {
         </View>
       ) : hasNoServices ? (
         <EmptyState
-          icon={<Briefcase size={48} color={colors.slate[300]} />}
+          icon={<Briefcase size={48} color={themeColor().iconMuted} />}
           title="No services"
           description="Add services that customers can book"
           actionLabel={canManageServices ? 'Add Service' : undefined}
@@ -100,15 +101,15 @@ export default function ServicesListScreen() {
               <View className="mt-4">
                 <TouchableOpacity
                   onPress={() => setShowInactive(!showInactive)}
-                  className="flex-row items-center justify-between px-4 py-3 bg-slate-100 rounded-xl mx-2"
+                  className="flex-row items-center justify-between px-4 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl mx-2"
                 >
-                  <Text className="text-base font-medium text-slate-700">
+                  <Text className="text-base font-medium text-slate-700 dark:text-slate-300">
                     Inactive Services ({inactiveServices.length})
                   </Text>
                   {showInactive ? (
-                    <ChevronUp size={20} color={colors.slate[500]} />
+                    <ChevronUp size={20} color={themeColor().textMuted} />
                   ) : (
-                    <ChevronDown size={20} color={colors.slate[500]} />
+                    <ChevronDown size={20} color={themeColor().textMuted} />
                   )}
                 </TouchableOpacity>
                 

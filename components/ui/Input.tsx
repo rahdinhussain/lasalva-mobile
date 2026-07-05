@@ -8,7 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import { Eye, EyeOff } from 'lucide-react-native';
-import { colors } from '@/constants/colors';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -29,16 +29,17 @@ export const Input = forwardRef<TextInput, InputProps>(
 
     const isPassword = secureTextEntry !== undefined;
     const showPassword = isPassword && isPasswordVisible;
+    const theme = useThemeColors();
 
     return (
       <View className={`${containerClassName}`}>
         {label && (
-          <Text className="text-sm font-medium text-slate-700 mb-1.5">{label}</Text>
+          <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{label}</Text>
         )}
         <View
           className={`
-            flex-row items-center bg-white rounded-xl border px-3
-            ${isFocused ? 'border-indigo-500' : error ? 'border-rose-500' : 'border-slate-200'}
+            flex-row items-center bg-white dark:bg-slate-800 rounded-xl border px-3
+            ${isFocused ? 'border-indigo-500' : error ? 'border-rose-500' : 'border-slate-200 dark:border-slate-700'}
           `}
           style={{ minHeight: 52 }}
         >
@@ -51,7 +52,7 @@ export const Input = forwardRef<TextInput, InputProps>(
                 paddingTop: 14,
                 paddingBottom: 16,
                 fontSize: 16,
-                color: '#0f172a',
+                color: theme.text,
               },
               Platform.OS === 'android' && {
                 textAlignVertical: multiline ? 'top' : 'center',
@@ -59,7 +60,7 @@ export const Input = forwardRef<TextInput, InputProps>(
               },
               style,
             ]}
-            placeholderTextColor={colors.slate[500]}
+            placeholderTextColor={theme.placeholder}
             secureTextEntry={isPassword && !showPassword}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
@@ -72,9 +73,9 @@ export const Input = forwardRef<TextInput, InputProps>(
               className="ml-2 p-1"
             >
               {showPassword ? (
-                <EyeOff size={20} color={colors.slate[500]} />
+                <EyeOff size={20} color={theme.iconMuted} />
               ) : (
-                <Eye size={20} color={colors.slate[500]} />
+                <Eye size={20} color={theme.iconMuted} />
               )}
             </TouchableOpacity>
           ) : rightIcon ? (
@@ -82,7 +83,7 @@ export const Input = forwardRef<TextInput, InputProps>(
           ) : null}
         </View>
         {error && (
-          <Text className="text-sm text-rose-600 mt-1">{error}</Text>
+          <Text className="text-sm text-rose-600 dark:text-rose-400 mt-1">{error}</Text>
         )}
       </View>
     );

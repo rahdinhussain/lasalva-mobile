@@ -14,6 +14,7 @@ import { SkeletonCard, EmptyState } from '@/components/ui';
 import { Calendar } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 import { formatDuration } from '@/utils/formatters';
+import { themeColor } from '@/utils/themeColor';
 
 interface DayViewProps {
   currentDate: Date;
@@ -97,7 +98,7 @@ export function DayView({
   if (dayAppointments.length === 0) {
     return (
       <EmptyState
-        icon={<Calendar size={48} color={colors.slate[300]} />}
+        icon={<Calendar size={48} color={themeColor().iconMuted} />}
         title="No appointments"
         description={`No appointments on ${format(parseISO(currentDateKey), 'EEEE, MMM d')}`}
         className="flex-1"
@@ -141,7 +142,7 @@ export function DayView({
             <View className="px-2 py-1 flex-1">
               <View className="flex-row items-center justify-between">
                 <Text
-                  className="text-sm font-semibold text-slate-900 flex-1"
+                  className="text-sm font-semibold text-slate-900 dark:text-slate-50 flex-1"
                   numberOfLines={1}
                 >
                   {customerName}
@@ -155,12 +156,12 @@ export function DayView({
                 </View>
               </View>
               {height > 40 && (
-                <Text className="text-xs text-slate-600 mt-0.5" numberOfLines={1}>
+                <Text className="text-xs text-slate-600 dark:text-slate-400 mt-0.5" numberOfLines={1}>
                   {serviceName}
                 </Text>
               )}
               {height > 55 && (
-                <Text className="text-xs text-slate-500 mt-0.5">
+                <Text className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   {formatInTimeZoneSafe(apt.start_time, timeZone, 'h:mm a')} ·{' '}
                   {formatDuration(durationMin)}
                 </Text>

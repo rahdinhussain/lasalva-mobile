@@ -8,6 +8,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
 import { SkeletonListItem } from '@/components/ui/Skeleton';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { themeColor } from '@/utils/themeColor';
 
 interface StaffStepProps {
   businessId: string;
@@ -31,8 +32,8 @@ function StaffCard({
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
-      className={`bg-white rounded-xl border p-3 flex-row items-center gap-3 ${
-        isSelected ? 'border-2 border-indigo-600' : 'border-slate-200'
+      className={`bg-white dark:bg-slate-800 rounded-xl border p-3 flex-row items-center gap-3 ${
+        isSelected ? 'border-2 border-indigo-600' : 'border-slate-200 dark:border-slate-700'
       }`}
     >
       <Avatar
@@ -41,9 +42,9 @@ function StaffCard({
         size="md"
       />
       <View className="flex-1">
-        <Text className="text-base font-medium text-slate-900">{staff.name}</Text>
+        <Text className="text-base font-medium text-slate-900 dark:text-slate-50">{staff.name}</Text>
         {staff.designation && (
-          <Text className="text-xs text-slate-500 mt-0.5">{staff.designation}</Text>
+          <Text className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{staff.designation}</Text>
         )}
       </View>
       {isSelected && (
@@ -73,7 +74,7 @@ export function StaffStep({
 
   return (
     <View className="flex-1 px-4">
-      <Text className="text-lg font-semibold text-slate-900 mb-3">
+      <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-3">
         Choose a Staff Member
       </Text>
 
@@ -89,16 +90,16 @@ export function StaffStep({
           <TouchableOpacity
             onPress={() => onSelect(null, null)}
             activeOpacity={0.7}
-            className={`bg-white rounded-xl border p-3 flex-row items-center gap-3 ${
-              selectedStaffId === null ? 'border-2 border-indigo-600' : 'border-slate-200'
+            className={`bg-white dark:bg-slate-800 rounded-xl border p-3 flex-row items-center gap-3 ${
+              selectedStaffId === null ? 'border-2 border-indigo-600' : 'border-slate-200 dark:border-slate-700'
             }`}
           >
-            <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center">
-              <Users size={20} color={colors.slate[500]} />
+            <View className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center">
+              <Users size={20} color={themeColor().textMuted} />
             </View>
             <View className="flex-1">
-              <Text className="text-base font-medium text-slate-900">No Preference</Text>
-              <Text className="text-xs text-slate-500 mt-0.5">Any available staff</Text>
+              <Text className="text-base font-medium text-slate-900 dark:text-slate-50">No Preference</Text>
+              <Text className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Any available staff</Text>
             </View>
             {selectedStaffId === null && (
               <View className="w-6 h-6 rounded-full bg-indigo-600 items-center justify-center">

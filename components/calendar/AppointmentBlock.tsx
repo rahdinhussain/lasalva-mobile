@@ -38,10 +38,10 @@ export function AppointmentBlock({
         style={{ backgroundColor: color + '20', borderLeftWidth: 3, borderLeftColor: color }}
         activeOpacity={0.7}
       >
-        <Text className="text-xs font-medium text-slate-900" numberOfLines={1}>
+        <Text className="text-xs font-medium text-slate-900 dark:text-slate-50" numberOfLines={1}>
           {timeLabel}
         </Text>
-        <Text className="text-xs text-slate-600" numberOfLines={1}>
+        <Text className="text-xs text-slate-600 dark:text-slate-400" numberOfLines={1}>
           {customerName}
         </Text>
       </TouchableOpacity>
@@ -57,13 +57,13 @@ export function AppointmentBlock({
     >
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
-          <Text className="text-sm font-semibold text-slate-900" numberOfLines={1}>
+          <Text className="text-sm font-semibold text-slate-900 dark:text-slate-50" numberOfLines={1}>
             {customerName}
           </Text>
-          <Text className="text-xs text-slate-600 mt-0.5" numberOfLines={1}>
+          <Text className="text-xs text-slate-600 dark:text-slate-400 mt-0.5" numberOfLines={1}>
             {serviceName} • {duration} min
           </Text>
-          <Text className="text-xs text-slate-500 mt-1">
+          <Text className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             {timeLabel}
           </Text>
         </View>

@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, Pressable, Platform, Animated } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 interface ToggleProps {
   value: boolean;
@@ -19,6 +20,8 @@ export function Toggle({
   disabled = false,
   className = '',
 }: ToggleProps) {
+  const { scheme } = useThemeColors();
+  const trackOff = scheme === 'dark' ? '#475569' : '#e2e8f0'; // slate-600 / slate-200
   const thumbPos = useRef(new Animated.Value(value ? 20 : 0)).current;
 
   useEffect(() => {
@@ -47,16 +50,16 @@ export function Toggle({
       {(label || description) && (
         <View className="flex-1 mr-3">
           {label && (
-            <Text className="text-base font-medium text-slate-900">{label}</Text>
+            <Text className="text-base font-medium text-slate-900 dark:text-slate-50">{label}</Text>
           )}
           {description && (
-            <Text className="text-sm text-slate-500 mt-0.5">{description}</Text>
+            <Text className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{description}</Text>
           )}
         </View>
       )}
       <View
         className="w-12 h-7 rounded-full p-1 justify-center"
-        style={{ backgroundColor: value ? '#4f46e5' : '#e2e8f0' }}
+        style={{ backgroundColor: value ? '#4f46e5' : trackOff }}
       >
         <Animated.View
           style={{

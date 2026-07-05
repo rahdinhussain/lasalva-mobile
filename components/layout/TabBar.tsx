@@ -5,6 +5,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import * as Haptics from 'expo-haptics';
 import { Calendar, Users, Briefcase, Settings } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 const icons: Record<string, typeof Calendar> = {
   calendar: Calendar,
@@ -66,17 +67,17 @@ function TabItem({ routeName, isFocused, onPress }: TabItemProps) {
       >
         <View
           className={`items-center justify-center rounded-xl px-4 py-1.5 ${
-            isFocused ? 'bg-indigo-50' : ''
+            isFocused ? 'bg-indigo-50 dark:bg-indigo-500/20' : ''
           }`}
         >
           <Icon
             size={22}
-            color={isFocused ? colors.indigo[600] : colors.slate[500]}
+            color={isFocused ? colors.indigo[600] : themeColor().textMuted}
             strokeWidth={isFocused ? 2.5 : 2}
           />
           <Text
             className={`text-xs mt-1 ${
-              isFocused ? 'text-indigo-600 font-semibold' : 'text-slate-500'
+              isFocused ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400'
             }`}
           >
             {labels[routeName] || routeName}
@@ -92,7 +93,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 
   return (
     <View
-      className="bg-white border-t border-slate-100 flex-row"
+      className="bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex-row"
       style={{ paddingBottom: Math.max(insets.bottom, 8) }}
     >
       {state.routes.map((route, index) => {

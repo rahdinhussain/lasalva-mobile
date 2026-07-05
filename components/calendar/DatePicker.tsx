@@ -13,6 +13,7 @@ import {
   getNowInTimeZone,
 } from '@/utils/dateUtils';
 import type { ViewMode } from './ViewModeToggle';
+import { themeColor } from '@/utils/themeColor';
 
 interface DatePickerProps {
   currentDate: Date;
@@ -122,28 +123,28 @@ export function DatePicker({
   const showToday = showNavigation && !isOnCurrentPeriod();
 
   return (
-    <View className="flex-row items-center justify-between py-3 px-4 bg-white border-b border-slate-100">
+    <View className="flex-row items-center justify-between py-3 px-4 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
       {showNavigation ? (
         <TouchableOpacity
           onPress={handlePrev}
           className="p-2 -ml-2"
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <ChevronLeft size={24} color={colors.slate[700]} />
+          <ChevronLeft size={24} color={themeColor().icon} />
         </TouchableOpacity>
       ) : (
         <View className="w-10" />
       )}
 
       <View className="flex-row items-center gap-3">
-        <Text className="text-lg font-semibold text-slate-900">
+        <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50">
           {getLabel()}
         </Text>
         {viewMode === 'day' &&
           appointmentCount !== undefined &&
           appointmentCount > 0 && (
-            <View className="bg-indigo-100 px-2 py-0.5 rounded-full">
-              <Text className="text-xs font-medium text-indigo-600">
+            <View className="bg-indigo-100 dark:bg-indigo-500/20 px-2 py-0.5 rounded-full">
+              <Text className="text-xs font-medium text-indigo-600 dark:text-indigo-400">
                 {appointmentCount}
               </Text>
             </View>
@@ -151,9 +152,9 @@ export function DatePicker({
         {showToday && (
           <TouchableOpacity
             onPress={onTodayPress}
-            className="bg-indigo-50 px-3 py-1 rounded-full"
+            className="bg-indigo-50 dark:bg-indigo-500/20 px-3 py-1 rounded-full"
           >
-            <Text className="text-sm font-medium text-indigo-600">Today</Text>
+            <Text className="text-sm font-medium text-indigo-600 dark:text-indigo-400">Today</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -164,7 +165,7 @@ export function DatePicker({
           className="p-2 -mr-2"
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <ChevronRight size={24} color={colors.slate[700]} />
+          <ChevronRight size={24} color={themeColor().icon} />
         </TouchableOpacity>
       ) : (
         <View className="w-10" />

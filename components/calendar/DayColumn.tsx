@@ -29,15 +29,15 @@ export function DayColumn({ date, appointments, onAppointmentPress, timeZone }: 
   return (
     <View className="flex-1 min-w-[100px]">
       {/* Day Header */}
-      <View className={`items-center py-2 ${isToday ? 'bg-indigo-50' : 'bg-slate-50'}`}>
-        <Text className={`text-xs font-medium ${isToday ? 'text-indigo-600' : 'text-slate-500'}`}>
+      <View className={`items-center py-2 ${isToday ? 'bg-indigo-50 dark:bg-indigo-500/20' : 'bg-slate-50 dark:bg-slate-900'}`}>
+        <Text className={`text-xs font-medium ${isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`}>
           {format(date, 'EEE')}
         </Text>
         <View className={`mt-1 w-8 h-8 rounded-full items-center justify-center ${
           isToday ? 'bg-indigo-600' : ''
         }`}>
           <Text className={`text-sm font-semibold ${
-            isToday ? 'text-white' : 'text-slate-900'
+            isToday ? 'text-white' : 'text-slate-900 dark:text-slate-50'
           }`}>
             {format(date, 'd')}
           </Text>
@@ -51,7 +51,7 @@ export function DayColumn({ date, appointments, onAppointmentPress, timeZone }: 
       >
         {dayAppointments.length === 0 ? (
           <View className="items-center py-4">
-            <Text className="text-xs text-slate-400">—</Text>
+            <Text className="text-xs text-slate-400 dark:text-slate-500">—</Text>
           </View>
         ) : (
           dayAppointments.map((apt) => (

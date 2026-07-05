@@ -24,6 +24,7 @@ import { Card, Button, Avatar, Badge, ErrorState, SkeletonCard } from '@/compone
 import { formatCurrency, formatDuration } from '@/utils/formatters';
 import type { Profile } from '@/types';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 export default function ServiceDetailScreen() {
   const { serviceId } = useLocalSearchParams<{ serviceId: string }>();
@@ -111,7 +112,7 @@ export default function ServiceDetailScreen() {
 
   if (error) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Service" showBack />
         <ErrorState message="Failed to load service details" onRetry={refetch} />
       </SafeAreaView>
@@ -120,7 +121,7 @@ export default function ServiceDetailScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Service" showBack />
         <View className="p-4">
           <SkeletonCard />
@@ -131,7 +132,7 @@ export default function ServiceDetailScreen() {
 
   if (!service) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Service" showBack />
         <ErrorState message="Service not found" onRetry={refetch} />
       </SafeAreaView>
@@ -139,7 +140,7 @@ export default function ServiceDetailScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       <Header title="Service Details" showBack />
       
       <ScrollView 
@@ -170,7 +171,7 @@ export default function ServiceDetailScreen() {
           <Card className="p-4 mb-4">
             <View className="flex-row items-start justify-between">
               <View className="flex-1">
-                <Text className="text-xl font-semibold text-slate-900">
+                <Text className="text-xl font-semibold text-slate-900 dark:text-slate-50">
                   {service.name}
                 </Text>
                 <View className="flex-row items-center gap-2 mt-2">
@@ -194,12 +195,12 @@ export default function ServiceDetailScreen() {
               <View className="gap-4">
                 {/* Duration */}
                 <View className="flex-row items-center gap-3">
-                  <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center">
-                    <Clock size={20} color={colors.slate[600]} />
+                  <View className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center">
+                    <Clock size={20} color={themeColor().icon} />
                   </View>
                   <View>
-                    <Text className="text-sm text-slate-500">Duration</Text>
-                    <Text className="text-base font-medium text-slate-900">
+                    <Text className="text-sm text-slate-500 dark:text-slate-400">Duration</Text>
+                    <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                       {formatDuration(service.duration_minutes)}
                     </Text>
                   </View>
@@ -207,12 +208,12 @@ export default function ServiceDetailScreen() {
 
                 {/* Price */}
                 <View className="flex-row items-center gap-3">
-                  <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center">
-                    <DollarSign size={20} color={colors.slate[600]} />
+                  <View className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center">
+                    <DollarSign size={20} color={themeColor().icon} />
                   </View>
                   <View>
-                    <Text className="text-sm text-slate-500">Price</Text>
-                    <Text className="text-base font-medium text-slate-900">
+                    <Text className="text-sm text-slate-500 dark:text-slate-400">Price</Text>
+                    <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                       {service.price ? formatCurrency(service.price) : '—'}
                     </Text>
                   </View>
@@ -221,12 +222,12 @@ export default function ServiceDetailScreen() {
                 {/* Tax */}
                 {service.tax !== null && service.tax > 0 && (
                   <View className="flex-row items-center gap-3">
-                    <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center">
-                      <Percent size={20} color={colors.slate[600]} />
+                    <View className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center">
+                      <Percent size={20} color={themeColor().icon} />
                     </View>
                     <View>
-                      <Text className="text-sm text-slate-500">Tax</Text>
-                      <Text className="text-base font-medium text-slate-900">
+                      <Text className="text-sm text-slate-500 dark:text-slate-400">Tax</Text>
+                      <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                         {service.tax}%
                       </Text>
                     </View>
@@ -237,24 +238,24 @@ export default function ServiceDetailScreen() {
                 {service.deposit_required && (
                   <>
                     <View className="flex-row items-center gap-3">
-                      <View className="w-10 h-10 rounded-full bg-amber-50 items-center justify-center">
+                      <View className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-500/20 items-center justify-center">
                         <CreditCard size={20} color={colors.amber[600]} />
                       </View>
                       <View>
-                        <Text className="text-sm text-slate-500">Deposit Amount</Text>
-                        <Text className="text-base font-medium text-slate-900">
+                        <Text className="text-sm text-slate-500 dark:text-slate-400">Deposit Amount</Text>
+                        <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                           {formatCurrency(service.deposit_amount || 0)}
                         </Text>
                       </View>
                     </View>
                     {service.deposit_note && (
                       <View className="flex-row items-start gap-3">
-                        <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center">
-                          <FileText size={20} color={colors.slate[600]} />
+                        <View className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center">
+                          <FileText size={20} color={themeColor().icon} />
                         </View>
                         <View className="flex-1">
-                          <Text className="text-sm text-slate-500">Deposit Note</Text>
-                          <Text className="text-base text-slate-900">
+                          <Text className="text-sm text-slate-500 dark:text-slate-400">Deposit Note</Text>
+                          <Text className="text-base text-slate-900 dark:text-slate-50">
                             {service.deposit_note}
                           </Text>
                         </View>
@@ -272,26 +273,26 @@ export default function ServiceDetailScreen() {
               <View className="flex-row items-center justify-between">
                 <Card.Title>Assigned Staff</Card.Title>
                 {canManageServices && (
-                  <Text className="text-sm text-indigo-600 font-medium">Manage</Text>
+                  <Text className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">Manage</Text>
                 )}
               </View>
             </Card.Header>
             <Card.Content>
               {isStaffLoading ? (
                 <View className="flex-row items-center gap-3">
-                  <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center">
-                    <Users size={20} color={colors.slate[400]} />
+                  <View className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center">
+                    <Users size={20} color={themeColor().iconMuted} />
                   </View>
-                  <Text className="text-base text-slate-500">
+                  <Text className="text-base text-slate-500 dark:text-slate-400">
                     Loading staff...
                   </Text>
                 </View>
               ) : assignedStaff.length === 0 ? (
                 <View className="flex-row items-center gap-3">
-                  <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center">
-                    <Users size={20} color={colors.slate[400]} />
+                  <View className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center">
+                    <Users size={20} color={themeColor().iconMuted} />
                   </View>
-                  <Text className="text-base text-slate-500">
+                  <Text className="text-base text-slate-500 dark:text-slate-400">
                     No staff assigned
                   </Text>
                 </View>
@@ -301,11 +302,11 @@ export default function ServiceDetailScreen() {
                     <View key={staff.id} className="flex-row items-center gap-3">
                       <Avatar source={staff.profile_photo_url} name={staff.name} size="md" />
                       <View>
-                        <Text className="text-base font-medium text-slate-900">
+                        <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                           {staff.name || 'Unnamed'}
                         </Text>
                         {staff.designation && (
-                          <Text className="text-sm text-slate-500">{staff.designation}</Text>
+                          <Text className="text-sm text-slate-500 dark:text-slate-400">{staff.designation}</Text>
                         )}
                       </View>
                     </View>
@@ -321,7 +322,7 @@ export default function ServiceDetailScreen() {
               <Button
                 variant="secondary"
                 fullWidth
-                icon={<Edit2 size={18} color={colors.slate[700]} />}
+                icon={<Edit2 size={18} color={themeColor().icon} />}
                 onPress={handleEdit}
               >
                 Edit Service

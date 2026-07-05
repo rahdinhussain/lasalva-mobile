@@ -15,7 +15,7 @@ export function StepIndicator({ currentStep, totalSteps, skipStaff }: StepIndica
     : STEP_LABELS;
 
   return (
-    <View className="flex-row items-center px-4 pt-2 pb-3 mb-1 border-b border-slate-100">
+    <View className="flex-row items-center px-4 pt-2 pb-3 mb-1 border-b border-slate-100 dark:border-slate-800">
       {labels.map((label, index) => {
         const stepNumber = index + 1;
         const isActive = stepNumber === currentStep;
@@ -26,7 +26,7 @@ export function StepIndicator({ currentStep, totalSteps, skipStaff }: StepIndica
             {index > 0 && (
               <View
                 className={`flex-1 h-0.5 ${
-                  isCompleted ? 'bg-indigo-300' : 'bg-slate-200'
+                  isCompleted ? 'bg-indigo-300' : 'bg-slate-200 dark:bg-slate-700'
                 }`}
               />
             )}
@@ -37,16 +37,16 @@ export function StepIndicator({ currentStep, totalSteps, skipStaff }: StepIndica
                     ? 'bg-indigo-600'
                     : isCompleted
                     ? 'bg-indigo-300'
-                    : 'bg-slate-200'
+                    : 'bg-slate-200 dark:bg-slate-700'
                 }`}
               />
               <Text
                 className={`text-[10px] mt-1 ${
                   isActive
-                    ? 'text-indigo-600 font-medium'
+                    ? 'text-indigo-600 dark:text-indigo-400 font-medium'
                     : isCompleted
                     ? 'text-indigo-400'
-                    : 'text-slate-400'
+                    : 'text-slate-400 dark:text-slate-500'
                 }`}
                 numberOfLines={1}
               >

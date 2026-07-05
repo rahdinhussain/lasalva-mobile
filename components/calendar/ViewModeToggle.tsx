@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Grid3X3, CalendarDays, Clock, List } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 export type ViewMode = 'month' | 'week' | 'day' | 'list';
 
@@ -19,7 +20,7 @@ const modes: { key: ViewMode; label: string; Icon: typeof Grid3X3 }[] = [
 
 export function ViewModeToggle({ activeMode, onModeChange }: ViewModeToggleProps) {
   return (
-    <View className="flex-row bg-slate-100 rounded-lg p-1 border border-slate-200">
+    <View className="flex-row bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
       {modes.map(({ key, label, Icon }) => {
         const isActive = activeMode === key;
         return (
@@ -33,11 +34,11 @@ export function ViewModeToggle({ activeMode, onModeChange }: ViewModeToggleProps
           >
             <Icon
               size={14}
-              color={isActive ? '#ffffff' : colors.slate[600]}
+              color={isActive ? '#ffffff' : themeColor().icon}
             />
             <Text
               className={`text-xs font-medium ${
-                isActive ? 'text-white' : 'text-slate-600'
+                isActive ? 'text-white' : 'text-slate-600 dark:text-slate-400'
               }`}
             >
               {label}

@@ -109,7 +109,7 @@ export function AvatarGroup({ avatars, size = 'sm', max = 3, className = '' }: A
         <View
           key={index}
           style={{ marginLeft: index > 0 ? -8 : 0 }}
-          className="border-2 border-white rounded-full"
+          className="border-2 border-white dark:border-slate-800 rounded-full"
         >
           <Avatar source={avatar.source} name={avatar.name} size={size} />
         </View>
@@ -117,9 +117,9 @@ export function AvatarGroup({ avatars, size = 'sm', max = 3, className = '' }: A
       {remaining > 0 && (
         <View
           style={{ marginLeft: -8 }}
-          className={`${sizeStyle.container} rounded-full items-center justify-center bg-slate-200 border-2 border-white`}
+          className={`${sizeStyle.container} rounded-full items-center justify-center bg-slate-200 dark:bg-slate-700 border-2 border-white dark:border-slate-800`}
         >
-          <Text className={`font-medium text-slate-600 ${sizeStyles.sm.text}`}>
+          <Text className={`font-medium text-slate-600 dark:text-slate-400 ${sizeStyles.sm.text}`}>
             +{remaining}
           </Text>
         </View>

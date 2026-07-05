@@ -18,13 +18,14 @@ import { Button, Card, Badge, SkeletonCard, ErrorState } from '@/components/ui';
 import { formatCurrency } from '@/utils/formatters';
 import { formatDate } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 const statusConfig: Record<string, { color: string; bgColor: string; icon: typeof CheckCircle }> = {
-  active: { color: colors.emerald[600], bgColor: 'bg-emerald-50', icon: CheckCircle },
-  trialing: { color: colors.indigo[600], bgColor: 'bg-indigo-50', icon: Clock },
-  pending: { color: colors.amber[600], bgColor: 'bg-amber-50', icon: AlertCircle },
-  canceled: { color: colors.rose[600], bgColor: 'bg-rose-50', icon: AlertCircle },
-  past_due: { color: colors.rose[600], bgColor: 'bg-rose-50', icon: AlertCircle },
+  active: { color: colors.emerald[600], bgColor: 'bg-emerald-50 dark:bg-emerald-500/20', icon: CheckCircle },
+  trialing: { color: colors.indigo[600], bgColor: 'bg-indigo-50 dark:bg-indigo-500/20', icon: Clock },
+  pending: { color: colors.amber[600], bgColor: 'bg-amber-50 dark:bg-amber-500/20', icon: AlertCircle },
+  canceled: { color: colors.rose[600], bgColor: 'bg-rose-50 dark:bg-rose-500/20', icon: AlertCircle },
+  past_due: { color: colors.rose[600], bgColor: 'bg-rose-50 dark:bg-rose-500/20', icon: AlertCircle },
 };
 
 export default function BillingSettingsScreen() {
@@ -51,7 +52,7 @@ export default function BillingSettingsScreen() {
 
   if (error) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Billing" showBack />
         <ErrorState message="Failed to load billing information" onRetry={refetch} />
       </SafeAreaView>
@@ -60,7 +61,7 @@ export default function BillingSettingsScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Billing" showBack />
         <View className="p-4 gap-4">
           <SkeletonCard />
@@ -75,7 +76,7 @@ export default function BillingSettingsScreen() {
   const StatusIcon = statusStyle.icon;
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       <Header title="Billing" showBack />
       
       <ScrollView 
@@ -109,10 +110,10 @@ export default function BillingSettingsScreen() {
                 {billing.currentPeriodStart && (
                   <View className="flex-row items-center justify-between">
                     <View className="flex-row items-center gap-2">
-                      <Calendar size={16} color={colors.slate[500]} />
-                      <Text className="text-sm text-slate-500">Current Period</Text>
+                      <Calendar size={16} color={themeColor().textMuted} />
+                      <Text className="text-sm text-slate-500 dark:text-slate-400">Current Period</Text>
                     </View>
-                    <Text className="text-sm font-medium text-slate-900">
+                    <Text className="text-sm font-medium text-slate-900 dark:text-slate-50">
                       {formatDate(billing.currentPeriodStart, 'MMM d')} - {formatDate(billing.currentPeriodEnd, 'MMM d, yyyy')}
                     </Text>
                   </View>
@@ -121,10 +122,10 @@ export default function BillingSettingsScreen() {
                 {billing.nextPaymentDate && (
                   <View className="flex-row items-center justify-between">
                     <View className="flex-row items-center gap-2">
-                      <CreditCard size={16} color={colors.slate[500]} />
-                      <Text className="text-sm text-slate-500">Next Payment</Text>
+                      <CreditCard size={16} color={themeColor().textMuted} />
+                      <Text className="text-sm text-slate-500 dark:text-slate-400">Next Payment</Text>
                     </View>
-                    <Text className="text-sm font-medium text-slate-900">
+                    <Text className="text-sm font-medium text-slate-900 dark:text-slate-50">
                       {formatCurrency(billing.amount || 0, billing.currency)} on {formatDate(billing.nextPaymentDate, 'MMM d, yyyy')}
                     </Text>
                   </View>
@@ -137,14 +138,14 @@ export default function BillingSettingsScreen() {
         {/* Manage Subscription */}
         <Card className="p-4 mb-4">
           <View className="flex-row items-center gap-3 mb-4">
-            <View className="w-10 h-10 rounded-full bg-indigo-50 items-center justify-center">
+            <View className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-500/20 items-center justify-center">
               <CreditCard size={20} color={colors.indigo[600]} />
             </View>
             <View className="flex-1">
-              <Text className="text-base font-semibold text-slate-900">
+              <Text className="text-base font-semibold text-slate-900 dark:text-slate-50">
                 Manage Subscription
               </Text>
-              <Text className="text-sm text-slate-500">
+              <Text className="text-sm text-slate-500 dark:text-slate-400">
                 Update payment method, change plan, or cancel
               </Text>
             </View>
@@ -152,7 +153,7 @@ export default function BillingSettingsScreen() {
           <Button
             variant="secondary"
             fullWidth
-            icon={<ExternalLink size={18} color={colors.slate[700]} />}
+            icon={<ExternalLink size={18} color={themeColor().icon} />}
             iconPosition="right"
             onPress={handleOpenPortal}
           >
@@ -175,14 +176,14 @@ export default function BillingSettingsScreen() {
                     disabled={!invoice.pdfUrl}
                     className="flex-row items-center py-2"
                   >
-                    <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center">
-                      <FileText size={18} color={colors.slate[600]} />
+                    <View className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center">
+                      <FileText size={18} color={themeColor().icon} />
                     </View>
                     <View className="flex-1 ml-3">
-                      <Text className="text-base font-medium text-slate-900">
+                      <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                         {formatCurrency(invoice.amount, invoice.currency)}
                       </Text>
-                      <Text className="text-sm text-slate-500">
+                      <Text className="text-sm text-slate-500 dark:text-slate-400">
                         {formatDate(invoice.date, 'MMM d, yyyy')}
                       </Text>
                     </View>

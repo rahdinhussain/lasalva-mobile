@@ -10,7 +10,7 @@ export default function AuthLayout() {
   // visible with its own button spinner, instead of a full-screen spinner takeover.
   if (!isHydrated) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8fafc' }}>
+      <View className="flex-1 items-center justify-center bg-slate-50 dark:bg-slate-900">
         <ActivityIndicator size="large" color="#4f46e5" />
       </View>
     );

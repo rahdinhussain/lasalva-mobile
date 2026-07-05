@@ -24,7 +24,7 @@ export default function AddServiceScreen() {
   };
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       <Header title="Add Service" showBack />
       <ServiceForm
         onSubmit={handleSubmit}

@@ -12,6 +12,7 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
   USER_ID: 'user_id',
   AUTH_COOKIE: 'auth_cookie', // lasalva_auth for cookie-based API (fallback when backend expects cookie)
+  THEME: 'theme_preference', // 'light' | 'dark' | 'system'
 } as const;
 
 export const QUERY_KEYS = {

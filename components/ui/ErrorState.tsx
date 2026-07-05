@@ -19,13 +19,13 @@ export function ErrorState({
 }: ErrorStateProps) {
   return (
     <View className={`items-center justify-center py-12 px-6 ${className}`}>
-      <View className="w-16 h-16 rounded-full bg-rose-50 items-center justify-center mb-4">
+      <View className="w-16 h-16 rounded-full bg-rose-50 dark:bg-rose-500/20 items-center justify-center mb-4">
         <AlertCircle size={32} color={colors.rose[500]} />
       </View>
-      <Text className="text-lg font-semibold text-slate-900 text-center">
+      <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50 text-center">
         {title}
       </Text>
-      <Text className="text-sm text-slate-500 text-center mt-2 max-w-xs">
+      <Text className="text-sm text-slate-500 dark:text-slate-400 text-center mt-2 max-w-xs">
         {message}
       </Text>
       {onRetry && (

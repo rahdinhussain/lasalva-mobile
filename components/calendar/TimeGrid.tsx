@@ -81,7 +81,7 @@ export function TimeGrid({
               className="pr-2 items-end"
             >
               <Text
-                className="text-slate-400 font-medium"
+                className="text-slate-400 dark:text-slate-500 font-medium"
                 style={{ fontSize: 10, marginTop: -6 }}
               >
                 {formatHourLabel(i)}
@@ -96,7 +96,7 @@ export function TimeGrid({
           {Array.from({ length: TOTAL_HOURS }, (_, i) => (
             <View
               key={i}
-              className="border-t border-slate-100 absolute left-0 right-0"
+              className="border-t border-slate-100 dark:border-slate-800 absolute left-0 right-0"
               style={{ top: i * HOUR_HEIGHT }}
             />
           ))}
@@ -118,7 +118,7 @@ export function TimeGrid({
               return (
                 <View
                   key={`divider-${i}`}
-                  className="absolute top-0 bottom-0 border-l border-slate-100"
+                  className="absolute top-0 bottom-0 border-l border-slate-100 dark:border-slate-800"
                   style={{ left: left as number }}
                 />
               );

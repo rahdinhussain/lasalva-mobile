@@ -7,6 +7,7 @@ import { formatDate, formatInTimeZoneSafe } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { themeColor } from '@/utils/themeColor';
 
 interface CustomerDetailsStepProps {
   service: Service;
@@ -72,73 +73,73 @@ export function CustomerDetailsStep({
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
     >
-      <Text className="text-lg font-semibold text-slate-900 mb-3">
+      <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-3">
         Booking Details
       </Text>
 
       {/* Summary */}
-      <View className="bg-slate-50 rounded-xl p-4 mb-4 gap-3">
+      <View className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 mb-4 gap-3">
         <View className="flex-row items-center gap-2">
-          <View className="w-8 h-8 rounded-lg bg-indigo-50 items-center justify-center">
+          <View className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 items-center justify-center">
             <DollarSign size={16} color={colors.indigo[600]} />
           </View>
           <View className="flex-1">
-            <Text className="text-sm font-medium text-slate-900">{service.name}</Text>
-            <Text className="text-xs text-slate-500">
+            <Text className="text-sm font-medium text-slate-900 dark:text-slate-50">{service.name}</Text>
+            <Text className="text-xs text-slate-500 dark:text-slate-400">
               {formatDuration(service.duration_minutes)}
             </Text>
           </View>
         </View>
 
         <View className="flex-row items-center gap-2">
-          <View className="w-8 h-8 rounded-lg bg-indigo-50 items-center justify-center">
+          <View className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 items-center justify-center">
             <User size={16} color={colors.indigo[600]} />
           </View>
-          <Text className="text-sm text-slate-700">
+          <Text className="text-sm text-slate-700 dark:text-slate-300">
             {staffName ?? 'Any Available Staff'}
           </Text>
         </View>
 
         <View className="flex-row items-center gap-2">
-          <View className="w-8 h-8 rounded-lg bg-indigo-50 items-center justify-center">
+          <View className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 items-center justify-center">
             <Calendar size={16} color={colors.indigo[600]} />
           </View>
-          <Text className="text-sm text-slate-700">
+          <Text className="text-sm text-slate-700 dark:text-slate-300">
             {formatDate(date, 'EEEE, MMMM d, yyyy')}
           </Text>
         </View>
 
         <View className="flex-row items-center gap-2">
-          <View className="w-8 h-8 rounded-lg bg-indigo-50 items-center justify-center">
+          <View className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 items-center justify-center">
             <Clock size={16} color={colors.indigo[600]} />
           </View>
-          <Text className="text-sm text-slate-700">
+          <Text className="text-sm text-slate-700 dark:text-slate-300">
             {formatInTimeZoneSafe(slot.startTime, timeZone, 'h:mm a')} -{' '}
             {formatInTimeZoneSafe(slot.endTime, timeZone, 'h:mm a')}
           </Text>
         </View>
 
         {/* Price breakdown */}
-        <View className="border-t border-slate-200 pt-3 mt-1">
+        <View className="border-t border-slate-200 dark:border-slate-700 pt-3 mt-1">
           <View className="flex-row justify-between">
-            <Text className="text-sm text-slate-500">Subtotal</Text>
-            <Text className="text-sm text-slate-700">{formatCurrency(price)}</Text>
+            <Text className="text-sm text-slate-500 dark:text-slate-400">Subtotal</Text>
+            <Text className="text-sm text-slate-700 dark:text-slate-300">{formatCurrency(price)}</Text>
           </View>
           {taxPercent > 0 && (
             <View className="flex-row justify-between mt-1">
-              <Text className="text-sm text-slate-500">Tax ({taxPercent}%)</Text>
-              <Text className="text-sm text-slate-700">{formatCurrency(taxAmount)}</Text>
+              <Text className="text-sm text-slate-500 dark:text-slate-400">Tax ({taxPercent}%)</Text>
+              <Text className="text-sm text-slate-700 dark:text-slate-300">{formatCurrency(taxAmount)}</Text>
             </View>
           )}
           <View className="flex-row justify-between mt-2">
-            <Text className="text-sm font-semibold text-slate-900">Total</Text>
-            <Text className="text-sm font-semibold text-slate-900">{formatCurrency(total)}</Text>
+            <Text className="text-sm font-semibold text-slate-900 dark:text-slate-50">Total</Text>
+            <Text className="text-sm font-semibold text-slate-900 dark:text-slate-50">{formatCurrency(total)}</Text>
           </View>
         </View>
       </View>
 
       {/* Customer Form */}
-      <Text className="text-base font-semibold text-slate-900 mb-3">
+      <Text className="text-base font-semibold text-slate-900 dark:text-slate-50 mb-3">
         Customer Information
       </Text>
 
@@ -152,7 +153,7 @@ export function CustomerDetailsStep({
             if (errors.customerName) setErrors((e) => ({ ...e, customerName: '' }));
           }}
           error={errors.customerName}
-          leftIcon={<User size={18} color={colors.slate[400]} />}
+          leftIcon={<User size={18} color={themeColor().iconMuted} />}
           autoCapitalize="words"
         />
 
@@ -165,7 +166,7 @@ export function CustomerDetailsStep({
             if (errors.customerEmail) setErrors((e) => ({ ...e, customerEmail: '' }));
           }}
           error={errors.customerEmail}
-          leftIcon={<Mail size={18} color={colors.slate[400]} />}
+          leftIcon={<Mail size={18} color={themeColor().iconMuted} />}
           keyboardType="email-address"
           autoCapitalize="none"
         />
@@ -175,7 +176,7 @@ export function CustomerDetailsStep({
           placeholder="Enter phone number"
           value={customerPhone}
           onChangeText={(v) => onFieldChange('customerPhone', v)}
-          leftIcon={<Phone size={18} color={colors.slate[400]} />}
+          leftIcon={<Phone size={18} color={themeColor().iconMuted} />}
           keyboardType="phone-pad"
         />
       </View>

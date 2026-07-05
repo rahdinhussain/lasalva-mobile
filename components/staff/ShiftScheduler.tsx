@@ -15,6 +15,7 @@ import {
 } from '@/utils/dateUtils';
 import { Card, Select, Button } from '@/components/ui';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 interface ShiftSchedulerProps {
   staffId: string;
@@ -167,18 +168,18 @@ export function ShiftScheduler({ staffId, staffName }: ShiftSchedulerProps) {
   return (
     <View className="flex-1">
       {/* Week Navigation Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-slate-100">
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
         <TouchableOpacity
           onPress={handlePrevWeek}
-          className="w-10 h-10 items-center justify-center rounded-full bg-slate-100"
+          className="w-10 h-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
         >
-          <ChevronLeft size={20} color={colors.slate[600]} />
+          <ChevronLeft size={20} color={themeColor().icon} />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={handleToday} className="flex-1 mx-3">
-          <Text className="text-base font-semibold text-slate-900 text-center">{weekRangeText}</Text>
+          <Text className="text-base font-semibold text-slate-900 dark:text-slate-50 text-center">{weekRangeText}</Text>
           {!isCurrentWeek && (
-            <Text className="text-xs text-indigo-600 text-center mt-0.5">
+            <Text className="text-xs text-indigo-600 dark:text-indigo-400 text-center mt-0.5">
               Tap to go to current week
             </Text>
           )}
@@ -186,15 +187,15 @@ export function ShiftScheduler({ staffId, staffName }: ShiftSchedulerProps) {
 
         <TouchableOpacity
           onPress={handleNextWeek}
-          className="w-10 h-10 items-center justify-center rounded-full bg-slate-100"
+          className="w-10 h-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
         >
-          <ChevronRight size={20} color={colors.slate[600]} />
+          <ChevronRight size={20} color={themeColor().icon} />
         </TouchableOpacity>
       </View>
 
       {/* Instruction text */}
-      <View className="px-4 py-3 bg-slate-50 border-b border-slate-100">
-        <Text className="text-sm text-slate-600">
+      <View className="px-4 py-3 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
+        <Text className="text-sm text-slate-600 dark:text-slate-400">
           Tap a day to add or edit a one-time shift. Navigate weeks to schedule ahead.
         </Text>
       </View>
@@ -203,13 +204,13 @@ export function ShiftScheduler({ staffId, staffName }: ShiftSchedulerProps) {
       {isLoading ? (
         <View className="flex-1 items-center justify-center py-12">
           <ActivityIndicator size="large" color={colors.indigo[600]} />
-          <Text className="text-sm text-slate-500 mt-3">Loading schedule...</Text>
+          <Text className="text-sm text-slate-500 dark:text-slate-400 mt-3">Loading schedule...</Text>
         </View>
       ) : error ? (
         <View className="flex-1 items-center justify-center py-12 px-4">
-          <Calendar size={48} color={colors.slate[300]} />
-          <Text className="text-base font-medium text-slate-900 mt-4">Unable to load schedule</Text>
-          <Text className="text-sm text-slate-500 mt-1 text-center">
+          <Calendar size={48} color={themeColor().iconMuted} />
+          <Text className="text-base font-medium text-slate-900 dark:text-slate-50 mt-4">Unable to load schedule</Text>
+          <Text className="text-sm text-slate-500 dark:text-slate-400 mt-1 text-center">
             {error instanceof Error ? error.message : 'Please try again'}
           </Text>
           <TouchableOpacity
@@ -250,14 +251,14 @@ export function ShiftScheduler({ staffId, staffName }: ShiftSchedulerProps) {
                         <View className={`w-12 items-center ${isToday ? 'opacity-100' : 'opacity-80'}`}>
                           <Text
                             className={`text-xs font-medium ${
-                              isToday ? 'text-indigo-600' : 'text-slate-500'
+                              isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
                             }`}
                           >
                             {dayName}
                           </Text>
                           <Text
                             className={`text-lg font-bold ${
-                              isToday ? 'text-indigo-600' : 'text-slate-900'
+                              isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-900 dark:text-slate-50'
                             }`}
                           >
                             {formatDate(day, 'd')}
@@ -267,20 +268,20 @@ export function ShiftScheduler({ staffId, staffName }: ShiftSchedulerProps) {
                         <View className="ml-4 flex-1">
                           {shift ? (
                             <View>
-                              <Text className="text-base font-medium text-slate-900">
+                              <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                                 {formatTimeToDisplay(shift.start_time)} –{' '}
                                 {formatTimeToDisplay(shift.end_time)}
                               </Text>
                               <View className="flex-row items-center mt-1">
-                                <View className="px-2 py-0.5 rounded bg-emerald-100">
-                                  <Text className="text-xs font-medium text-emerald-700">
+                                <View className="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-500/20">
+                                  <Text className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
                                     Scheduled
                                   </Text>
                                 </View>
                               </View>
                             </View>
                           ) : (
-                            <Text className="text-base text-slate-400">
+                            <Text className="text-base text-slate-400 dark:text-slate-500">
                               {isPast ? 'Past date' : 'Tap to add shift'}
                             </Text>
                           )}
@@ -296,14 +297,14 @@ export function ShiftScheduler({ staffId, staffName }: ShiftSchedulerProps) {
                         {shift && !isPast && (
                           <TouchableOpacity
                             onPress={() => handleDeleteShift(shift.id, dateStr)}
-                            className="w-8 h-8 items-center justify-center rounded-full bg-rose-50"
+                            className="w-8 h-8 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-500/20"
                             disabled={deleteShift.isPending}
                           >
                             <Trash2 size={16} color={colors.rose[500]} />
                           </TouchableOpacity>
                         )}
                         {!shift && !isPast && (
-                          <View className="w-8 h-8 items-center justify-center rounded-full bg-indigo-50">
+                          <View className="w-8 h-8 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-500/20">
                             <Plus size={16} color={colors.indigo[500]} />
                           </View>
                         )}
@@ -314,7 +315,7 @@ export function ShiftScheduler({ staffId, staffName }: ShiftSchedulerProps) {
 
                 {/* Shift editor panel (shown when date is selected) */}
                 {isSelected && (
-                  <Card className="p-4 mb-3 bg-indigo-50 border-indigo-200">
+                  <Card className="p-4 mb-3 bg-indigo-50 dark:bg-indigo-500/20 border-indigo-200 dark:border-indigo-500/40">
                     <View className="flex-row items-center mb-3">
                       <Clock size={18} color={colors.indigo[600]} />
                       <Text className="ml-2 text-base font-semibold text-indigo-900">
@@ -369,18 +370,18 @@ export function ShiftScheduler({ staffId, staffName }: ShiftSchedulerProps) {
           })}
 
           {/* Week Summary */}
-          <View className="mt-2 p-4 bg-slate-50 rounded-xl">
-            <Text className="text-sm font-medium text-slate-700 mb-2">Week Summary</Text>
+          <View className="mt-2 p-4 bg-slate-50 dark:bg-slate-900 rounded-xl">
+            <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Week Summary</Text>
             <View className="flex-row flex-wrap gap-3">
               <View className="flex-row items-center">
                 <View className="w-3 h-3 rounded-full bg-emerald-500 mr-2" />
-                <Text className="text-sm text-slate-600">
+                <Text className="text-sm text-slate-600 dark:text-slate-400">
                   {shifts.length} shift{shifts.length !== 1 ? 's' : ''} scheduled
                 </Text>
               </View>
               <View className="flex-row items-center">
                 <View className="w-3 h-3 rounded-full bg-slate-300 mr-2" />
-                <Text className="text-sm text-slate-600">
+                <Text className="text-sm text-slate-600 dark:text-slate-400">
                   {7 - shifts.length} day{7 - shifts.length !== 1 ? 's' : ''} off
                 </Text>
               </View>

@@ -122,7 +122,7 @@ export default function CalendarScreen() {
 
   if (error) {
     return (
-      <SafeAreaView className="flex-1 bg-slate-50">
+      <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
         <ErrorState
           message="Failed to load appointments"
           onRetry={refetch}
@@ -132,14 +132,14 @@ export default function CalendarScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       {/* Header with view mode toggle */}
-      <View className="px-4 py-3 bg-white border-b border-slate-100">
+      <View className="px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
         <ViewModeToggle
           activeMode={viewMode}
           onModeChange={handleViewModeChange}
         />
-        <Text className="text-[11px] text-slate-400 mt-1.5 text-center">
+        <Text className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5 text-center">
           Times shown in {(timeZone || 'UTC').replace(/_/g, ' ')}
         </Text>
       </View>

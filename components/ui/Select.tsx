@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { ChevronDown, Check } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 interface SelectOption {
   label: string;
@@ -41,26 +42,26 @@ export function Select({
   return (
     <View className={className}>
       {label && (
-        <Text className="text-sm font-medium text-slate-700 mb-1.5">{label}</Text>
+        <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{label}</Text>
       )}
       <TouchableOpacity
         onPress={() => !disabled && setIsOpen(true)}
         disabled={disabled}
         className={`
-          flex-row items-center justify-between bg-white rounded-xl border px-3 py-3
-          ${error ? 'border-rose-500' : 'border-slate-200'}
+          flex-row items-center justify-between bg-white dark:bg-slate-800 rounded-xl border px-3 py-3
+          ${error ? 'border-rose-500' : 'border-slate-200 dark:border-slate-700'}
           ${disabled ? 'opacity-50' : ''}
         `}
       >
         <Text
-          className={`text-base ${selectedOption ? 'text-slate-900' : 'text-slate-500'}`}
+          className={`text-base ${selectedOption ? 'text-slate-900 dark:text-slate-50' : 'text-slate-500 dark:text-slate-400'}`}
         >
           {selectedOption?.label || placeholder}
         </Text>
-        <ChevronDown size={20} color={colors.slate[500]} />
+        <ChevronDown size={20} color={themeColor().textMuted} />
       </TouchableOpacity>
       {error && (
-        <Text className="text-sm text-rose-600 mt-1">{error}</Text>
+        <Text className="text-sm text-rose-600 dark:text-rose-400 mt-1">{error}</Text>
       )}
 
       <Modal
@@ -74,12 +75,12 @@ export function Select({
           onPress={() => setIsOpen(false)}
           className="flex-1 justify-end bg-black/50"
         >
-          <View className="bg-white rounded-t-3xl max-h-[60%]">
+          <View className="bg-white dark:bg-slate-800 rounded-t-3xl max-h-[60%]">
             <View className="items-center py-3">
               <View className="w-10 h-1 bg-slate-300 rounded-full" />
             </View>
             {label && (
-              <Text className="text-lg font-semibold text-slate-900 px-4 pb-2">
+              <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50 px-4 pb-2">
                 {label}
               </Text>
             )}
@@ -95,7 +96,7 @@ export function Select({
                   >
                     <Text
                       className={`text-base ${
-                        item.value === value ? 'text-indigo-600 font-medium' : 'text-slate-900'
+                        item.value === value ? 'text-indigo-600 dark:text-indigo-400 font-medium' : 'text-slate-900 dark:text-slate-50'
                       }`}
                     >
                       {item.label}
@@ -105,7 +106,7 @@ export function Select({
                     )}
                   </TouchableOpacity>
                   {index < options.length - 1 && (
-                    <View className="h-px bg-slate-100 mx-4" />
+                    <View className="h-px bg-slate-100 dark:bg-slate-800 mx-4" />
                   )}
                 </View>
               ))}

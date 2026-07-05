@@ -8,6 +8,7 @@ import { colors } from '@/constants/colors';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { themeColor } from '@/utils/themeColor';
 
 interface TimeStepProps {
   serviceId: string;
@@ -40,16 +41,16 @@ export function TimeStep({
 
   return (
     <View className="flex-1 px-4">
-      <Text className="text-lg font-semibold text-slate-900 mb-1">
+      <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-1">
         Select a Time
       </Text>
       <View className="flex-row items-center gap-1.5 mb-1">
-        <Clock size={14} color={colors.slate[400]} />
-        <Text className="text-sm text-slate-500">
+        <Clock size={14} color={themeColor().iconMuted} />
+        <Text className="text-sm text-slate-500 dark:text-slate-400">
           {formatDate(date, 'EEEE, MMMM d, yyyy')}
         </Text>
       </View>
-      <Text className="text-[11px] text-slate-400 mb-4">
+      <Text className="text-[11px] text-slate-400 dark:text-slate-500 mb-4">
         Times shown in {(timeZone || 'UTC').replace(/_/g, ' ')}
       </Text>
 
@@ -87,8 +88,8 @@ export function TimeStep({
                     isSlotSelected
                       ? 'bg-indigo-600 border-indigo-600'
                       : isAvailable
-                      ? 'bg-white border-slate-200'
-                      : 'bg-slate-50 border-slate-100 opacity-40'
+                      ? 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+                      : 'bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800 opacity-40'
                   }`}
                 >
                   <Text
@@ -96,8 +97,8 @@ export function TimeStep({
                       isSlotSelected
                         ? 'text-white'
                         : isAvailable
-                        ? 'text-slate-700'
-                        : 'text-slate-400'
+                        ? 'text-slate-700 dark:text-slate-300'
+                        : 'text-slate-400 dark:text-slate-500'
                     }`}
                   >
                     {formatInTimeZoneSafe(slot.startTime, timeZone, 'h:mm a')}
@@ -105,7 +106,7 @@ export function TimeStep({
                   {isAvailable && slot.availableStaffCount > 1 && (
                     <Text
                       className={`text-xs text-center mt-0.5 ${
-                        isSlotSelected ? 'text-indigo-200' : 'text-slate-400'
+                        isSlotSelected ? 'text-indigo-200' : 'text-slate-400 dark:text-slate-500'
                       }`}
                     >
                       {slot.availableStaffCount} staff

@@ -6,6 +6,7 @@ import { Camera, Type, Clock, DollarSign, Percent, CreditCard, FileText } from '
 import { Service } from '@/types';
 import { Button, Input, Card, Toggle, Select } from '@/components/ui';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 export interface ServiceFormData {
   name: string;
@@ -137,16 +138,17 @@ export function ServiceForm({ initialData, isEditing = false, onSubmit, isLoadin
               contentFit="cover"
             />
             <View className="absolute inset-0 bg-black/30 items-center justify-center">
+              {/* Pill sits over a darkened image in both themes — keep it light. */}
               <View className="bg-white/90 px-4 py-2 rounded-full flex-row items-center gap-2">
-                <Camera size={18} color={colors.slate[700]} />
+                <Camera size={18} color={themeColor().icon} />
                 <Text className="text-sm font-medium text-slate-700">Change Image</Text>
               </View>
             </View>
           </View>
         ) : (
-          <View className="h-[180px] bg-slate-100 rounded-2xl items-center justify-center border-2 border-dashed border-slate-300">
-            <Camera size={32} color={colors.slate[400]} />
-            <Text className="text-sm text-slate-500 mt-2">Add service image</Text>
+          <View className="h-[180px] bg-slate-100 dark:bg-slate-800 rounded-2xl items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-600">
+            <Camera size={32} color={themeColor().iconMuted} />
+            <Text className="text-sm text-slate-500 dark:text-slate-400 mt-2">Add service image</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -162,7 +164,7 @@ export function ServiceForm({ initialData, isEditing = false, onSubmit, isLoadin
             setErrors((prev) => ({ ...prev, name: undefined }));
           }}
           error={errors.name}
-          leftIcon={<Type size={20} color={colors.slate[500]} />}
+          leftIcon={<Type size={20} color={themeColor().textMuted} />}
           containerClassName="mb-4"
         />
 
@@ -186,7 +188,7 @@ export function ServiceForm({ initialData, isEditing = false, onSubmit, isLoadin
               }}
               error={errors.price}
               keyboardType="decimal-pad"
-              leftIcon={<DollarSign size={20} color={colors.slate[500]} />}
+              leftIcon={<DollarSign size={20} color={themeColor().textMuted} />}
             />
           </View>
           <View className="flex-1">
@@ -200,7 +202,7 @@ export function ServiceForm({ initialData, isEditing = false, onSubmit, isLoadin
               }}
               error={errors.tax}
               keyboardType="decimal-pad"
-              leftIcon={<Percent size={20} color={colors.slate[500]} />}
+              leftIcon={<Percent size={20} color={themeColor().textMuted} />}
             />
           </View>
         </View>
@@ -228,7 +230,7 @@ export function ServiceForm({ initialData, isEditing = false, onSubmit, isLoadin
               }}
               error={errors.deposit_amount}
               keyboardType="decimal-pad"
-              leftIcon={<CreditCard size={20} color={colors.slate[500]} />}
+              leftIcon={<CreditCard size={20} color={themeColor().textMuted} />}
               containerClassName="mb-4"
             />
             <Input
@@ -236,7 +238,7 @@ export function ServiceForm({ initialData, isEditing = false, onSubmit, isLoadin
               placeholder="e.g., Non-refundable within 24 hours"
               value={formData.deposit_note}
               onChangeText={(text) => setFormData((prev) => ({ ...prev, deposit_note: text }))}
-              leftIcon={<FileText size={20} color={colors.slate[500]} />}
+              leftIcon={<FileText size={20} color={themeColor().textMuted} />}
               multiline
             />
           </>

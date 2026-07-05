@@ -41,11 +41,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
     if (this.state.hasError) {
       return (
-        <View className="flex-1 bg-slate-50 justify-center items-center px-6">
-          <Text className="text-lg font-semibold text-slate-900 text-center mb-2">
+        <View className="flex-1 bg-slate-50 dark:bg-slate-900 justify-center items-center px-6">
+          <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50 text-center mb-2">
             Something went wrong
           </Text>
-          <Text className="text-slate-500 text-center mb-6">
+          <Text className="text-slate-500 dark:text-slate-400 text-center mb-6">
             We're sorry. Please try again or restart the app.
           </Text>
           <TouchableOpacity

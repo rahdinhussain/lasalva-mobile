@@ -14,13 +14,14 @@ import {
 } from '@/utils/dateUtils';
 import { Card, Badge } from '@/components/ui';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 interface WeekScheduleViewProps {
   staffId: string;
   staffName?: string;
 }
 
-const SHIFT_STYLE = { bg: 'bg-emerald-100', text: 'text-emerald-700', label: 'Scheduled' };
+const SHIFT_STYLE = { bg: 'bg-emerald-100 dark:bg-emerald-500/20', text: 'text-emerald-700 dark:text-emerald-300', label: 'Scheduled' };
 
 export function WeekScheduleView({ staffId, staffName }: WeekScheduleViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -78,20 +79,20 @@ export function WeekScheduleView({ staffId, staffName }: WeekScheduleViewProps) 
   return (
     <View className="flex-1">
       {/* Week Navigation Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-b border-slate-100">
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
         <TouchableOpacity 
           onPress={handlePrevWeek}
-          className="w-10 h-10 items-center justify-center rounded-full bg-slate-100"
+          className="w-10 h-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
         >
-          <ChevronLeft size={20} color={colors.slate[600]} />
+          <ChevronLeft size={20} color={themeColor().icon} />
         </TouchableOpacity>
         
         <TouchableOpacity onPress={handleToday} className="flex-1 mx-3">
-          <Text className="text-base font-semibold text-slate-900 text-center">
+          <Text className="text-base font-semibold text-slate-900 dark:text-slate-50 text-center">
             {weekRangeText}
           </Text>
           {!isCurrentWeek && (
-            <Text className="text-xs text-indigo-600 text-center mt-0.5">
+            <Text className="text-xs text-indigo-600 dark:text-indigo-400 text-center mt-0.5">
               Tap to go to current week
             </Text>
           )}
@@ -99,9 +100,9 @@ export function WeekScheduleView({ staffId, staffName }: WeekScheduleViewProps) 
         
         <TouchableOpacity 
           onPress={handleNextWeek}
-          className="w-10 h-10 items-center justify-center rounded-full bg-slate-100"
+          className="w-10 h-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800"
         >
-          <ChevronRight size={20} color={colors.slate[600]} />
+          <ChevronRight size={20} color={themeColor().icon} />
         </TouchableOpacity>
       </View>
 
@@ -109,15 +110,15 @@ export function WeekScheduleView({ staffId, staffName }: WeekScheduleViewProps) 
       {isLoading ? (
         <View className="flex-1 items-center justify-center py-12">
           <ActivityIndicator size="large" color={colors.indigo[600]} />
-          <Text className="text-sm text-slate-500 mt-3">Loading schedule...</Text>
+          <Text className="text-sm text-slate-500 dark:text-slate-400 mt-3">Loading schedule...</Text>
         </View>
       ) : error ? (
         <View className="flex-1 items-center justify-center py-12 px-4">
-          <Calendar size={48} color={colors.slate[300]} />
-          <Text className="text-base font-medium text-slate-900 mt-4">
+          <Calendar size={48} color={themeColor().iconMuted} />
+          <Text className="text-base font-medium text-slate-900 dark:text-slate-50 mt-4">
             Unable to load schedule
           </Text>
-          <Text className="text-sm text-slate-500 mt-1 text-center">
+          <Text className="text-sm text-slate-500 dark:text-slate-400 mt-1 text-center">
             {error instanceof Error ? error.message : 'Please try again'}
           </Text>
           <TouchableOpacity 
@@ -148,10 +149,10 @@ export function WeekScheduleView({ staffId, staffName }: WeekScheduleViewProps) 
                 <View className="flex-row items-center justify-between">
                   <View className="flex-row items-center flex-1">
                     <View className={`w-12 items-center ${isToday ? 'opacity-100' : 'opacity-80'}`}>
-                      <Text className={`text-xs font-medium ${isToday ? 'text-indigo-600' : 'text-slate-500'}`}>
+                      <Text className={`text-xs font-medium ${isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`}>
                         {dayName}
                       </Text>
-                      <Text className={`text-lg font-bold ${isToday ? 'text-indigo-600' : 'text-slate-900'}`}>
+                      <Text className={`text-lg font-bold ${isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-900 dark:text-slate-50'}`}>
                         {formatDate(day, 'd')}
                       </Text>
                     </View>
@@ -159,7 +160,7 @@ export function WeekScheduleView({ staffId, staffName }: WeekScheduleViewProps) 
                     <View className="ml-4 flex-1">
                       {shift ? (
                         <View>
-                          <Text className="text-base font-medium text-slate-900">
+                          <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                             {formatTimeToDisplay(shift.start_time)} – {formatTimeToDisplay(shift.end_time)}
                           </Text>
                           <View className="flex-row items-center mt-1">
@@ -167,7 +168,7 @@ export function WeekScheduleView({ staffId, staffName }: WeekScheduleViewProps) 
                           </View>
                         </View>
                       ) : (
-                        <Text className="text-base text-slate-400">
+                        <Text className="text-base text-slate-400 dark:text-slate-500">
                           No shift scheduled
                         </Text>
                       )}
@@ -185,20 +186,20 @@ export function WeekScheduleView({ staffId, staffName }: WeekScheduleViewProps) 
           })}
           
           {/* Summary */}
-          <View className="mt-2 p-4 bg-slate-50 rounded-xl">
-            <Text className="text-sm font-medium text-slate-700 mb-2">
+          <View className="mt-2 p-4 bg-slate-50 dark:bg-slate-900 rounded-xl">
+            <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               Week Summary
             </Text>
             <View className="flex-row flex-wrap gap-3">
               <View className="flex-row items-center">
                 <View className="w-3 h-3 rounded-full bg-emerald-500 mr-2" />
-                <Text className="text-sm text-slate-600">
+                <Text className="text-sm text-slate-600 dark:text-slate-400">
                   {shifts.length} shift{shifts.length !== 1 ? 's' : ''} scheduled
                 </Text>
               </View>
               <View className="flex-row items-center">
                 <View className="w-3 h-3 rounded-full bg-slate-300 mr-2" />
-                <Text className="text-sm text-slate-600">
+                <Text className="text-sm text-slate-600 dark:text-slate-400">
                   {7 - shifts.length} day{7 - shifts.length !== 1 ? 's' : ''} off
                 </Text>
               </View>

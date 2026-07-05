@@ -63,7 +63,7 @@ export function ScreenContainer({
   );
 
   return (
-    <SafeAreaView edges={edges} className={`flex-1 bg-slate-50 ${className}`}>
+    <SafeAreaView edges={edges} className={`flex-1 bg-slate-50 dark:bg-slate-900 ${className}`}>
       {wrappedContent}
     </SafeAreaView>
   );

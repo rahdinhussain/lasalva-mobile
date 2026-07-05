@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button, Input, Card, Logo } from '@/components/ui';
 import { colors } from '@/constants/colors';
 import { ApiError } from '@/types';
+import { themeColor } from '@/utils/themeColor';
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -52,7 +53,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-50">
+    <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
@@ -61,15 +62,15 @@ export default function LoginScreen() {
           {/* Logo/Header */}
           <View className="items-center mb-8">
             <Logo size="lg" className="mb-4" />
-            <Text className="text-2xl font-bold text-slate-900">Welcome back</Text>
-            <Text className="text-slate-500 mt-1">Sign in to your account</Text>
+            <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Welcome back</Text>
+            <Text className="text-slate-500 dark:text-slate-400 mt-1">Sign in to your account</Text>
           </View>
 
           {/* Login Card */}
           <Card className="p-6">
             {error && (
-              <View className="bg-rose-50 border border-rose-200 rounded-xl p-3 mb-4">
-                <Text className="text-rose-700 text-sm text-center">{error}</Text>
+              <View className="bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 rounded-xl p-3 mb-4">
+                <Text className="text-rose-700 dark:text-rose-300 text-sm text-center">{error}</Text>
               </View>
             )}
 
@@ -85,7 +86,7 @@ export default function LoginScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               autoComplete="email"
-              leftIcon={<Mail size={20} color={colors.slate[500]} />}
+              leftIcon={<Mail size={20} color={themeColor().textMuted} />}
               containerClassName="mb-4"
             />
 
@@ -100,13 +101,13 @@ export default function LoginScreen() {
               error={errors.password}
               secureTextEntry
               autoComplete="password"
-              leftIcon={<Lock size={20} color={colors.slate[500]} />}
+              leftIcon={<Lock size={20} color={themeColor().textMuted} />}
               containerClassName="mb-2"
             />
 
             <Link href="/(auth)/forgot-password" asChild>
               <TouchableOpacity className="self-end mb-6">
-                <Text className="text-indigo-600 text-sm font-medium">
+                <Text className="text-indigo-600 dark:text-indigo-400 text-sm font-medium">
                   Forgot password?
                 </Text>
               </TouchableOpacity>

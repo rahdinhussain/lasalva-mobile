@@ -33,6 +33,7 @@ import { Button, Avatar, StatusBadge, Toggle } from '@/components/ui';
 import { useUpdateAppointmentStatus } from '@/hooks/useAppointments';
 import { useServicesList } from '@/hooks/useServices';
 import { useStaffList } from '@/hooks/useStaff';
+import { themeColor } from '@/utils/themeColor';
 
 interface AppointmentDetailProps {
   appointment: Appointment | null;
@@ -251,7 +252,7 @@ export function AppointmentDetail({
         >
           <TouchableOpacity
             activeOpacity={1}
-            className="bg-white rounded-t-3xl max-h-[85%]"
+            className="bg-white dark:bg-slate-800 rounded-t-3xl max-h-[85%]"
           >
           {/* Handle */}
           <View className="items-center pt-3 pb-2">
@@ -259,7 +260,7 @@ export function AppointmentDetail({
           </View>
 
           {/* Header */}
-          <View className="flex-row items-center justify-between px-4 pb-3 border-b border-slate-100">
+          <View className="flex-row items-center justify-between px-4 pb-3 border-b border-slate-100 dark:border-slate-800">
             <View className="flex-row items-center gap-3 flex-1">
               <View
                 className="w-4 h-12 rounded-full"
@@ -267,32 +268,32 @@ export function AppointmentDetail({
               />
               <View className="flex-1">
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-lg font-semibold text-slate-900">
+                  <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50">
                     {customerName}
                   </Text>
                   <StatusBadge status={appointment.status} size="sm" />
                 </View>
-                <Text className="text-sm text-slate-500">
+                <Text className="text-sm text-slate-500 dark:text-slate-400">
                   {formatDateInTimeZone(appointment.start_time, timeZone, 'EEEE, MMM d, yyyy')}
                 </Text>
               </View>
             </View>
             <TouchableOpacity onPress={onClose} className="p-2 -mr-2">
-              <X size={24} color={colors.slate[500]} />
+              <X size={24} color={themeColor().textMuted} />
             </TouchableOpacity>
           </View>
 
           <ScrollView className="px-4" showsVerticalScrollIndicator={false}>
             {/* Details */}
-            <View className="py-4 gap-4 bg-slate-50 rounded-xl p-4 my-3">
+            <View className="py-4 gap-4 bg-slate-50 dark:bg-slate-900 rounded-xl p-4 my-3">
               {/* Date */}
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full bg-white items-center justify-center">
-                  <CalendarDays size={20} color={colors.slate[600]} />
+                <View className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 items-center justify-center">
+                  <CalendarDays size={20} color={themeColor().icon} />
                 </View>
                 <View>
-                  <Text className="text-sm text-slate-500">Date</Text>
-                  <Text className="text-base font-medium text-slate-900">
+                  <Text className="text-sm text-slate-500 dark:text-slate-400">Date</Text>
+                  <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                     {formatDateInTimeZone(appointment.start_time, timeZone, 'EEEE, MMM d, yyyy')}
                   </Text>
                 </View>
@@ -300,12 +301,12 @@ export function AppointmentDetail({
 
               {/* Time */}
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full bg-white items-center justify-center">
-                  <Clock size={20} color={colors.slate[600]} />
+                <View className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 items-center justify-center">
+                  <Clock size={20} color={themeColor().icon} />
                 </View>
                 <View>
-                  <Text className="text-sm text-slate-500">Time</Text>
-                  <Text className="text-base font-medium text-slate-900">
+                  <Text className="text-sm text-slate-500 dark:text-slate-400">Time</Text>
+                  <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                     {formatTimeRangeInTimeZone(
                       appointment.start_time,
                       appointment.end_time,
@@ -317,12 +318,12 @@ export function AppointmentDetail({
 
               {/* Service */}
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full bg-white items-center justify-center">
-                  <Briefcase size={20} color={colors.slate[600]} />
+                <View className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 items-center justify-center">
+                  <Briefcase size={20} color={themeColor().icon} />
                 </View>
                 <View>
-                  <Text className="text-sm text-slate-500">Service</Text>
-                  <Text className="text-base font-medium text-slate-900">
+                  <Text className="text-sm text-slate-500 dark:text-slate-400">Service</Text>
+                  <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                     {serviceName}
                   </Text>
                 </View>
@@ -336,8 +337,8 @@ export function AppointmentDetail({
                   size="md"
                 />
                 <View>
-                  <Text className="text-sm text-slate-500">Staff</Text>
-                  <Text className="text-base font-medium text-slate-900">
+                  <Text className="text-sm text-slate-500 dark:text-slate-400">Staff</Text>
+                  <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                     {staffName}
                   </Text>
                 </View>
@@ -345,12 +346,12 @@ export function AppointmentDetail({
 
               {/* Duration */}
               <View className="flex-row items-center gap-3">
-                <View className="w-10 h-10 rounded-full bg-white items-center justify-center">
-                  <Timer size={20} color={colors.slate[600]} />
+                <View className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 items-center justify-center">
+                  <Timer size={20} color={themeColor().icon} />
                 </View>
                 <View>
-                  <Text className="text-sm text-slate-500">Duration</Text>
-                  <Text className="text-base font-medium text-slate-900">
+                  <Text className="text-sm text-slate-500 dark:text-slate-400">Duration</Text>
+                  <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                     {formatDuration(durationMin)}
                   </Text>
                 </View>
@@ -359,20 +360,20 @@ export function AppointmentDetail({
               {/* Price */}
               {(appointment.price !== null || appointment.tax !== null) && (
                 <View className="flex-row items-center gap-3">
-                  <View className="w-10 h-10 rounded-full bg-white items-center justify-center">
-                    <DollarSign size={20} color={colors.slate[600]} />
+                  <View className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 items-center justify-center">
+                    <DollarSign size={20} color={themeColor().icon} />
                   </View>
                   <View>
-                    <Text className="text-sm text-slate-500">Price</Text>
-                    <Text className="text-base font-medium text-slate-900">
+                    <Text className="text-sm text-slate-500 dark:text-slate-400">Price</Text>
+                    <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                       {formatCurrency(price)}
                     </Text>
                     {taxPercent > 0 && (
                       <>
-                        <Text className="text-sm text-slate-500">
+                        <Text className="text-sm text-slate-500 dark:text-slate-400">
                           Tax: {formatCurrency(taxAmount)} ({taxPercent}%)
                         </Text>
-                        <Text className="text-sm font-semibold text-slate-900">
+                        <Text className="text-sm font-semibold text-slate-900 dark:text-slate-50">
                           Total: {formatCurrency(total)}
                         </Text>
                       </>
@@ -384,12 +385,12 @@ export function AppointmentDetail({
               {/* Customer Email */}
               {appointment.customer_email && (
                 <View className="flex-row items-center gap-3">
-                  <View className="w-10 h-10 rounded-full bg-white items-center justify-center">
-                    <Mail size={20} color={colors.slate[600]} />
+                  <View className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 items-center justify-center">
+                    <Mail size={20} color={themeColor().icon} />
                   </View>
                   <View>
-                    <Text className="text-sm text-slate-500">Email</Text>
-                    <Text className="text-base font-medium text-slate-900">
+                    <Text className="text-sm text-slate-500 dark:text-slate-400">Email</Text>
+                    <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                       {appointment.customer_email}
                     </Text>
                   </View>
@@ -399,12 +400,12 @@ export function AppointmentDetail({
           {/* Customer Phone */}
           {appointment.customer_phone && (
             <View className="flex-row items-center gap-3">
-              <View className="w-10 h-10 rounded-full bg-white items-center justify-center">
-                <Phone size={20} color={colors.slate[600]} />
+              <View className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 items-center justify-center">
+                <Phone size={20} color={themeColor().icon} />
               </View>
               <View>
-                <Text className="text-sm text-slate-500">Phone</Text>
-                <Text className="text-base font-medium text-slate-900">
+                <Text className="text-sm text-slate-500 dark:text-slate-400">Phone</Text>
+                <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
                   {appointment.customer_phone}
                 </Text>
               </View>
@@ -416,7 +417,7 @@ export function AppointmentDetail({
           {/* Actions */}
           {hasActions && (
             <View
-              className="px-4 pt-4 border-t border-slate-100"
+              className="px-4 pt-4 border-t border-slate-100 dark:border-slate-800"
               style={{ paddingBottom: Math.max(insets.bottom, 16) }}
             >
               {renderActions()}
@@ -439,15 +440,15 @@ export function AppointmentDetail({
         >
           <TouchableOpacity
             activeOpacity={1}
-            className="bg-white rounded-t-3xl max-h-[90%]"
+            className="bg-white dark:bg-slate-800 rounded-t-3xl max-h-[90%]"
           >
           <View className="items-center pt-3 pb-2">
             <View className="w-10 h-1 bg-slate-300 rounded-full" />
           </View>
-          <View className="flex-row items-center justify-between px-4 pb-3 border-b border-slate-100">
-            <Text className="text-lg font-semibold text-slate-900">Reschedule</Text>
+          <View className="flex-row items-center justify-between px-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+            <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50">Reschedule</Text>
             <TouchableOpacity onPress={() => setRescheduleVisible(false)} className="p-2 -mr-2">
-              <X size={24} color={colors.slate[500]} />
+              <X size={24} color={themeColor().textMuted} />
             </TouchableOpacity>
           </View>
 

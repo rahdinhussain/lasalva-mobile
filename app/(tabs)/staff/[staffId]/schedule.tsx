@@ -8,6 +8,7 @@ import { useRoleAccess } from '@/hooks/useRoleAccess';
 import { WeekScheduleView, ShiftScheduler } from '@/components/staff';
 import { Header } from '@/components/layout';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 type TabType = 'view' | 'schedule';
 
@@ -20,24 +21,24 @@ export default function StaffScheduleScreen() {
   const showManageTab = canManageStaff;
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       <Header title={staff?.name ? `${staff.name}'s Schedule` : 'Schedule'} showBack />
 
       {/* Tab Switcher: staff sees only Week View (preview), admin sees both */}
       {showManageTab && (
-        <View className="flex-row bg-white border-b border-slate-100 px-4 py-2">
+        <View className="flex-row bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800 px-4 py-2">
           <TouchableOpacity
             onPress={() => setActiveTab('view')}
             className={`flex-1 flex-row items-center justify-center py-2.5 rounded-lg mr-1 ${
-              activeTab === 'view' ? 'bg-indigo-50' : 'bg-transparent'
+              activeTab === 'view' ? 'bg-indigo-50 dark:bg-indigo-500/20' : 'bg-transparent'
             }`}
           >
             <Calendar
               size={18}
-              color={activeTab === 'view' ? colors.indigo[600] : colors.slate[400]}
+              color={activeTab === 'view' ? colors.indigo[600] : themeColor().iconMuted}
             />
             <Text className={`ml-2 font-medium ${
-              activeTab === 'view' ? 'text-indigo-600' : 'text-slate-500'
+              activeTab === 'view' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
             }`}>
               Week View
             </Text>
@@ -46,15 +47,15 @@ export default function StaffScheduleScreen() {
           <TouchableOpacity
             onPress={() => setActiveTab('schedule')}
             className={`flex-1 flex-row items-center justify-center py-2.5 rounded-lg ml-1 ${
-              activeTab === 'schedule' ? 'bg-indigo-50' : 'bg-transparent'
+              activeTab === 'schedule' ? 'bg-indigo-50 dark:bg-indigo-500/20' : 'bg-transparent'
             }`}
           >
             <CalendarPlus
               size={18}
-              color={activeTab === 'schedule' ? colors.indigo[600] : colors.slate[400]}
+              color={activeTab === 'schedule' ? colors.indigo[600] : themeColor().iconMuted}
             />
             <Text className={`ml-2 font-medium ${
-              activeTab === 'schedule' ? 'text-indigo-600' : 'text-slate-500'
+              activeTab === 'schedule' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
             }`}>
               Schedule
             </Text>

@@ -22,11 +22,11 @@ export function EmptyState({
   return (
     <View className={`items-center justify-center py-12 px-6 ${className}`}>
       {icon && <View className="mb-4">{icon}</View>}
-      <Text className="text-lg font-semibold text-slate-900 text-center">
+      <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50 text-center">
         {title}
       </Text>
       {description && (
-        <Text className="text-sm text-slate-500 text-center mt-2 max-w-xs">
+        <Text className="text-sm text-slate-500 dark:text-slate-400 text-center mt-2 max-w-xs">
           {description}
         </Text>
       )}

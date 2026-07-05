@@ -8,6 +8,7 @@ import { useRoleAccess } from '@/hooks/useRoleAccess';
 import { Header } from '@/components/layout';
 import { Avatar, Card, Button, RoleBadge, Badge, ErrorState, SkeletonCard } from '@/components/ui';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 export default function StaffDetailScreen() {
   const { staffId } = useLocalSearchParams<{ staffId: string }>();
@@ -48,7 +49,7 @@ export default function StaffDetailScreen() {
 
   if (error) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Staff" showBack />
         <ErrorState message="Failed to load staff details" onRetry={refetch} />
       </SafeAreaView>
@@ -57,7 +58,7 @@ export default function StaffDetailScreen() {
 
   if (isLoading || !staff) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Staff" showBack />
         <View className="p-4">
           <SkeletonCard />
@@ -67,7 +68,7 @@ export default function StaffDetailScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       <Header title="Staff Details" showBack />
       
       <ScrollView 
@@ -82,11 +83,11 @@ export default function StaffDetailScreen() {
             name={staff.name}
             size="xl"
           />
-          <Text className="text-xl font-semibold text-slate-900 mt-4 text-center">
+          <Text className="text-xl font-semibold text-slate-900 dark:text-slate-50 mt-4 text-center">
             {staff.name || 'Unnamed'}
           </Text>
           {staff.designation && (
-            <Text className="text-base text-slate-500 mt-1 text-center">
+            <Text className="text-base text-slate-500 dark:text-slate-400 mt-1 text-center">
               {staff.designation}
             </Text>
           )}
@@ -105,12 +106,12 @@ export default function StaffDetailScreen() {
           </Card.Header>
           <Card.Content>
             <View className="flex-row items-center gap-3">
-              <View className="w-10 h-10 rounded-full bg-slate-100 items-center justify-center">
-                <Mail size={20} color={colors.slate[600]} />
+              <View className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center">
+                <Mail size={20} color={themeColor().icon} />
               </View>
               <View>
-                <Text className="text-sm text-slate-500">Email</Text>
-                <Text className="text-base text-slate-900">
+                <Text className="text-sm text-slate-500 dark:text-slate-400">Email</Text>
+                <Text className="text-base text-slate-900 dark:text-slate-50">
                   {staff.email || '—'}
                 </Text>
               </View>
@@ -129,9 +130,9 @@ export default function StaffDetailScreen() {
                 {staff.notify_appointments ? (
                   <Bell size={20} color={colors.emerald[500]} />
                 ) : (
-                  <BellOff size={20} color={colors.slate[400]} />
+                  <BellOff size={20} color={themeColor().iconMuted} />
                 )}
-                <Text className={`text-base ${staff.notify_appointments ? 'text-slate-900' : 'text-slate-400'}`}>
+                <Text className={`text-base ${staff.notify_appointments ? 'text-slate-900 dark:text-slate-50' : 'text-slate-400 dark:text-slate-500'}`}>
                   Appointment notifications {staff.notify_appointments ? 'enabled' : 'disabled'}
                 </Text>
               </View>
@@ -139,9 +140,9 @@ export default function StaffDetailScreen() {
                 {staff.notify_shifts ? (
                   <Bell size={20} color={colors.emerald[500]} />
                 ) : (
-                  <BellOff size={20} color={colors.slate[400]} />
+                  <BellOff size={20} color={themeColor().iconMuted} />
                 )}
-                <Text className={`text-base ${staff.notify_shifts ? 'text-slate-900' : 'text-slate-400'}`}>
+                <Text className={`text-base ${staff.notify_shifts ? 'text-slate-900 dark:text-slate-50' : 'text-slate-400 dark:text-slate-500'}`}>
                   Shift notifications {staff.notify_shifts ? 'enabled' : 'disabled'}
                 </Text>
               </View>
@@ -155,16 +156,16 @@ export default function StaffDetailScreen() {
             <View className="flex-row items-center justify-between">
               <Card.Title>Schedule</Card.Title>
               {canManageStaff && (
-                <Text className="text-sm text-indigo-600 font-medium">Manage</Text>
+                <Text className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">Manage</Text>
               )}
             </View>
           </Card.Header>
           <Card.Content>
             <View className="flex-row items-center gap-3">
-              <View className="w-10 h-10 rounded-full bg-indigo-50 items-center justify-center">
+              <View className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-500/20 items-center justify-center">
                 <Calendar size={20} color={colors.indigo[600]} />
               </View>
-              <Text className="text-base text-slate-900">
+              <Text className="text-base text-slate-900 dark:text-slate-50">
                 {canManageStaff ? 'View and manage weekly schedule' : 'View weekly schedule'}
               </Text>
             </View>
@@ -177,7 +178,7 @@ export default function StaffDetailScreen() {
             <Button
               variant="secondary"
               fullWidth
-              icon={<Edit2 size={18} color={colors.slate[700]} />}
+              icon={<Edit2 size={18} color={themeColor().icon} />}
               onPress={handleEdit}
             >
               Edit Staff

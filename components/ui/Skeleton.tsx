@@ -48,7 +48,7 @@ export function Skeleton({
         },
         style,
       ]}
-      className={`bg-slate-200 ${className}`}
+      className={`bg-slate-200 dark:bg-slate-700 ${className}`}
       {...props}
     />
   );
@@ -74,7 +74,7 @@ export function SkeletonAvatar({ size = 40 }: { size?: number }) {
 
 export function SkeletonCard({ className = '' }: { className?: string }) {
   return (
-    <View className={`bg-white rounded-2xl border border-slate-200 p-4 ${className}`}>
+    <View className={`bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 ${className}`}>
       <View className="flex-row items-center gap-3 mb-4">
         <SkeletonAvatar size={48} />
         <View className="flex-1 gap-2">

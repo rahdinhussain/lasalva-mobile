@@ -7,6 +7,7 @@ import { resetPassword } from '@/services/auth';
 import { Button, Input, Card, IconButton, Logo } from '@/components/ui';
 import { colors } from '@/constants/colors';
 import { ApiError } from '@/types';
+import { themeColor } from '@/utils/themeColor';
 
 export default function ResetPasswordScreen() {
   const router = useRouter();
@@ -61,16 +62,16 @@ export default function ResetPasswordScreen() {
 
   if (isSuccess) {
     return (
-      <SafeAreaView className="flex-1 bg-slate-50">
+      <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
         <View className="flex-1 justify-center px-6">
           <Card className="p-6 items-center">
-            <View className="w-16 h-16 rounded-full bg-emerald-50 items-center justify-center mb-4">
+            <View className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-500/20 items-center justify-center mb-4">
               <CheckCircle size={32} color={colors.emerald[500]} />
             </View>
-            <Text className="text-xl font-semibold text-slate-900 text-center">
+            <Text className="text-xl font-semibold text-slate-900 dark:text-slate-50 text-center">
               Password reset
             </Text>
-            <Text className="text-slate-500 text-center mt-2">
+            <Text className="text-slate-500 dark:text-slate-400 text-center mt-2">
               Your password has been successfully reset. You can now log in with your new password.
             </Text>
             <Button
@@ -88,10 +89,10 @@ export default function ResetPasswordScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-50">
+    <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
       <View className="flex-row items-center px-4 py-2">
         <IconButton
-          icon={<ArrowLeft size={24} color={colors.slate[700]} />}
+          icon={<ArrowLeft size={24} color={themeColor().icon} />}
           variant="ghost"
           onPress={() => router.back()}
         />
@@ -104,16 +105,16 @@ export default function ResetPasswordScreen() {
         <View className="flex-1 justify-center px-6">
           <View className="items-center mb-8">
             <Logo size="md" className="mb-4" />
-            <Text className="text-2xl font-bold text-slate-900">New password</Text>
-            <Text className="text-slate-500 mt-1 text-center">
+            <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">New password</Text>
+            <Text className="text-slate-500 dark:text-slate-400 mt-1 text-center">
               Enter your new password below
             </Text>
           </View>
 
           <Card className="p-6">
             {error && (
-              <View className="bg-rose-50 border border-rose-200 rounded-xl p-3 mb-4">
-                <Text className="text-rose-700 text-sm text-center">{error}</Text>
+              <View className="bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 rounded-xl p-3 mb-4">
+                <Text className="text-rose-700 dark:text-rose-300 text-sm text-center">{error}</Text>
               </View>
             )}
 
@@ -127,7 +128,7 @@ export default function ResetPasswordScreen() {
               }}
               error={errors.password}
               secureTextEntry
-              leftIcon={<Lock size={20} color={colors.slate[500]} />}
+              leftIcon={<Lock size={20} color={themeColor().textMuted} />}
               containerClassName="mb-4"
             />
 
@@ -141,7 +142,7 @@ export default function ResetPasswordScreen() {
               }}
               error={errors.confirmPassword}
               secureTextEntry
-              leftIcon={<Lock size={20} color={colors.slate[500]} />}
+              leftIcon={<Lock size={20} color={themeColor().textMuted} />}
               containerClassName="mb-6"
             />
 

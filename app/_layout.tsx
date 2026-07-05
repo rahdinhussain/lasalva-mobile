@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query';
 import { AuthProvider } from '@/context/AuthContext';
 import { BusinessProvider } from '@/context/BusinessContext';
+import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
 const queryClient = new QueryClient({
@@ -29,6 +30,19 @@ function onAppStateChange(status: AppStateStatus) {
   }
 }
 
+// Status bar style/background must track the active theme so its text stays
+// legible when the app switches between light and dark surfaces.
+function ThemedStatusBar() {
+  const { scheme } = useTheme();
+  return (
+    <StatusBar
+      style={scheme === 'dark' ? 'light' : 'dark'}
+      backgroundColor={scheme === 'dark' ? '#0f172a' : '#ffffff'}
+      translucent={false}
+    />
+  );
+}
+
 export default function RootLayout() {
   useEffect(() => {
     const subscription = AppState.addEventListener('change', onAppStateChange);
@@ -37,20 +51,22 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="dark" backgroundColor="#ffffff" translucent={false} />
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-        <BusinessProvider>
-          <ErrorBoundary>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="(auth)" options={{ animation: 'slide_from_right' }} />
-              <Stack.Screen name="(tabs)" />
-            </Stack>
-          </ErrorBoundary>
-        </BusinessProvider>
-      </AuthProvider>
-      </QueryClientProvider>
+      <ThemeProvider>
+        <ThemedStatusBar />
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <BusinessProvider>
+              <ErrorBoundary>
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="index" />
+                  <Stack.Screen name="(auth)" options={{ animation: 'slide_from_right' }} />
+                  <Stack.Screen name="(tabs)" />
+                </Stack>
+              </ErrorBoundary>
+            </BusinessProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

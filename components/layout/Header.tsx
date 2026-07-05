@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
-import { colors } from '@/constants/colors';
+import { useThemeColors } from '@/hooks/useThemeColors';
 
 interface HeaderProps {
   title?: string;
@@ -26,6 +26,7 @@ export function Header({
   className = '',
 }: HeaderProps) {
   const router = useRouter();
+  const theme = useThemeColors();
 
   const handleBack = () => {
     if (onBack) {
@@ -39,7 +40,7 @@ export function Header({
     <View
       className={`
         flex-row items-center justify-between px-4 py-3
-        ${transparent ? '' : 'bg-white border-b border-slate-100'}
+        ${transparent ? '' : 'bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700'}
         ${className}
       `}
     >
@@ -50,17 +51,17 @@ export function Header({
             className="mr-2 -ml-2 p-2"
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <ChevronLeft size={24} color={colors.slate[700]} />
+            <ChevronLeft size={24} color={theme.icon} />
           </TouchableOpacity>
         )}
         {leftContent}
         {title && !leftContent && (
           <View className="flex-1">
-            <Text className="text-xl font-semibold text-slate-900" numberOfLines={1}>
+            <Text className="text-xl font-semibold text-slate-900 dark:text-slate-50" numberOfLines={1}>
               {title}
             </Text>
             {subtitle && (
-              <Text className="text-sm text-slate-500" numberOfLines={1}>
+              <Text className="text-sm text-slate-500 dark:text-slate-400" numberOfLines={1}>
                 {subtitle}
               </Text>
             )}

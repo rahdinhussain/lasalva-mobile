@@ -1,5 +1,5 @@
 import { Redirect } from 'expo-router';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 
 export default function Index() {
@@ -11,7 +11,7 @@ export default function Index() {
   // full-screen spinner. The login button shows its own loading state.
   if (!isHydrated) {
     return (
-      <View style={styles.centered}>
+      <View className="flex-1 items-center justify-center bg-slate-50 dark:bg-slate-900">
         <ActivityIndicator size="large" color="#4f46e5" />
       </View>
     );
@@ -23,12 +23,3 @@ export default function Index() {
 
   return <Redirect href="/(auth)/login" />;
 }
-
-const styles = StyleSheet.create({
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f8fafc',
-  },
-});

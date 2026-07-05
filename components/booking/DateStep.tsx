@@ -13,6 +13,7 @@ import {
 } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
 import { Button } from '@/components/ui/Button';
+import { themeColor } from '@/utils/themeColor';
 
 interface DateStepProps {
   selectedDate: string | null;
@@ -70,7 +71,7 @@ export function DateStep({
 
   return (
     <View className="flex-1 px-4">
-      <Text className="text-lg font-semibold text-slate-900 mb-3">
+      <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-3">
         Select a Date
       </Text>
 
@@ -84,20 +85,20 @@ export function DateStep({
         >
           <ChevronLeft
             size={22}
-            color={isCurrentMonth ? colors.slate[300] : colors.slate[700]}
+            color={isCurrentMonth ? themeColor().iconMuted : themeColor().icon}
           />
         </TouchableOpacity>
 
         <View className="flex-row items-center gap-2">
-          <Text className="text-base font-semibold text-slate-900">
+          <Text className="text-base font-semibold text-slate-900 dark:text-slate-50">
             {formatInTimeZoneSafe(calendarMonth, timeZone, 'MMMM yyyy')}
           </Text>
           {!isCurrentMonth && (
             <TouchableOpacity
               onPress={() => setCalendarMonth(new Date())}
-              className="bg-indigo-50 px-2.5 py-0.5 rounded-full"
+              className="bg-indigo-50 dark:bg-indigo-500/20 px-2.5 py-0.5 rounded-full"
             >
-              <Text className="text-xs font-medium text-indigo-600">Today</Text>
+              <Text className="text-xs font-medium text-indigo-600 dark:text-indigo-400">Today</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -107,15 +108,15 @@ export function DateStep({
           className="p-2 -mr-2"
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <ChevronRight size={22} color={colors.slate[700]} />
+          <ChevronRight size={22} color={themeColor().icon} />
         </TouchableOpacity>
       </View>
 
       {/* Weekday Headers */}
-      <View className="flex-row border-b border-slate-100">
+      <View className="flex-row border-b border-slate-100 dark:border-slate-800">
         {WEEKDAY_LABELS.map((label) => (
           <View key={label} className="flex-1 items-center py-1.5">
-            <Text className="text-xs font-medium text-slate-500">{label}</Text>
+            <Text className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</Text>
           </View>
         ))}
       </View>
@@ -146,7 +147,7 @@ export function DateStep({
                     isSelected
                       ? 'bg-indigo-600'
                       : isTodayDate && inCurrentMonth
-                      ? 'bg-indigo-50'
+                      ? 'bg-indigo-50 dark:bg-indigo-500/20'
                       : ''
                   }`}
                 >
@@ -155,10 +156,10 @@ export function DateStep({
                       isSelected
                         ? 'text-white'
                         : isTodayDate && inCurrentMonth
-                        ? 'text-indigo-600 font-semibold'
+                        ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
                         : isDisabled
                         ? 'text-slate-300'
-                        : 'text-slate-900'
+                        : 'text-slate-900 dark:text-slate-50'
                     }`}
                   >
                     {format(displayDate, 'd')}

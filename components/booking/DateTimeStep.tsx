@@ -16,6 +16,7 @@ import { colors } from '@/constants/colors';
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { themeColor } from '@/utils/themeColor';
 
 interface DateTimeStepProps {
   serviceId: string;
@@ -89,7 +90,7 @@ export function DateTimeStep({
 
   return (
     <View className="flex-1 px-4">
-      <Text className="text-lg font-semibold text-slate-900 mb-3">
+      <Text className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-3">
         Pick a Date & Time
       </Text>
 
@@ -103,20 +104,20 @@ export function DateTimeStep({
         >
           <ChevronLeft
             size={22}
-            color={isCurrentMonth ? colors.slate[300] : colors.slate[700]}
+            color={isCurrentMonth ? themeColor().iconMuted : themeColor().icon}
           />
         </TouchableOpacity>
 
         <View className="flex-row items-center gap-2">
-          <Text className="text-base font-semibold text-slate-900">
+          <Text className="text-base font-semibold text-slate-900 dark:text-slate-50">
             {formatInTimeZoneSafe(calendarMonth, timeZone, 'MMMM yyyy')}
           </Text>
           {!isCurrentMonth && (
             <TouchableOpacity
               onPress={() => setCalendarMonth(new Date())}
-              className="bg-indigo-50 px-2.5 py-0.5 rounded-full"
+              className="bg-indigo-50 dark:bg-indigo-500/20 px-2.5 py-0.5 rounded-full"
             >
-              <Text className="text-xs font-medium text-indigo-600">Today</Text>
+              <Text className="text-xs font-medium text-indigo-600 dark:text-indigo-400">Today</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -126,15 +127,15 @@ export function DateTimeStep({
           className="p-2 -mr-2"
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <ChevronRight size={22} color={colors.slate[700]} />
+          <ChevronRight size={22} color={themeColor().icon} />
         </TouchableOpacity>
       </View>
 
       {/* Weekday Headers */}
-      <View className="flex-row border-b border-slate-100">
+      <View className="flex-row border-b border-slate-100 dark:border-slate-800">
         {WEEKDAY_LABELS.map((label) => (
           <View key={label} className="flex-1 items-center py-1.5">
-            <Text className="text-xs font-medium text-slate-500">{label}</Text>
+            <Text className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</Text>
           </View>
         ))}
       </View>
@@ -165,7 +166,7 @@ export function DateTimeStep({
                     isSelected
                       ? 'bg-indigo-600'
                       : isTodayDate && inCurrentMonth
-                      ? 'bg-indigo-50'
+                      ? 'bg-indigo-50 dark:bg-indigo-500/20'
                       : ''
                   }`}
                 >
@@ -174,10 +175,10 @@ export function DateTimeStep({
                       isSelected
                         ? 'text-white'
                         : isTodayDate && inCurrentMonth
-                        ? 'text-indigo-600 font-semibold'
+                        ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
                         : isDisabled
                         ? 'text-slate-300'
-                        : 'text-slate-900'
+                        : 'text-slate-900 dark:text-slate-50'
                     }`}
                   >
                     {format(displayDate, 'd')}
@@ -193,11 +194,11 @@ export function DateTimeStep({
       ))}
 
       {/* Time Slots */}
-      <View className="mt-3 border-t border-slate-100 pt-3">
+      <View className="mt-3 border-t border-slate-100 dark:border-slate-800 pt-3">
         {!selectedDate ? (
           <View className="items-center py-4">
-            <CalendarDays size={28} color={colors.slate[300]} />
-            <Text className="text-sm text-slate-400 mt-2">
+            <CalendarDays size={28} color={themeColor().iconMuted} />
+            <Text className="text-sm text-slate-400 dark:text-slate-500 mt-2">
               Select a date to see available times
             </Text>
           </View>
@@ -238,8 +239,8 @@ export function DateTimeStep({
                       isSlotSelected
                         ? 'bg-indigo-600 border-indigo-600'
                         : isAvailable
-                        ? 'bg-white border-slate-200'
-                        : 'bg-slate-50 border-slate-100 opacity-40'
+                        ? 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+                        : 'bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800 opacity-40'
                     }`}
                   >
                     <Text
@@ -247,8 +248,8 @@ export function DateTimeStep({
                         isSlotSelected
                           ? 'text-white'
                           : isAvailable
-                          ? 'text-slate-700'
-                          : 'text-slate-400'
+                          ? 'text-slate-700 dark:text-slate-300'
+                          : 'text-slate-400 dark:text-slate-500'
                       }`}
                     >
                       {formatInTimeZoneSafe(slot.startTime, timeZone, 'h:mm a')}
@@ -256,7 +257,7 @@ export function DateTimeStep({
                     {isAvailable && slot.availableStaffCount > 1 && (
                       <Text
                         className={`text-xs text-center ${
-                          isSlotSelected ? 'text-indigo-200' : 'text-slate-400'
+                          isSlotSelected ? 'text-indigo-200' : 'text-slate-400 dark:text-slate-500'
                         }`}
                       >
                         {slot.availableStaffCount} staff

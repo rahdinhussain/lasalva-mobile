@@ -40,7 +40,7 @@ export function Card({ children, className = '', onPress, pressable = false, sty
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           activeOpacity={0.95}
-          className={`bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden ${className}`}
+          className={`bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden ${className}`}
         >
           {children}
         </TouchableOpacity>
@@ -51,7 +51,7 @@ export function Card({ children, className = '', onPress, pressable = false, sty
   return (
     <View
       style={style}
-      className={`bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden ${className}`}
+      className={`bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden ${className}`}
     >
       {children}
     </View>
@@ -76,7 +76,7 @@ Card.Title = function CardTitle({
   className?: string;
 }) {
   return (
-    <Text className={`text-lg font-semibold text-slate-900 ${className}`}>
+    <Text className={`text-lg font-semibold text-slate-900 dark:text-slate-50 ${className}`}>
       {children}
     </Text>
   );
@@ -90,7 +90,7 @@ Card.Description = function CardDescription({
   className?: string;
 }) {
   return (
-    <Text className={`text-sm text-slate-500 mt-1 ${className}`}>
+    <Text className={`text-sm text-slate-500 dark:text-slate-400 mt-1 ${className}`}>
       {children}
     </Text>
   );
@@ -114,7 +114,7 @@ Card.Footer = function CardFooter({
   className?: string;
 }) {
   return (
-    <View className={`px-4 py-3 border-t border-slate-100 ${className}`}>
+    <View className={`px-4 py-3 border-t border-slate-100 dark:border-slate-800 ${className}`}>
       {children}
     </View>
   );

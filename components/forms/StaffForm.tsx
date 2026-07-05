@@ -6,6 +6,7 @@ import { Camera, User, Mail, Lock, Briefcase } from 'lucide-react-native';
 import { Profile } from '@/types';
 import { Button, Input, Card, Toggle, Avatar } from '@/components/ui';
 import { colors } from '@/constants/colors';
+import { themeColor } from '@/utils/themeColor';
 
 interface StaffFormData {
   name: string;
@@ -120,7 +121,7 @@ export function StaffForm({ initialData, isEditing = false, onSubmit, isLoading 
             <Camera size={16} color="white" />
           </View>
         </TouchableOpacity>
-        <Text className="text-sm text-slate-500 mt-2">Tap to change photo</Text>
+        <Text className="text-sm text-slate-500 dark:text-slate-400 mt-2">Tap to change photo</Text>
       </View>
 
       <Card className="p-4 mb-4">
@@ -133,7 +134,7 @@ export function StaffForm({ initialData, isEditing = false, onSubmit, isLoading 
             setErrors((prev) => ({ ...prev, name: undefined }));
           }}
           error={errors.name}
-          leftIcon={<User size={20} color={colors.slate[500]} />}
+          leftIcon={<User size={20} color={themeColor().textMuted} />}
           containerClassName="mb-4"
         />
 
@@ -148,7 +149,7 @@ export function StaffForm({ initialData, isEditing = false, onSubmit, isLoading 
           error={errors.email}
           keyboardType="email-address"
           autoCapitalize="none"
-          leftIcon={<Mail size={20} color={colors.slate[500]} />}
+          leftIcon={<Mail size={20} color={themeColor().textMuted} />}
           containerClassName="mb-4"
         />
 
@@ -162,7 +163,7 @@ export function StaffForm({ initialData, isEditing = false, onSubmit, isLoading 
           }}
           error={errors.password}
           secureTextEntry
-          leftIcon={<Lock size={20} color={colors.slate[500]} />}
+          leftIcon={<Lock size={20} color={themeColor().textMuted} />}
           containerClassName="mb-4"
         />
 
@@ -171,12 +172,12 @@ export function StaffForm({ initialData, isEditing = false, onSubmit, isLoading 
           placeholder="e.g., Stylist, Therapist"
           value={formData.designation}
           onChangeText={(text) => setFormData((prev) => ({ ...prev, designation: text }))}
-          leftIcon={<Briefcase size={20} color={colors.slate[500]} />}
+          leftIcon={<Briefcase size={20} color={themeColor().textMuted} />}
         />
       </Card>
 
       <Card className="p-4 mb-6">
-        <Text className="text-sm font-medium text-slate-700 mb-3">Notifications</Text>
+        <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Notifications</Text>
         <Toggle
           label="Appointment notifications"
           description="Receive notifications for new appointments"

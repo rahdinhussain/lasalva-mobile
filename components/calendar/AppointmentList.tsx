@@ -23,6 +23,7 @@ import {
 import { formatCurrency, formatDuration } from '@/utils/formatters';
 import { SkeletonListItem, EmptyState, StatusBadge } from '@/components/ui';
 import { useSearchAppointments } from '@/hooks/useAppointments';
+import { themeColor } from '@/utils/themeColor';
 
 interface AppointmentListProps {
   appointments: Appointment[];
@@ -162,7 +163,7 @@ export function AppointmentList({
       return (
         <TouchableOpacity
           onPress={() => onAppointmentPress(apt)}
-          className="mx-4 mb-2 bg-white rounded-xl p-3 border border-slate-100"
+          className="mx-4 mb-2 bg-white dark:bg-slate-800 rounded-xl p-3 border border-slate-100 dark:border-slate-800"
           activeOpacity={0.7}
         >
           <View className="flex-row items-center">
@@ -182,17 +183,17 @@ export function AppointmentList({
             {/* Info */}
             <View className="flex-1 mr-3">
               <Text
-                className="text-sm font-semibold text-slate-900"
+                className="text-sm font-semibold text-slate-900 dark:text-slate-50"
                 numberOfLines={1}
               >
                 {customerName}
               </Text>
-              <Text className="text-xs text-slate-500 mt-0.5" numberOfLines={1}>
+              <Text className="text-xs text-slate-500 dark:text-slate-400 mt-0.5" numberOfLines={1}>
                 {serviceName} · {staffName}
               </Text>
               {apt.customer_email && (
                 <Text
-                  className="text-xs text-slate-400 mt-0.5"
+                  className="text-xs text-slate-400 dark:text-slate-500 mt-0.5"
                   numberOfLines={1}
                 >
                   {apt.customer_email}
@@ -202,10 +203,10 @@ export function AppointmentList({
 
             {/* Time + Status */}
             <View className="items-end">
-              <Text className="text-sm font-semibold text-slate-900">
+              <Text className="text-sm font-semibold text-slate-900 dark:text-slate-50">
                 {timeLabel}
               </Text>
-              <Text className="text-xs text-slate-500 mt-0.5">
+              <Text className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {formatDuration(durationMin)}
               </Text>
               <StatusBadge status={apt.status} size="sm" className="mt-1" />
@@ -238,13 +239,13 @@ export function AppointmentList({
   return (
     <View className="flex-1">
       {/* Search bar */}
-      <View className="px-4 py-3 bg-white">
-        <View className="flex-row items-center bg-slate-100 rounded-lg px-3 min-h-[44px]">
-          <Search size={18} color={colors.slate[400]} />
+      <View className="px-4 py-3 bg-white dark:bg-slate-800">
+        <View className="flex-row items-center bg-slate-100 dark:bg-slate-800 rounded-lg px-3 min-h-[44px]">
+          <Search size={18} color={themeColor().iconMuted} />
           <TextInput
-            className="flex-1 ml-2 text-sm text-slate-900 py-2.5"
+            className="flex-1 ml-2 text-sm text-slate-900 dark:text-slate-50 py-2.5"
             placeholder="Search by name, service, or staff..."
-            placeholderTextColor={colors.slate[400]}
+            placeholderTextColor={themeColor().iconMuted}
             value={searchQuery}
             onChangeText={setSearchQuery}
             autoCapitalize="none"
@@ -256,7 +257,7 @@ export function AppointmentList({
       </View>
 
       {/* Status filter chips */}
-      <View className="bg-white border-b border-slate-100">
+      <View className="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -276,13 +277,13 @@ export function AppointmentList({
                 className={`w-24 h-9 rounded-full border items-center justify-center ${
                   isActive
                     ? 'bg-indigo-600 border-indigo-600'
-                    : 'bg-white border-slate-200'
+                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
                 }`}
                 activeOpacity={0.7}
               >
                 <Text
                   className={`text-xs font-medium leading-4 text-center ${
-                    isActive ? 'text-white' : 'text-slate-600'
+                    isActive ? 'text-white' : 'text-slate-600 dark:text-slate-400'
                   }`}
                   numberOfLines={1}
                 >
@@ -295,8 +296,8 @@ export function AppointmentList({
       </View>
 
       {shouldUseServerSearch && searchResult.statistics && (
-        <View className="px-4 py-2 bg-slate-50 border-b border-slate-100">
-          <Text className="text-xs text-slate-600">
+        <View className="px-4 py-2 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
+          <Text className="text-xs text-slate-600 dark:text-slate-400">
             Total {searchResult.total ?? filteredAppointments.length} · Revenue{' '}
             {formatCurrency(searchResult.statistics.revenue ?? 0)} · Completion{' '}
             {Math.round((searchResult.statistics.completionRate ?? 0) * 100)}%
@@ -307,7 +308,7 @@ export function AppointmentList({
       {/* Appointment list */}
       {sections.length === 0 ? (
         <EmptyState
-          icon={<Calendar size={48} color={colors.slate[300]} />}
+          icon={<Calendar size={48} color={themeColor().iconMuted} />}
           title="No appointments"
           description={
             searchQuery || activeFilter !== 'ALL'
@@ -322,17 +323,17 @@ export function AppointmentList({
           keyExtractor={(item) => item.id}
           renderItem={renderAppointmentCard}
           renderSectionHeader={({ section }) => (
-            <View className="px-4 py-2 bg-slate-50">
+            <View className="px-4 py-2 bg-slate-50 dark:bg-slate-900">
               <View className="flex-row items-center gap-2">
                 <Text
                   className={`text-sm font-semibold ${
-                    section.isToday ? 'text-indigo-600' : 'text-slate-700'
+                    section.isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300'
                   }`}
                 >
                   {section.title}
                 </Text>
-                <View className="bg-slate-200 px-2 py-0.5 rounded-full">
-                  <Text className="text-xs font-medium text-slate-600">
+                <View className="bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">
+                  <Text className="text-xs font-medium text-slate-600 dark:text-slate-400">
                     {section.count}
                   </Text>
                 </View>

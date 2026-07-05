@@ -25,11 +25,11 @@ export function StaffCard({ staff, weekSchedule }: StaffCardProps) {
           name={staff.name}
           size="lg"
         />
-        <Text className="text-base font-semibold text-slate-900 mt-3 text-center" numberOfLines={1}>
+        <Text className="text-base font-semibold text-slate-900 dark:text-slate-50 mt-3 text-center" numberOfLines={1}>
           {staff.name || 'Unnamed'}
         </Text>
         {staff.designation && (
-          <Text className="text-sm text-slate-500 mt-0.5 text-center" numberOfLines={1}>
+          <Text className="text-sm text-slate-500 dark:text-slate-400 mt-0.5 text-center" numberOfLines={1}>
             {staff.designation}
           </Text>
         )}
@@ -45,12 +45,12 @@ export function StaffCard({ staff, weekSchedule }: StaffCardProps) {
             const isWorking = weekSchedule[day] ?? false;
             return (
               <View key={day} className="items-center">
-                <Text className="text-xs text-slate-400 mb-1">
+                <Text className="text-xs text-slate-400 dark:text-slate-500 mb-1">
                   {DAY_NAMES_SHORT[day].charAt(0)}
                 </Text>
                 <View
                   className={`w-2 h-2 rounded-full ${
-                    isWorking ? 'bg-indigo-500' : 'bg-slate-200'
+                    isWorking ? 'bg-indigo-500' : 'bg-slate-200 dark:bg-slate-700'
                   }`}
                 />
               </View>
@@ -60,8 +60,8 @@ export function StaffCard({ staff, weekSchedule }: StaffCardProps) {
       )}
 
       {!staff.is_active && (
-        <View className="bg-slate-100 rounded-lg px-2 py-1 mt-3 self-center">
-          <Text className="text-xs text-slate-500">Inactive</Text>
+        <View className="bg-slate-100 dark:bg-slate-800 rounded-lg px-2 py-1 mt-3 self-center">
+          <Text className="text-xs text-slate-500 dark:text-slate-400">Inactive</Text>
         </View>
       )}
     </Card>

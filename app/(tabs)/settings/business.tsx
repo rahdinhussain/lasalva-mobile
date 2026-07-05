@@ -25,6 +25,7 @@ import { colors } from '@/constants/colors';
 import { BOOKING_BASE_URL } from '@/constants';
 import { DAY_NAMES } from '@/constants';
 import { generateTimeSlots } from '@/utils/dateUtils';
+import { themeColor } from '@/utils/themeColor';
 
 const countryOptions = [
   { label: 'United States', value: 'US' },
@@ -225,7 +226,7 @@ export default function BusinessSettingsScreen() {
 
   if (error) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Business" showBack />
         <ErrorState message="Failed to load business settings" onRetry={refetch} />
       </SafeAreaView>
@@ -234,7 +235,7 @@ export default function BusinessSettingsScreen() {
 
   if (isLoading || !business) {
     return (
-      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Header title="Business" showBack />
         <View className="p-4 gap-4">
           <SkeletonCard />
@@ -245,7 +246,7 @@ export default function BusinessSettingsScreen() {
   }
 
   return (
-    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50">
+    <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       <Header title="Business" showBack />
       
       <ScrollView 
@@ -256,15 +257,15 @@ export default function BusinessSettingsScreen() {
       >
         {/* Booking Link */}
         {bookingUrl && (
-          <Card className="p-4 mb-4 bg-indigo-50 border-indigo-200">
+          <Card className="p-4 mb-4 bg-indigo-50 dark:bg-indigo-500/20 border-indigo-200 dark:border-indigo-500/40">
             <View className="flex-row items-center mb-2">
               <Link2 size={18} color={colors.indigo[600]} />
-              <Text className="text-sm font-medium text-indigo-700 ml-2">
+              <Text className="text-sm font-medium text-indigo-700 dark:text-indigo-300 ml-2">
                 Booking Link
               </Text>
             </View>
             <View className="flex-row items-center">
-              <Text className="flex-1 text-sm text-indigo-600" numberOfLines={1}>
+              <Text className="flex-1 text-sm text-indigo-600 dark:text-indigo-400" numberOfLines={1}>
                 {bookingUrl}
               </Text>
               <TouchableOpacity onPress={handleCopyLink} className="ml-2 p-2">
@@ -280,7 +281,7 @@ export default function BusinessSettingsScreen() {
 
         {/* Logo & Name */}
         <Card className="p-4 mb-4">
-          <Text className="text-base font-semibold text-slate-900 mb-4">Studio Details</Text>
+          <Text className="text-base font-semibold text-slate-900 dark:text-slate-50 mb-4">Studio Details</Text>
           
           <View className="items-center mb-4">
             <TouchableOpacity onPress={handlePickLogo} className="relative">
@@ -291,8 +292,8 @@ export default function BusinessSettingsScreen() {
                   contentFit="cover"
                 />
               ) : (
-                <View className="w-20 h-20 rounded-2xl bg-slate-100 items-center justify-center">
-                  <Building2 size={32} color={colors.slate[400]} />
+                <View className="w-20 h-20 rounded-2xl bg-slate-100 dark:bg-slate-800 items-center justify-center">
+                  <Building2 size={32} color={themeColor().iconMuted} />
                 </View>
               )}
               <View className="absolute -bottom-1 -right-1 w-7 h-7 bg-indigo-600 rounded-full items-center justify-center border-2 border-white">
@@ -306,7 +307,7 @@ export default function BusinessSettingsScreen() {
             placeholder="Your business name"
             value={formData.name}
             onChangeText={(text) => handleChange('name', text)}
-            leftIcon={<Building2 size={20} color={colors.slate[500]} />}
+            leftIcon={<Building2 size={20} color={themeColor().textMuted} />}
             containerClassName="mb-4"
           />
 
@@ -316,13 +317,13 @@ export default function BusinessSettingsScreen() {
             value={formData.slug}
             onChangeText={(text) => handleChange('slug', text)}
             autoCapitalize="none"
-            leftIcon={<Link2 size={20} color={colors.slate[500]} />}
+            leftIcon={<Link2 size={20} color={themeColor().textMuted} />}
           />
         </Card>
 
         {/* Contact */}
         <Card className="p-4 mb-4">
-          <Text className="text-base font-semibold text-slate-900 mb-4">Contact Information</Text>
+          <Text className="text-base font-semibold text-slate-900 dark:text-slate-50 mb-4">Contact Information</Text>
           
           <Input
             label="Business Email"
@@ -331,7 +332,7 @@ export default function BusinessSettingsScreen() {
             onChangeText={(text) => handleChange('email', text)}
             keyboardType="email-address"
             autoCapitalize="none"
-            leftIcon={<Mail size={20} color={colors.slate[500]} />}
+            leftIcon={<Mail size={20} color={themeColor().textMuted} />}
             containerClassName="mb-4"
           />
 
@@ -352,7 +353,7 @@ export default function BusinessSettingsScreen() {
                 value={formData.phone}
                 onChangeText={(text) => handleChange('phone', text)}
                 keyboardType="phone-pad"
-                leftIcon={<Phone size={20} color={colors.slate[500]} />}
+                leftIcon={<Phone size={20} color={themeColor().textMuted} />}
               />
             </View>
           </View>
@@ -362,7 +363,7 @@ export default function BusinessSettingsScreen() {
             placeholder="123 Main St"
             value={formData.address_street}
             onChangeText={(text) => handleChange('address_street', text)}
-            leftIcon={<MapPin size={20} color={colors.slate[500]} />}
+            leftIcon={<MapPin size={20} color={themeColor().textMuted} />}
             containerClassName="mb-4"
           />
 
@@ -408,12 +409,12 @@ export default function BusinessSettingsScreen() {
 
         {/* Operating Hours */}
         <Card className="p-4 mb-4">
-          <Text className="text-base font-semibold text-slate-900 mb-4">Operating Hours</Text>
+          <Text className="text-base font-semibold text-slate-900 dark:text-slate-50 mb-4">Operating Hours</Text>
           
           {[1, 2, 3, 4, 5, 6, 0].map((day) => (
             <View key={day} className="mb-3">
               <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-sm font-medium text-slate-700 w-24">
+                <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 w-24">
                   {DAY_NAMES[day]}
                 </Text>
                 <Toggle
@@ -447,7 +448,7 @@ export default function BusinessSettingsScreen() {
 
         {/* Preferences */}
         <Card className="p-4 mb-6">
-          <Text className="text-base font-semibold text-slate-900 mb-4">Booking Preferences</Text>
+          <Text className="text-base font-semibold text-slate-900 dark:text-slate-50 mb-4">Booking Preferences</Text>
           
           <Toggle
             label="Allow customers to choose staff"

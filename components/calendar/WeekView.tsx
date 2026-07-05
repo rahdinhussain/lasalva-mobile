@@ -100,7 +100,7 @@ export function WeekView({
   return (
     <View className="flex-1">
       {/* Day headers */}
-      <View className="flex-row bg-white border-b border-slate-100">
+      <View className="flex-row bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
         <View style={{ width: TIME_LABEL_WIDTH }} />
         {weekDays.map((day) => {
           const dayKey = getDateKeyInTimeZone(day, timeZone);
@@ -116,7 +116,7 @@ export function WeekView({
             >
               <Text
                 className={`text-xs font-medium ${
-                  isTodayDate ? 'text-indigo-600' : 'text-slate-500'
+                  isTodayDate ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'
                 }`}
               >
                 {format(displayDate, 'EEE')}
@@ -128,7 +128,7 @@ export function WeekView({
               >
                 <Text
                   className={`text-xs font-semibold ${
-                    isTodayDate ? 'text-white' : 'text-slate-900'
+                    isTodayDate ? 'text-white' : 'text-slate-900 dark:text-slate-50'
                   }`}
                 >
                   {format(displayDate, 'd')}
@@ -178,7 +178,7 @@ export function WeekView({
               >
                 <View className="px-1 py-0.5 flex-1">
                   <Text
-                    className="text-slate-900 font-medium"
+                    className="text-slate-900 dark:text-slate-50 font-medium"
                     style={{ fontSize: 9 }}
                     numberOfLines={1}
                   >
@@ -186,7 +186,7 @@ export function WeekView({
                   </Text>
                   {height > 30 && (
                     <Text
-                      className="text-slate-500"
+                      className="text-slate-500 dark:text-slate-400"
                       style={{ fontSize: 8 }}
                       numberOfLines={1}
                     >

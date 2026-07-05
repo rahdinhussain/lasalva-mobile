@@ -33,54 +33,54 @@ export function ConfirmationStep({
   const isConfirmed = status === 'CONFIRMED';
   return (
     <View className="flex-1 px-4 items-center">
-      <View className="w-16 h-16 rounded-full bg-emerald-50 items-center justify-center mt-4 mb-4">
+      <View className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-500/20 items-center justify-center mt-4 mb-4">
         <CheckCircle size={36} color={colors.emerald[500]} />
       </View>
 
-      <Text className="text-xl font-bold text-slate-900 mb-1">
+      <Text className="text-xl font-bold text-slate-900 dark:text-slate-50 mb-1">
         {isConfirmed ? 'Booking Confirmed!' : 'Booking Pending'}
       </Text>
-      <Text className="text-sm text-slate-500 mb-6">
+      <Text className="text-sm text-slate-500 dark:text-slate-400 mb-6">
         {isConfirmed
           ? `Appointment booked for ${customerName}`
           : 'Your booking is pending confirmation by staff.'}
       </Text>
 
-      <View className="bg-slate-50 rounded-xl p-4 w-full gap-3 mb-6">
+      <View className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 w-full gap-3 mb-6">
         <View className="flex-row items-center gap-3">
-          <View className="w-8 h-8 rounded-lg bg-indigo-50 items-center justify-center">
+          <View className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 items-center justify-center">
             <CheckCircle size={16} color={colors.indigo[600]} />
           </View>
           <View>
-            <Text className="text-sm font-medium text-slate-900">{service.name}</Text>
-            <Text className="text-xs text-slate-500">{formatDuration(service.duration_minutes)}</Text>
+            <Text className="text-sm font-medium text-slate-900 dark:text-slate-50">{service.name}</Text>
+            <Text className="text-xs text-slate-500 dark:text-slate-400">{formatDuration(service.duration_minutes)}</Text>
           </View>
         </View>
 
         <View className="flex-row items-center gap-3">
-          <View className="w-8 h-8 rounded-lg bg-indigo-50 items-center justify-center">
+          <View className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 items-center justify-center">
             <Calendar size={16} color={colors.indigo[600]} />
           </View>
-          <Text className="text-sm text-slate-700">
+          <Text className="text-sm text-slate-700 dark:text-slate-300">
             {formatDate(date, 'EEEE, MMMM d, yyyy')}
           </Text>
         </View>
 
         <View className="flex-row items-center gap-3">
-          <View className="w-8 h-8 rounded-lg bg-indigo-50 items-center justify-center">
+          <View className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 items-center justify-center">
             <Clock size={16} color={colors.indigo[600]} />
           </View>
-          <Text className="text-sm text-slate-700">
+          <Text className="text-sm text-slate-700 dark:text-slate-300">
             {formatInTimeZoneSafe(slot.startTime, timeZone, 'h:mm a')} -{' '}
             {formatInTimeZoneSafe(slot.endTime, timeZone, 'h:mm a')}
           </Text>
         </View>
 
         <View className="flex-row items-center gap-3">
-          <View className="w-8 h-8 rounded-lg bg-indigo-50 items-center justify-center">
+          <View className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 items-center justify-center">
             <User size={16} color={colors.indigo[600]} />
           </View>
-          <Text className="text-sm text-slate-700">
+          <Text className="text-sm text-slate-700 dark:text-slate-300">
             {staffName ?? 'Any Available Staff'}
           </Text>
         </View>
