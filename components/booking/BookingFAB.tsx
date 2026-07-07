@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { TouchableOpacity, Platform, Animated } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Plus } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -44,23 +45,36 @@ export function BookingFAB({ onPress }: BookingFABProps) {
         right: 20,
         bottom: insets.bottom + 16,
         shadowColor: '#4f46e5',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 8,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.4,
+        shadowRadius: 14,
+        elevation: 10,
         transform: [{ scale: scaleAnim }],
+        borderRadius: 32,
       }}
     >
       <TouchableOpacity
         onPress={handlePress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        activeOpacity={0.8}
-        className="w-14 h-14 rounded-full bg-indigo-600 items-center justify-center"
+        activeOpacity={0.85}
         accessibilityRole="button"
         accessibilityLabel="Book new appointment"
       >
-        <Plus size={24} color="#ffffff" strokeWidth={2.5} />
+        <LinearGradient
+          colors={['#6366f1', '#9333ea']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Plus size={26} color="#ffffff" strokeWidth={2.5} />
+        </LinearGradient>
       </TouchableOpacity>
     </Animated.View>
   );

@@ -11,6 +11,7 @@ import {
 } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
 import { ErrorState } from '@/components/ui';
+import { GradientHeader } from '@/components/layout';
 import { BookingFAB, BookingModal } from '@/components/booking';
 import {
   DatePicker,
@@ -133,30 +134,31 @@ export default function CalendarScreen() {
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
-      {/* Header with view mode toggle */}
-      <View className="px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
+      {/* Gradient hero: date navigation + view mode toggle */}
+      <GradientHeader>
+        {viewMode !== 'list' && (
+          <DatePicker
+            currentDate={currentDate}
+            onDateChange={setCurrentDate}
+            onTodayPress={handleToday}
+            viewMode={viewMode}
+            timeZone={timeZone}
+            appointmentCount={
+              viewMode === 'day' ? dayAppointmentCount : undefined
+            }
+            onHero
+          />
+        )}
+        {viewMode !== 'list' && <View className="h-3" />}
         <ViewModeToggle
           activeMode={viewMode}
           onModeChange={handleViewModeChange}
+          onHero
         />
-        <Text className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5 text-center">
+        <Text className="text-[11px] text-white/70 mt-2 text-center">
           Times shown in {(timeZone || 'UTC').replace(/_/g, ' ')}
         </Text>
-      </View>
-
-      {/* Date Picker / Navigation (hidden in list view) */}
-      {viewMode !== 'list' && (
-        <DatePicker
-          currentDate={currentDate}
-          onDateChange={setCurrentDate}
-          onTodayPress={handleToday}
-          viewMode={viewMode}
-          timeZone={timeZone}
-          appointmentCount={
-            viewMode === 'day' ? dayAppointmentCount : undefined
-          }
-        />
-      )}
+      </GradientHeader>
 
       {/* Content */}
       {viewMode === 'month' && (

@@ -14,7 +14,8 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { useRoleAccess } from '@/hooks/useRoleAccess';
 import { useTheme, type ThemePreference } from '@/context/ThemeContext';
-import { Card, Avatar, RoleBadge, Logo } from '@/components/ui';
+import { Card, Avatar, RoleBadge } from '@/components/ui';
+import { GradientHeader } from '@/components/layout';
 import { colors } from '@/constants/colors';
 import { themeColor } from '@/utils/themeColor';
 
@@ -118,10 +119,7 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       {/* Header */}
-      <View className="flex-row items-center px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
-        <Logo size="sm" className="mr-3" />
-        <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Settings</Text>
-      </View>
+      <GradientHeader title="Settings" />
 
       <View className="flex-1 px-4 py-4">
         {/* Profile Card */}

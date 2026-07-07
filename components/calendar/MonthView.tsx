@@ -64,7 +64,10 @@ export function MonthView({
   }
 
   return (
-    <ScrollView className="flex-1 bg-white dark:bg-slate-800" showsVerticalScrollIndicator={false}>
+    <ScrollView
+      className="flex-1 mx-3 mt-3 mb-3 rounded-3xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700"
+      showsVerticalScrollIndicator={false}
+    >
       {/* Weekday headers */}
       <View className="flex-row border-b border-slate-100 dark:border-slate-800">
         {WEEKDAY_LABELS.map((label) => (

@@ -10,7 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import { format, parseISO } from 'date-fns';
-import { Search, Calendar } from 'lucide-react-native';
+import { Search, Calendar, ChevronRight } from 'lucide-react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { Appointment, AppointmentStatus } from '@/types';
 import { useBusiness } from '@/context/BusinessContext';
@@ -21,9 +21,18 @@ import {
   getDurationInMinutes,
 } from '@/utils/dateUtils';
 import { formatCurrency, formatDuration } from '@/utils/formatters';
-import { SkeletonListItem, EmptyState, StatusBadge } from '@/components/ui';
+import { SkeletonListItem, EmptyState, StatusBadge, SectionHeader } from '@/components/ui';
 import { useSearchAppointments } from '@/hooks/useAppointments';
 import { themeColor } from '@/utils/themeColor';
+
+// Soft elevation for the timeline appointment cards.
+const listCardShadow = {
+  shadowColor: '#4338ca',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.06,
+  shadowRadius: 12,
+  elevation: 2,
+} as const;
 
 interface AppointmentListProps {
   appointments: Appointment[];
@@ -163,25 +172,26 @@ export function AppointmentList({
       return (
         <TouchableOpacity
           onPress={() => onAppointmentPress(apt)}
-          className="mx-4 mb-2 bg-white dark:bg-slate-800 rounded-xl p-3 border border-slate-100 dark:border-slate-800"
+          className="mx-4 mb-3 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 flex-row items-stretch overflow-hidden"
+          style={listCardShadow}
           activeOpacity={0.7}
         >
-          <View className="flex-row items-center">
-            {/* Avatar */}
-            <View
-              className="w-10 h-10 rounded-full items-center justify-center mr-3"
-              style={{ backgroundColor: statusStyle.color + '20' }}
-            >
-              <Text
-                className="font-bold"
-                style={{ color: statusStyle.color, fontSize: 16 }}
-              >
-                {customerName.charAt(0).toUpperCase()}
+          {/* Colored status accent bar */}
+          <View style={{ width: 4, backgroundColor: statusStyle.color }} />
+
+          <View className="flex-1 flex-row items-center p-3">
+            {/* Time column */}
+            <View className="w-16 pr-2">
+              <Text className="text-sm font-bold text-slate-900 dark:text-slate-50" numberOfLines={1}>
+                {timeLabel}
+              </Text>
+              <Text className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5" numberOfLines={1}>
+                {formatDuration(durationMin)}
               </Text>
             </View>
 
             {/* Info */}
-            <View className="flex-1 mr-3">
+            <View className="flex-1 pl-3 border-l border-slate-100 dark:border-slate-700">
               <Text
                 className="text-sm font-semibold text-slate-900 dark:text-slate-50"
                 numberOfLines={1}
@@ -191,26 +201,11 @@ export function AppointmentList({
               <Text className="text-xs text-slate-500 dark:text-slate-400 mt-0.5" numberOfLines={1}>
                 {serviceName} · {staffName}
               </Text>
-              {apt.customer_email && (
-                <Text
-                  className="text-xs text-slate-400 dark:text-slate-500 mt-0.5"
-                  numberOfLines={1}
-                >
-                  {apt.customer_email}
-                </Text>
-              )}
+              <StatusBadge status={apt.status} size="sm" className="mt-1.5" />
             </View>
 
-            {/* Time + Status */}
-            <View className="items-end">
-              <Text className="text-sm font-semibold text-slate-900 dark:text-slate-50">
-                {timeLabel}
-              </Text>
-              <Text className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                {formatDuration(durationMin)}
-              </Text>
-              <StatusBadge status={apt.status} size="sm" className="mt-1" />
-            </View>
+            {/* Chevron */}
+            <ChevronRight size={18} color={themeColor().iconMuted} />
           </View>
         </TouchableOpacity>
       );
@@ -239,8 +234,8 @@ export function AppointmentList({
   return (
     <View className="flex-1">
       {/* Search bar */}
-      <View className="px-4 py-3 bg-white dark:bg-slate-800">
-        <View className="flex-row items-center bg-slate-100 dark:bg-slate-800 rounded-lg px-3 min-h-[44px]">
+      <View className="px-4 pt-3 pb-2">
+        <View className="flex-row items-center bg-white dark:bg-slate-800 rounded-full border border-slate-100 dark:border-slate-700 px-4 min-h-[46px]">
           <Search size={18} color={themeColor().iconMuted} />
           <TextInput
             className="flex-1 ml-2 text-sm text-slate-900 dark:text-slate-50 py-2.5"
@@ -257,7 +252,7 @@ export function AppointmentList({
       </View>
 
       {/* Status filter chips */}
-      <View className="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
+      <View className="pb-1">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -323,21 +318,8 @@ export function AppointmentList({
           keyExtractor={(item) => item.id}
           renderItem={renderAppointmentCard}
           renderSectionHeader={({ section }) => (
-            <View className="px-4 py-2 bg-slate-50 dark:bg-slate-900">
-              <View className="flex-row items-center gap-2">
-                <Text
-                  className={`text-sm font-semibold ${
-                    section.isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-700 dark:text-slate-300'
-                  }`}
-                >
-                  {section.title}
-                </Text>
-                <View className="bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">
-                  <Text className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                    {section.count}
-                  </Text>
-                </View>
-              </View>
+            <View className="px-4 pt-3 pb-2 bg-slate-50 dark:bg-slate-900">
+              <SectionHeader title={section.title} count={section.count} />
             </View>
           )}
           stickySectionHeadersEnabled

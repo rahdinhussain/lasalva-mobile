@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
 import { useThemeColors } from '@/hooks/useThemeColors';
+import { GradientHeader } from './GradientHeader';
 
 interface HeaderProps {
   title?: string;
@@ -36,11 +37,26 @@ export function Header({
     }
   };
 
+  // Solid screen headers render as the gradient hero for a consistent modern
+  // look. `transparent` headers keep the flat, chromeless style (e.g. overlays).
+  if (!transparent) {
+    return (
+      <GradientHeader
+        title={title}
+        subtitle={subtitle}
+        showBack={showBack}
+        onBack={onBack}
+        leftContent={leftContent}
+        rightContent={rightContent}
+        className={className}
+      />
+    );
+  }
+
   return (
     <View
       className={`
         flex-row items-center justify-between px-4 py-3
-        ${transparent ? '' : 'bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700'}
         ${className}
       `}
     >

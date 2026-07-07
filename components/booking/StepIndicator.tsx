@@ -32,12 +32,12 @@ export function StepIndicator({ currentStep, totalSteps, skipStaff }: StepIndica
             )}
             <View className="items-center" style={{ width: 40 }}>
               <View
-                className={`w-2 h-2 rounded-full ${
+                className={`rounded-full ${
                   isActive
-                    ? 'bg-indigo-600'
+                    ? 'w-3 h-3 bg-indigo-600'
                     : isCompleted
-                    ? 'bg-indigo-300'
-                    : 'bg-slate-200 dark:bg-slate-700'
+                    ? 'w-2 h-2 bg-indigo-400'
+                    : 'w-2 h-2 bg-slate-200 dark:bg-slate-700'
                 }`}
               />
               <Text

@@ -8,6 +8,7 @@ export * from './Select';
 export * from './Toggle';
 export * from './IconButton';
 export * from './EmptyState';
+export * from './SectionHeader';
 export * from './ErrorState';
 export * from './ErrorBoundary';
 export * from './Logo';

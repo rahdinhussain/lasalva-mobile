@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, Text, TouchableOpacity, ViewProps, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, ViewProps, Animated, StyleSheet } from 'react-native';
 
 interface CardProps {
   children: React.ReactNode;
@@ -8,6 +8,21 @@ interface CardProps {
   pressable?: boolean;
   style?: ViewProps['style'];
 }
+
+// Soft, diffuse elevation shared by all cards. On pressable cards it sits on the
+// (non-clipping) outer wrapper so it renders fully on iOS; elevation covers Android.
+const cardShadow = StyleSheet.create({
+  shadow: {
+    shadowColor: '#4338ca',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 3,
+  },
+});
+
+const baseCardClass =
+  'bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 overflow-hidden';
 
 export function Card({ children, className = '', onPress, pressable = false, style }: CardProps) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -34,13 +49,15 @@ export function Card({ children, className = '', onPress, pressable = false, sty
 
   if (onPress || pressable) {
     return (
-      <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>
+      <Animated.View
+        style={[{ transform: [{ scale: scaleAnim }] }, cardShadow.shadow, style]}
+      >
         <TouchableOpacity
           onPress={onPress}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           activeOpacity={0.95}
-          className={`bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden ${className}`}
+          className={`${baseCardClass} ${className}`}
         >
           {children}
         </TouchableOpacity>
@@ -49,10 +66,7 @@ export function Card({ children, className = '', onPress, pressable = false, sty
   }
 
   return (
-    <View
-      style={style}
-      className={`bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden ${className}`}
-    >
+    <View style={[cardShadow.shadow, style]} className={`${baseCardClass} ${className}`}>
       {children}
     </View>
   );

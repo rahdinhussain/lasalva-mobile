@@ -7,6 +7,7 @@ import { useServicesList } from '@/hooks/useServices';
 import { useRoleAccess } from '@/hooks/useRoleAccess';
 import { ServiceCard } from '@/components/services';
 import { IconButton, ErrorState, EmptyState, SkeletonCard } from '@/components/ui';
+import { GradientHeader } from '@/components/layout';
 import { colors } from '@/constants/colors';
 import { themeColor } from '@/utils/themeColor';
 
@@ -31,10 +32,8 @@ export default function ServicesListScreen() {
 
   if (error) {
     return (
-      <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
-        <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
-          <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Services</Text>
-        </View>
+      <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
+        <GradientHeader title="Services" />
         <ErrorState message="Failed to load services" onRetry={refetch} />
       </SafeAreaView>
     );
@@ -46,16 +45,18 @@ export default function ServicesListScreen() {
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
-        <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Services</Text>
-        {canManageServices && (
-          <IconButton
-            icon={<Plus size={22} color={colors.indigo[600]} />}
-            variant="ghost"
-            onPress={handleAddService}
-          />
-        )}
-      </View>
+      <GradientHeader
+        title="Services"
+        rightContent={
+          canManageServices ? (
+            <IconButton
+              icon={<Plus size={22} color="#ffffff" />}
+              variant="ghost"
+              onPress={handleAddService}
+            />
+          ) : undefined
+        }
+      />
 
       {isLoading ? (
         <View className="flex-1 p-4">

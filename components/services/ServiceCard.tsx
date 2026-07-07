@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Clock, DollarSign, CreditCard } from 'lucide-react-native';
 import { Service, Profile } from '@/types';
 import { Card, AvatarGroup } from '@/components/ui';
@@ -31,16 +32,16 @@ export function ServiceCard({ service, assignedStaff = [] }: ServiceCardProps) {
           contentFit="cover"
         />
       ) : (
-        <View 
-          className="h-[120px] items-center justify-center"
-          style={{ 
-            backgroundColor: colors.indigo[100],
-          }}
+        <LinearGradient
+          colors={['#6366f1', '#9333ea']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ height: 120, alignItems: 'center', justifyContent: 'center' }}
         >
-          <Text className="text-4xl text-indigo-400">
+          <Text className="text-4xl font-bold text-white">
             {service.name.charAt(0).toUpperCase()}
           </Text>
-        </View>
+        </LinearGradient>
       )}
 
       <View className="p-3">

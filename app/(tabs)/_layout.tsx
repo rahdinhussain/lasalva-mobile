@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs, Redirect } from 'expo-router';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Calendar, Users, Briefcase, Settings } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 import { useAuth } from '@/context/AuthContext';
@@ -8,6 +9,7 @@ import { useThemeColors } from '@/hooks/useThemeColors';
 
 export default function TabsLayout() {
   const { isAuthenticated, isHydrated } = useAuth();
+  const insets = useSafeAreaInsets();
   const theme = useThemeColors();
   const activeColor = theme.scheme === 'dark' ? colors.indigo[400] : colors.indigo[600];
   const inactiveColor = theme.iconMuted;
@@ -36,6 +38,17 @@ export default function TabsLayout() {
         tabBarStyle: {
           backgroundColor: theme.surface,
           borderTopColor: theme.border,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          paddingTop: 6,
+          height: 60 + insets.bottom,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+          marginTop: 2,
+        },
+        tabBarItemStyle: {
+          paddingTop: 2,
         },
       }}
     >
