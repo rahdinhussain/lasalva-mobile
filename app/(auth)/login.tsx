@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mail, Lock } from 'lucide-react-native';
@@ -54,11 +54,20 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
+      {/* iOS: pad the view by the keyboard height. Android: leave it to the
+          window (softwareKeyboardLayoutMode: resize in app.json) — behavior
+          "height" double-counts with edge-to-edge enabled. The ScrollView
+          guarantees inputs can always be scrolled above the keyboard. */}
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1"
       >
-        <View className="flex-1 justify-center px-6">
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 24 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           {/* Logo/Header */}
           <View className="items-center mb-8">
             <Logo size="lg" className="mb-4" />
@@ -122,7 +131,7 @@ export default function LoginScreen() {
               Log in
             </Button>
           </Card>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

@@ -111,6 +111,38 @@ Already enforced by `supportsTablet: false` in `app.json`; the app will be liste
 
 ---
 
+## 3c. Demo account for app review (required — app signs in only)
+
+The app has no in-app registration, so reviewers **must** be given working
+login credentials or the build will be rejected (App Store guideline 5.1.1(v) /
+Google Play "App access"). There is no shared demo account committed to this
+repo — create one and keep it alive:
+
+1. Sign up on the web app (e.g. https://lasalva.com/signup) with a dedicated
+   review account, e.g. `demo@lasalva.com`, and a simple password you can share.
+2. Populate it so reviewers see a realistic app: a couple of services, at
+   least one staff member, business hours, and a few upcoming appointments.
+3. Use a paid/trial-active plan so billing-gated features don't block review,
+   and never reset this password while a submission is in review.
+
+**Where to put the credentials:**
+
+- **App Store Connect** → Your app → (version) → **App Review Information** →
+  enable "Sign-in required" and enter the demo email + password. Add a note
+  that account creation happens on the website.
+- **Google Play Console** → Policy → **App content** → **App access** →
+  "All or some functionality is restricted" → add the demo email + password
+  and short login instructions.
+
+> Fill in the current values here when you create them (do NOT commit real
+> passwords to the public repo — keep them in App Store Connect / Play
+> Console / your password manager instead):
+>
+> - Demo account email: `demo@lasalva.com` (or whichever you created)
+> - Demo account password: *(stored in App Store Connect / Play Console only)*
+
+---
+
 ## 4. Store listings and release
 
 **Google Play**

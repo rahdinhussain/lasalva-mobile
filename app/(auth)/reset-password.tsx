@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Lock, ArrowLeft, CheckCircle } from 'lucide-react-native';
@@ -19,7 +19,7 @@ export default function ResetPasswordScreen() {
   const [errors, setErrors] = useState<{ password?: string; confirmPassword?: string }>({});
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const validate = (): boolean => {
+  const validate(): boolean => {
     const newErrors: { password?: string; confirmPassword?: string } = {};
 
     if (!password) {
@@ -98,11 +98,19 @@ export default function ResetPasswordScreen() {
         />
       </View>
 
+      {/* iOS: pad by keyboard height. Android: window resize handles it
+          (softwareKeyboardLayoutMode in app.json). ScrollView ensures the
+          inputs can always be scrolled above the keyboard. */}
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1"
       >
-        <View className="flex-1 justify-center px-6">
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 24 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           <View className="items-center mb-8">
             <Logo size="md" className="mb-4" />
             <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">New password</Text>
@@ -155,7 +163,7 @@ export default function ResetPasswordScreen() {
               Reset password
             </Button>
           </Card>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

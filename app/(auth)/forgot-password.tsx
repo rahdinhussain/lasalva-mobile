@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react-native';
@@ -116,11 +116,19 @@ export default function ForgotPasswordScreen() {
         />
       </View>
 
+      {/* iOS: pad by keyboard height. Android: window resize handles it
+          (softwareKeyboardLayoutMode in app.json). ScrollView ensures the
+          input can always be scrolled above the keyboard. */}
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1"
       >
-        <View className="flex-1 justify-center px-6">
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 24 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           <View className="items-center mb-8">
             <Logo size="md" className="mb-4" />
             <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Reset password</Text>
@@ -161,7 +169,7 @@ export default function ForgotPasswordScreen() {
               Send reset link
             </Button>
           </Card>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

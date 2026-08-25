@@ -33,6 +33,7 @@
       "package": "com.lasalva.mobile",
       "versionCode": 29,
       "edgeToEdgeEnabled": true,
+      "softwareKeyboardLayoutMode": "resize",
       "intentFilters": [
         {
           "action": "VIEW",
