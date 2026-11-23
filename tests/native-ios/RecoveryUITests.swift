@@ -44,9 +44,31 @@ import XCTest
         XCTAssertTrue(app.staticTexts["Invalid email address"].waitForExistence(timeout: 15))
     }
 
+    func openExternalRecoveryLink(cold: Bool) {
+        if cold {
+            if app.state != .notRunning { app.terminate() }
+        } else {
+            app.launch()
+            XCTAssertTrue(field("login-email").isHittable)
+        }
+        let sender = XCUIApplication(bundleIdentifier: "com.lasalva.qa.linksource")
+        sender.launch()
+        sender.buttons["open-reset-link"].tap()
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let consent = springboard.alerts.buttons["Open"].firstMatch
+        if consent.waitForExistence(timeout: 5) { consent.tap() }
+        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 15))
+    }
+
+    func testWarmResetLinkOpensPasswordForm() {
+        continueAfterFailure = false
+        openExternalRecoveryLink(cold: false)
+        _ = field("reset-password-new-password", secure: true)
+    }
+
     func testResetPasswordKeepsBothFieldsReachable() {
         continueAfterFailure = false
-        app.open(URL(string: "lasalva://reset-password?token=local-fixture")!)
+        openExternalRecoveryLink(cold: true)
         let first = field("reset-password-new-password", secure: true)
         first.tap()
         first.typeText("short")

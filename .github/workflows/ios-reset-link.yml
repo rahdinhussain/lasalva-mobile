@@ -1,5 +1,10 @@
 name: Verify installed iOS reset links
 on:
+  workflow_call:
+    inputs:
+      run_id:
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       run_id:
@@ -11,13 +16,14 @@ on:
     paths:
       - .github/workflows/ios-reset-link.yml
       - tests/ios-links/**
+      - tests/native-ios/**
 permissions:
   contents: read
   actions: read
 jobs:
   links:
     runs-on: macos-15
-    timeout-minutes: 15
+    timeout-minutes: 22
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,6 +51,10 @@ jobs:
           path: ${{ runner.temp }}/lasalva-artifact
           github-token: ${{ github.token }}
           run-id: ${{ steps.source.outputs.run }}
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+      - run: gem install --no-document xcodeproj -v 1.27.0
       - name: Exercise cold and warm system URL delivery
         run: |
           ios_app="$RUNNER_TEMP/lasalva-simulator"

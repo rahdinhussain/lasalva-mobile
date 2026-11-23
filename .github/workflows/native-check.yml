@@ -9,7 +9,6 @@ on:
       - .maestro/**
       - app.config.js
       - plugins/withAndroidBuildMemory.js
-      - tests/native-ios/**
       - app.json
       - 'app/(auth)/**'
       - 'app/+native-intent.ts'
@@ -19,6 +18,7 @@ on:
       - components/ui/AuthFormScrollView.tsx
 permissions:
   contents: read
+  actions: read
 
 jobs:
   native:
@@ -103,22 +103,12 @@ jobs:
             adb install "$RUNNER_TEMP/Lasalva-Preview.apk"
             adb shell settings put secure show_ime_with_hard_keyboard 1
             maestro test -e APP_ID=com.lasalva.mobile.preview -e APP_SCHEME=lasalvapreview .maestro/auth.yaml
-      - uses: ruby/setup-ruby@v1
-        if: matrix.platform == 'ios'
-        with:
-          ruby-version: '3.3'
       - name: Build for the iOS simulator
         if: matrix.platform == 'ios'
         run: |
           npx expo prebuild --platform ios --no-install
           (cd ios && pod install)
-          gem install --no-document xcodeproj -v 1.27.0
-          ruby tests/native-ios/project.rb
-          udid=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; devices=json.load(sys.stdin)["devices"]; print(next(d["udid"] for runtime,items in reversed(list(devices.items())) if ".iOS-" in runtime for d in items if d["name"].startswith("iPhone")))')
-          echo "IOS_TEST_DEVICE=$udid" >> "$GITHUB_ENV"
-          defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
-          xcrun simctl boot "$udid"
-          xcodebuild build-for-testing -workspace ios/Lasalva.xcworkspace -scheme RecoveryUITests -configuration Release -destination "id=$udid" -derivedDataPath "$RUNNER_TEMP/lasalva-ios" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES > "$RUNNER_TEMP/lasalva-xcode.log" || { grep -Ei 'error:|fatal error:|Multiple commands produce|failed:' "$RUNNER_TEMP/lasalva-xcode.log" | tail -40; exit 1; }
+          xcodebuild build -workspace ios/Lasalva.xcworkspace -scheme Lasalva -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/lasalva-ios" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO > "$RUNNER_TEMP/lasalva-xcode.log" || { grep -Ei 'error:|fatal error:|Multiple commands produce|failed:' "$RUNNER_TEMP/lasalva-xcode.log" | tail -40; exit 1; }
       - name: Save the iOS simulator app
         if: matrix.platform == 'ios'
         run: ditto -c -k --keepParent "$RUNNER_TEMP/lasalva-ios/Build/Products/Release-iphonesimulator/Lasalva.app" "$RUNNER_TEMP/Lasalva-Simulator.zip"
@@ -128,25 +118,18 @@ jobs:
           name: Lasalva-iOS-simulator
           path: ${{ runner.temp }}/Lasalva-Simulator.zip
           retention-days: 7
-      - name: Exercise iOS forms
-        if: matrix.platform == 'ios'
-        run: |
-          xcrun simctl bootstatus "$IOS_TEST_DEVICE" -b
-          xcodebuild test-without-building -workspace ios/Lasalva.xcworkspace -scheme RecoveryUITests -configuration Release -destination "id=$IOS_TEST_DEVICE" -derivedDataPath "$RUNNER_TEMP/lasalva-ios" -parallel-testing-enabled NO -resultBundlePath "$RUNNER_TEMP/RecoveryUITests.xcresult" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES > "$RUNNER_TEMP/lasalva-ui.log" || { tail -100 "$RUNNER_TEMP/lasalva-ui.log"; exit 1; }
-          grep -E 'Test Case|Executed [0-9]+ tests' "$RUNNER_TEMP/lasalva-ui.log" | tail -18
-      - name: Save iOS test results
-        if: always() && matrix.platform == 'ios'
-        uses: actions/upload-artifact@v4
-        with:
-          name: Lasalva-iOS-test-results
-          path: ${{ runner.temp }}/RecoveryUITests.xcresult
-          if-no-files-found: ignore
-          retention-days: 7
       - name: Save failed form checks
-        if: failure()
+        if: failure() && matrix.platform == 'android'
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-form-diagnostics
           path: ~/.maestro/tests/
           if-no-files-found: ignore
           retention-days: 3
+
+  ios-forms:
+    needs: native
+    if: ${{ !cancelled() }}
+    uses: ./.github/workflows/ios-reset-link.yml
+    with:
+      run_id: ${{ format('{0}', github.run_id) }}
