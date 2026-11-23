@@ -7,6 +7,8 @@ on:
       - .github/workflows/native-check.yml
       - .maestro/**
       - app.config.js
+      - plugins/withAndroidBuildMemory.js
+      - tests/native-ios/**
       - app.json
       - 'app/(auth)/**'
       - components/ui/Input.tsx
@@ -46,6 +48,7 @@ jobs:
           java-version: 17
       - run: npm ci
       - name: Install verified Maestro CLI
+        if: matrix.platform == 'android'
         shell: bash
         run: |
           curl -fsSL --retry 3 https://github.com/mobile-dev-inc/maestro/releases/download/cli-2.12.1/maestro.zip -o "$RUNNER_TEMP/maestro.zip"
@@ -59,7 +62,7 @@ jobs:
         run: |
           npx expo prebuild --platform android --no-install
           cd android
-          ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64,arm64-v8a --max-workers=2
+          ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64,arm64-v8a --max-workers=2 --no-daemon -Pkotlin.compiler.execution.strategy=in-process
           cp app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/Lasalva-Preview.apk"
           "$ANDROID_HOME/build-tools/$(ls -1 "$ANDROID_HOME/build-tools" | sort -V | tail -1)/apksigner" verify "$RUNNER_TEMP/Lasalva-Preview.apk"
       - name: Save Android preview
@@ -87,11 +90,17 @@ jobs:
             adb install "$RUNNER_TEMP/Lasalva-Preview.apk"
             adb shell settings put secure show_ime_with_hard_keyboard 1
             maestro test -e APP_ID=com.lasalva.mobile.preview -e APP_SCHEME=lasalvapreview .maestro/auth.yaml
+      - uses: ruby/setup-ruby@v1
+        if: matrix.platform == 'ios'
+        with:
+          ruby-version: '3.3'
       - name: Build for the iOS simulator
         if: matrix.platform == 'ios'
         run: |
           npx expo prebuild --platform ios --no-install
           (cd ios && pod install)
+          gem install --no-document xcodeproj -v 1.27.0
+          ruby tests/native-ios/project.rb
           xcodebuild -workspace ios/Lasalva.xcworkspace -scheme Lasalva -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/lasalva-ios" ARCHS=arm64 CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=YES build > "$RUNNER_TEMP/lasalva-xcode.log" || { grep -E 'error:|fatal error:' "$RUNNER_TEMP/lasalva-xcode.log" | tail -40; exit 1; }
       - name: Save the iOS simulator app
         if: matrix.platform == 'ios'
@@ -110,7 +119,16 @@ jobs:
           xcrun simctl boot "$udid"
           xcrun simctl bootstatus "$udid" -b
           xcrun simctl install "$udid" "$RUNNER_TEMP/lasalva-ios/Build/Products/Release-iphonesimulator/Lasalva.app"
-          maestro --device "$udid" test -e APP_ID=com.lasalva.mobile -e APP_SCHEME=lasalva .maestro/auth.yaml
+          xcodebuild test -workspace ios/Lasalva.xcworkspace -scheme RecoveryUITests -configuration Release -destination "id=$udid" -derivedDataPath "$RUNNER_TEMP/lasalva-ios" -parallel-testing-enabled NO -resultBundlePath "$RUNNER_TEMP/RecoveryUITests.xcresult" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES > "$RUNNER_TEMP/lasalva-ui.log" || { tail -100 "$RUNNER_TEMP/lasalva-ui.log"; exit 1; }
+          grep -E 'Test Case|Executed [0-9]+ tests' "$RUNNER_TEMP/lasalva-ui.log" | tail -18
+      - name: Save iOS test results
+        if: always() && matrix.platform == 'ios'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lasalva-iOS-test-results
+          path: ${{ runner.temp }}/RecoveryUITests.xcresult
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Save failed form checks
         if: failure()
         uses: actions/upload-artifact@v4

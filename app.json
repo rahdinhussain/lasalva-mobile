@@ -54,7 +54,8 @@
           "cameraPermission": false,
           "microphonePermission": false
         }
-      ]
+      ],
+      "./plugins/withAndroidBuildMemory.js"
     ],
     "experiments": {
       "typedRoutes": true
