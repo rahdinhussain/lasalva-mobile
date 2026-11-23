@@ -17,9 +17,10 @@ function SessionData({ children }: React.PropsWithChildren) {
   return <QueryClientProvider client={client}><BusinessProvider>{children}</BusinessProvider></QueryClientProvider>;
 }
 function SessionRoot({ children }: React.PropsWithChildren) {
-  const { userId, user, isHydrated } = useAuth();
+  const { userId, user } = useAuth();
   usePushNotifications();
-  return <SessionData key={JSON.stringify([isHydrated, userId, user?.business_id])}>{children}</SessionData>;
+  // Finishing an anonymous session lookup must preserve the route from the launch URL.
+  return <SessionData key={JSON.stringify([userId, user?.business_id])}>{children}</SessionData>;
 }
 
 // Tell React Query whether the app is in the foreground. On native there is no

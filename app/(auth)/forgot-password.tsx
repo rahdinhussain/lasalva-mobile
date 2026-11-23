@@ -112,6 +112,7 @@ export default function ForgotPasswordScreen() {
       <View className="flex-row items-center px-4 py-2">
         <IconButton
           icon={<ArrowLeft size={24} color={themeColor().icon} />}
+          accessibilityLabel="Back"
           variant="ghost"
           onPress={() => router.back()}
         />
