@@ -145,6 +145,7 @@ export default function ForgotPasswordScreen() {
             )}
 
             <Input
+              testID="forgot-password-email"
               label="Email"
               placeholder="Enter your email"
               value={email}

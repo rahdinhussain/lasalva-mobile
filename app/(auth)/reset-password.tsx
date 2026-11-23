@@ -127,6 +127,7 @@ export default function ResetPasswordScreen() {
             )}
 
             <Input
+              testID="reset-password-new-password"
               label="New password"
               placeholder="Enter new password"
               value={password}
@@ -141,6 +142,7 @@ export default function ResetPasswordScreen() {
             />
 
             <Input
+              testID="reset-password-confirm-password"
               label="Confirm password"
               placeholder="Confirm new password"
               value={confirmPassword}

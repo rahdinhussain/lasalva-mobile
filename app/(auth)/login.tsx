@@ -84,6 +84,7 @@ export default function LoginScreen() {
             )}
 
             <Input
+              testID="login-email"
               label="Email"
               placeholder="Enter your email"
               value={email}
@@ -100,6 +101,7 @@ export default function LoginScreen() {
             />
 
             <Input
+              testID="login-password"
               label="Password"
               placeholder="Enter your password"
               value={password}
@@ -115,7 +117,7 @@ export default function LoginScreen() {
             />
 
             <Link href="/(auth)/forgot-password" asChild>
-              <TouchableOpacity className="self-end mb-6">
+              <TouchableOpacity testID="forgot-password-link" accessibilityRole="link" className="self-end mb-6">
                 <Text className="text-indigo-600 dark:text-indigo-400 text-sm font-medium">
                   Forgot password?
                 </Text>

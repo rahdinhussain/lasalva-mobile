@@ -27,7 +27,7 @@ export const Input = forwardRef<TextInput, InputProps>(
     const inputProps = restProps as Omit<InputProps, 'ref' | 'label' | 'error' | 'leftIcon' | 'rightIcon' | 'containerClassName' | 'component'>;
     const RefComponent = Component as React.ForwardRefExoticComponent<TextInputProps & React.RefAttributes<TextInput>>;
 
-    const isPassword = secureTextEntry !== undefined;
+    const isPassword = secureTextEntry === true;
     const showPassword = isPassword && isPasswordVisible;
     const theme = useThemeColors();
 
@@ -60,6 +60,8 @@ export const Input = forwardRef<TextInput, InputProps>(
               },
               style,
             ]}
+            accessibilityLabel={label}
+            accessibilityHint={error}
             placeholderTextColor={theme.placeholder}
             secureTextEntry={isPassword && !showPassword}
             onFocus={() => setIsFocused(true)}
@@ -69,6 +71,8 @@ export const Input = forwardRef<TextInput, InputProps>(
           />
           {isPassword ? (
             <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={showPassword ? "Hide password" : "Show password"}
               onPress={() => setIsPasswordVisible(!isPasswordVisible)}
               className="ml-2 p-1"
             >
@@ -83,7 +87,7 @@ export const Input = forwardRef<TextInput, InputProps>(
           ) : null}
         </View>
         {error && (
-          <Text className="text-sm text-rose-600 dark:text-rose-400 mt-1">{error}</Text>
+          <Text accessibilityRole="alert" accessibilityLiveRegion="polite" className="text-sm text-rose-600 dark:text-rose-400 mt-1">{error}</Text>
         )}
       </View>
     );

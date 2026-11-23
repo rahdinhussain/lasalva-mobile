@@ -1,0 +1,31 @@
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Welcome back"
+    timeout: 90000
+- tapOn:
+    id: "login-email"
+- inputText: "stylist"
+- tapOn:
+    id: "login-password"
+- inputText: "dummy"
+- assertVisible:
+    id: "login-password"
+- hideKeyboard
+- tapOn: "Show password"
+- assertVisible: "Hide password"
+- tapOn: "Log in"
+- assertVisible: "Invalid email address"
+- tapOn:
+    id: "forgot-password-link"
+- assertVisible: "Reset password"
+- tapOn:
+    id: "forgot-password-email"
+- inputText: "invalid"
+- assertVisible:
+    id: "forgot-password-email"
+- hideKeyboard
+- tapOn: "Send reset link"
+- assertVisible: "Invalid email address"

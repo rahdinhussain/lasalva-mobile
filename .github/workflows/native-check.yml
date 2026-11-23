@@ -1,0 +1,100 @@
+name: Test native mobile builds
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/native-check.yml
+      - .maestro/**
+      - app.config.js
+      - 'app/(auth)/**'
+      - components/ui/Input.tsx
+permissions:
+  contents: read
+
+jobs:
+  native:
+    name: ${{ matrix.platform }} login and password recovery
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: android
+            os: ubuntu-latest
+          - platform: ios
+            os: macos-15
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 85
+    env:
+      CI: 1
+      EXPO_NO_TELEMETRY: 1
+      MAESTRO_CLI_NO_ANALYTICS: 1
+      EXPO_PUBLIC_API_URL: https://lasalva.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: npm ci
+      - name: Install verified Maestro CLI
+        shell: bash
+        run: |
+          curl -fsSL --retry 3 https://github.com/mobile-dev-inc/maestro/releases/download/cli-2.12.1/maestro.zip -o "$RUNNER_TEMP/maestro.zip"
+          echo "54dbb0716425626604973cbb374c585ca30272375d9ce15177a1152765ddd9d7  $RUNNER_TEMP/maestro.zip" | shasum -a 256 -c -
+          unzip -q "$RUNNER_TEMP/maestro.zip" -d "$RUNNER_TEMP/maestro"
+          echo "$RUNNER_TEMP/maestro/maestro/bin" >> "$GITHUB_PATH"
+      - name: Build an installable Android preview
+        if: matrix.platform == 'android'
+        env:
+          LASALVA_DEVICE_PREVIEW: 1
+        run: |
+          npx expo prebuild --platform android --no-install
+          cd android
+          ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64,arm64-v8a --max-workers=2
+          cp app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/Lasalva-Preview.apk"
+          "$ANDROID_HOME/build-tools/$(ls -1 "$ANDROID_HOME/build-tools" | sort -V | tail -1)/apksigner" verify "$RUNNER_TEMP/Lasalva-Preview.apk"
+      - name: Save Android preview
+        if: matrix.platform == 'android'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lasalva-Android-preview
+          path: ${{ runner.temp }}/Lasalva-Preview.apk
+          compression-level: 0
+          retention-days: 14
+      - name: Enable Android emulator acceleration
+        if: matrix.platform == 'android'
+        run: |
+          sudo chown "$USER" /dev/kvm
+          test -w /dev/kvm
+      - name: Exercise Android forms
+        if: matrix.platform == 'android'
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: |
+            adb install "$RUNNER_TEMP/Lasalva-Preview.apk"
+            adb shell settings put secure show_ime_with_hard_keyboard 1
+            maestro test -e APP_ID=com.lasalva.mobile.preview .maestro/auth.yaml
+      - name: Build for the iOS simulator
+        if: matrix.platform == 'ios'
+        run: |
+          npx expo prebuild --platform ios --no-install
+          (cd ios && pod install)
+          xcodebuild -workspace ios/Lasalva.xcworkspace -scheme Lasalva -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/lasalva-ios" ARCHS=arm64 CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=YES build > "$RUNNER_TEMP/lasalva-xcode.log" || { grep -E 'error:|fatal error:' "$RUNNER_TEMP/lasalva-xcode.log" | tail -40; exit 1; }
+      - name: Exercise iOS forms
+        if: matrix.platform == 'ios'
+        run: |
+          udid=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; devices=json.load(sys.stdin)["devices"]; print(next(d["udid"] for runtime,items in reversed(list(devices.items())) if ".iOS-" in runtime for d in items if d["name"].startswith("iPhone")))')
+          defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
+          xcrun simctl boot "$udid"
+          xcrun simctl bootstatus "$udid" -b
+          xcrun simctl install "$udid" "$RUNNER_TEMP/lasalva-ios/Build/Products/Release-iphonesimulator/Lasalva.app"
+          maestro --device "$udid" test -e APP_ID=com.lasalva.mobile .maestro/auth.yaml
