@@ -82,7 +82,7 @@ jobs:
           script: |
             adb install "$RUNNER_TEMP/Lasalva-Preview.apk"
             adb shell settings put secure show_ime_with_hard_keyboard 1
-            maestro test -e APP_ID=com.lasalva.mobile.preview .maestro/auth.yaml
+            maestro test -e APP_ID=com.lasalva.mobile.preview -e APP_SCHEME=lasalvapreview .maestro/auth.yaml
       - name: Build for the iOS simulator
         if: matrix.platform == 'ios'
         run: |
@@ -97,4 +97,4 @@ jobs:
           xcrun simctl boot "$udid"
           xcrun simctl bootstatus "$udid" -b
           xcrun simctl install "$udid" "$RUNNER_TEMP/lasalva-ios/Build/Products/Release-iphonesimulator/Lasalva.app"
-          maestro --device "$udid" test -e APP_ID=com.lasalva.mobile .maestro/auth.yaml
+          maestro --device "$udid" test -e APP_ID=com.lasalva.mobile -e APP_SCHEME=lasalva .maestro/auth.yaml

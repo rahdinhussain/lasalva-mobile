@@ -72,8 +72,7 @@ export default function ForgotPasswordScreen() {
               Open the email link in your browser
             </Text>
             <Text className="text-slate-500 dark:text-slate-400 text-center mt-2">
-              We've sent a password reset link to{'\n'}
-              <Text className="font-medium text-slate-700 dark:text-slate-300">{email}</Text>
+              If <Text className="font-medium text-slate-700 dark:text-slate-300">{email}</Text> is linked to a Lasalva account, you’ll receive a password reset email.
             </Text>
             <Text className="text-slate-500 dark:text-slate-400 text-center mt-3 text-sm">
               Can't find it? Check your spam or junk folder.

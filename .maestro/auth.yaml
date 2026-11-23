@@ -29,3 +29,23 @@ appId: ${APP_ID}
 - hideKeyboard
 - tapOn: "Send reset link"
 - assertVisible: "Invalid email address"
+- openLink: "${APP_SCHEME}://reset-password?token=synthetic-local-test"
+- tapOn:
+    text: "Open"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: "reset-password-new-password"
+    timeout: 20000
+- tapOn:
+    id: "reset-password-new-password"
+- inputText: "short"
+- tapOn:
+    id: "reset-password-confirm-password"
+- inputText: "short"
+- assertVisible:
+    id: "reset-password-confirm-password"
+- hideKeyboard
+- tapOn:
+    id: "submit-new-password"
+- assertVisible: "Password must be at least 8 characters"

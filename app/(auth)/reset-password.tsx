@@ -160,6 +160,7 @@ export default function ResetPasswordScreen() {
               variant="primary"
               fullWidth
               loading={isLoading}
+              testID="submit-new-password"
               onPress={handleSubmit}
             >
               Reset password

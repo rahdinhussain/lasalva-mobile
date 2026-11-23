@@ -120,5 +120,5 @@ export async function forgotPassword(data: ForgotPasswordData): Promise<void> {
 }
 
 export async function resetPassword(data: ResetPasswordData): Promise<void> {
-  await api.post('/auth/reset-password', data);
+  await api.post('/auth/reset-password', { token: data.token, password: data.newPassword });
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Alert, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Linking, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -10,6 +10,8 @@ import {
   Monitor,
   Sun,
   Moon,
+  ShieldCheck,
+  UserMinus,
 } from 'lucide-react-native';
 import { useAuth } from '@/context/AuthContext';
 import { useRoleAccess } from '@/hooks/useRoleAccess';
@@ -17,6 +19,7 @@ import { useTheme, type ThemePreference } from '@/context/ThemeContext';
 import { Card, Avatar, RoleBadge } from '@/components/ui';
 import { GradientHeader } from '@/components/layout';
 import { colors } from '@/constants/colors';
+import { API_URL } from '@/constants';
 import { themeColor } from '@/utils/themeColor';
 
 const THEME_OPTIONS: { value: ThemePreference; label: string; Icon: typeof Monitor }[] = [
@@ -99,6 +102,15 @@ export default function SettingsScreen() {
   const { logout, user: profile } = useAuth();
   const { canManageBusiness, canViewBilling } = useRoleAccess();
 
+  const openAccountPage = async (path: '/privacy-policy' | '/delete-account') => {
+    const url = new URL(path, API_URL).href;
+    try {
+      await Linking.openURL(url);
+    } catch {
+      Alert.alert('Unable to open page', `Open ${url} in your browser.`);
+    }
+  };
+
   const handleLogout = () => {
     Alert.alert(
       'Sign Out',
@@ -121,7 +133,7 @@ export default function SettingsScreen() {
       {/* Header */}
       <GradientHeader title="Settings" />
 
-      <View className="flex-1 px-4 py-4">
+      <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
         {/* Profile Card */}
         <TouchableOpacity onPress={() => router.push('/(tabs)/settings/profile')}>
           <Card className="p-4 mb-6">
@@ -178,6 +190,20 @@ export default function SettingsScreen() {
           </Card>
         )}
 
+        <Card className="px-4 mb-6">
+          <MenuItem
+            icon={<ShieldCheck size={20} color={themeColor().icon} />}
+            label="Privacy policy"
+            onPress={() => openAccountPage('/privacy-policy')}
+          />
+          <View className="h-px bg-slate-100 dark:bg-slate-800" />
+          <MenuItem
+            icon={<UserMinus size={20} color={themeColor().icon} />}
+            label="Request account deletion"
+            onPress={() => openAccountPage('/delete-account')}
+          />
+        </Card>
+
         {/* Sign Out */}
         <Card className="px-4">
           <MenuItem
@@ -187,7 +213,7 @@ export default function SettingsScreen() {
             destructive
           />
         </Card>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
