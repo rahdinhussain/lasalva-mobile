@@ -1,0 +1,64 @@
+name: Verify installed iOS reset links
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Native build run on main containing the simulator app
+        required: true
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/ios-reset-link.yml
+      - tests/ios-links/**
+permissions:
+  contents: read
+  actions: read
+jobs:
+  links:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Find a simulator app matching the current application source
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_RUN: ${{ inputs.run_id }}
+        run: |
+          run="$REQUESTED_RUN"
+          if [ -z "$run" ]; then
+            run=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=Lasalva-iOS-simulator&per_page=25" --jq '[.artifacts[] | select(.expired == false and .workflow_run.head_branch == "main")][0].workflow_run.id')
+          fi
+          [[ "$run" =~ ^[0-9]+$ ]]
+          branch=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run" --jq .head_branch)
+          sha=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run" --jq .head_sha)
+          test "$branch" = main
+          git diff --quiet "$sha" HEAD -- . ':!.github' ':!tests' ':!.maestro'
+          echo "Native application commit $sha from run $run"
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@v4
+        with:
+          name: Lasalva-iOS-simulator
+          path: ${{ runner.temp }}/lasalva-artifact
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.source.outputs.run }}
+      - name: Exercise cold and warm system URL delivery
+        run: |
+          ios_app="$RUNNER_TEMP/lasalva-simulator"
+          mkdir -p "$ios_app"
+          ditto -x -k "$RUNNER_TEMP/lasalva-artifact/Lasalva-Simulator.zip" "$ios_app"
+          device=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; d=json.load(sys.stdin)["devices"]; print(next(item["udid"] for runtime,items in reversed(list(d.items())) if ".iOS-" in runtime for item in items if item["name"].startswith("iPhone")))')
+          xcrun simctl boot "$device"
+          xcrun simctl bootstatus "$device" -b
+          xcrun simctl install "$device" "$ios_app/Lasalva.app"
+          bash tests/ios-links/verify.sh "$device" "$RUNNER_TEMP/lasalva-link-screens"
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-system-link-screens
+          path: ${{ runner.temp }}/lasalva-link-screens
+          if-no-files-found: ignore
+          retention-days: 7
