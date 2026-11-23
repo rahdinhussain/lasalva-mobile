@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - .github/workflows/native-check.yml
+      - .github/gradle-central-mirror.gradle
       - .maestro/**
       - app.config.js
       - plugins/withAndroidBuildMemory.js
@@ -14,9 +15,6 @@ on:
       - components/ui/Input.tsx
 permissions:
   contents: read
-concurrency:
-  group: native-verification-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   native:
@@ -29,6 +27,9 @@ jobs:
             os: ubuntu-latest
           - platform: ios
             os: macos-15
+    concurrency:
+      group: native-${{ matrix.platform }}-${{ github.ref }}
+      cancel-in-progress: true
     runs-on: ${{ matrix.os }}
     timeout-minutes: 85
     env:
@@ -55,12 +56,20 @@ jobs:
           echo "54dbb0716425626604973cbb374c585ca30272375d9ce15177a1152765ddd9d7  $RUNNER_TEMP/maestro.zip" | shasum -a 256 -c -
           unzip -q "$RUNNER_TEMP/maestro.zip" -d "$RUNNER_TEMP/maestro"
           echo "$RUNNER_TEMP/maestro/maestro/bin" >> "$GITHUB_PATH"
+      - name: Cache Android dependencies
+        if: matrix.platform == 'android'
+        uses: gradle/actions/setup-gradle@v4
       - name: Build an installable Android preview
         if: matrix.platform == 'android'
         env:
           LASALVA_DEVICE_PREVIEW: 1
         run: |
           npx expo prebuild --platform android --no-install
+          central_status=$(curl -sSL -o /dev/null -w '%{http_code}' --max-time 15 'https://repo.maven.apache.org/maven2/com/google/code/gson/gson/2.9.1/gson-2.9.1.pom' || true)
+          if [ "$central_status" = 429 ]; then
+            mkdir -p "$HOME/.gradle/init.d"
+            cp .github/gradle-central-mirror.gradle "$HOME/.gradle/init.d/"
+          fi
           cd android
           ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64,arm64-v8a --max-workers=2 --no-daemon -Pkotlin.compiler.execution.strategy=in-process
           cp app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/Lasalva-Preview.apk"
@@ -101,7 +110,11 @@ jobs:
           (cd ios && pod install)
           gem install --no-document xcodeproj -v 1.27.0
           ruby tests/native-ios/project.rb
-          xcodebuild -workspace ios/Lasalva.xcworkspace -scheme Lasalva -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/lasalva-ios" ARCHS=arm64 CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=YES build > "$RUNNER_TEMP/lasalva-xcode.log" || { grep -E 'error:|fatal error:' "$RUNNER_TEMP/lasalva-xcode.log" | tail -40; exit 1; }
+          udid=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; devices=json.load(sys.stdin)["devices"]; print(next(d["udid"] for runtime,items in reversed(list(devices.items())) if ".iOS-" in runtime for d in items if d["name"].startswith("iPhone")))')
+          echo "IOS_TEST_DEVICE=$udid" >> "$GITHUB_ENV"
+          defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
+          xcrun simctl boot "$udid"
+          xcodebuild build-for-testing -workspace ios/Lasalva.xcworkspace -scheme RecoveryUITests -configuration Release -destination "id=$udid" -derivedDataPath "$RUNNER_TEMP/lasalva-ios" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES > "$RUNNER_TEMP/lasalva-xcode.log" || { grep -Ei 'error:|fatal error:|Multiple commands produce|failed:' "$RUNNER_TEMP/lasalva-xcode.log" | tail -40; exit 1; }
       - name: Save the iOS simulator app
         if: matrix.platform == 'ios'
         run: ditto -c -k --keepParent "$RUNNER_TEMP/lasalva-ios/Build/Products/Release-iphonesimulator/Lasalva.app" "$RUNNER_TEMP/Lasalva-Simulator.zip"
@@ -114,12 +127,8 @@ jobs:
       - name: Exercise iOS forms
         if: matrix.platform == 'ios'
         run: |
-          udid=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; devices=json.load(sys.stdin)["devices"]; print(next(d["udid"] for runtime,items in reversed(list(devices.items())) if ".iOS-" in runtime for d in items if d["name"].startswith("iPhone")))')
-          defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
-          xcrun simctl boot "$udid"
-          xcrun simctl bootstatus "$udid" -b
-          xcrun simctl install "$udid" "$RUNNER_TEMP/lasalva-ios/Build/Products/Release-iphonesimulator/Lasalva.app"
-          xcodebuild test -workspace ios/Lasalva.xcworkspace -scheme RecoveryUITests -configuration Release -destination "id=$udid" -derivedDataPath "$RUNNER_TEMP/lasalva-ios" -parallel-testing-enabled NO -resultBundlePath "$RUNNER_TEMP/RecoveryUITests.xcresult" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES > "$RUNNER_TEMP/lasalva-ui.log" || { tail -100 "$RUNNER_TEMP/lasalva-ui.log"; exit 1; }
+          xcrun simctl bootstatus "$IOS_TEST_DEVICE" -b
+          xcodebuild test-without-building -workspace ios/Lasalva.xcworkspace -scheme RecoveryUITests -configuration Release -destination "id=$IOS_TEST_DEVICE" -derivedDataPath "$RUNNER_TEMP/lasalva-ios" -parallel-testing-enabled NO -resultBundlePath "$RUNNER_TEMP/RecoveryUITests.xcresult" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES > "$RUNNER_TEMP/lasalva-ui.log" || { tail -100 "$RUNNER_TEMP/lasalva-ui.log"; exit 1; }
           grep -E 'Test Case|Executed [0-9]+ tests' "$RUNNER_TEMP/lasalva-ui.log" | tail -18
       - name: Save iOS test results
         if: always() && matrix.platform == 'ios'

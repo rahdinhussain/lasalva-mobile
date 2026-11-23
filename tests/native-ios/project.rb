@@ -11,6 +11,8 @@ source = project.main_group.new_file(File.join(__dir__, 'RecoveryUITests.swift')
 test.source_build_phase.add_file_reference(source)
 test.build_configurations.each do |configuration|
   settings = configuration.build_settings
+  settings['PRODUCT_NAME'] = '$(TARGET_NAME)'
+  settings['PRODUCT_MODULE_NAME'] = 'RecoveryUITests'
   settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.lasalva.qa.RecoveryUITests'
   settings['TEST_TARGET_NAME'] = app.name
   settings['SWIFT_VERSION'] = '5.0'

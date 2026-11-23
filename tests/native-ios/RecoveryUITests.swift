@@ -1,12 +1,7 @@
 import XCTest
 
-final class RecoveryUITests: XCTestCase {
+@MainActor final class RecoveryUITests: XCTestCase {
     let app = XCUIApplication(bundleIdentifier: "com.lasalva.mobile")
-
-    override func setUpWithError() throws {
-        continueAfterFailure = false
-        app.launch()
-    }
 
     func field(_ identifier: String, secure: Bool = false) -> XCUIElement {
         let input = secure ? app.secureTextFields[identifier] : app.textFields[identifier]
@@ -22,6 +17,8 @@ final class RecoveryUITests: XCTestCase {
     }
 
     func testLoginKeepsPasswordAccessibleWithKeyboardOpen() {
+        continueAfterFailure = false
+        app.launch()
         let email = field("login-email")
         email.tap()
         email.typeText("stylist")
@@ -36,6 +33,8 @@ final class RecoveryUITests: XCTestCase {
     }
 
     func testForgotPasswordValidationFromKeyboard() {
+        continueAfterFailure = false
+        app.launch()
         tap("forgot-password-link")
         let input = field("forgot-password-email")
         input.tap()
@@ -46,6 +45,7 @@ final class RecoveryUITests: XCTestCase {
     }
 
     func testResetPasswordKeepsBothFieldsReachable() {
+        continueAfterFailure = false
         app.open(URL(string: "lasalva://reset-password?token=local-fixture")!)
         let first = field("reset-password-new-password", secure: true)
         first.tap()

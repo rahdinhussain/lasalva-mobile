@@ -1,0 +1,17 @@
+// Apply only on CI runners rate-limited by Maven Central. Leave other repositories alone.
+def useCentralMirror = { repositories ->
+    repositories.withType(MavenArtifactRepository).configureEach { repository ->
+        if (repository.url?.host in ['repo.maven.apache.org', 'repo1.maven.org']) {
+            repository.url = URI.create('https://maven-central.storage-download.googleapis.com/maven2/')
+        }
+    }
+}
+
+gradle.beforeSettings { settings ->
+    useCentralMirror(settings.pluginManagement.repositories)
+    useCentralMirror(settings.dependencyResolutionManagement.repositories)
+}
+gradle.beforeProject { project ->
+    useCentralMirror(project.buildscript.repositories)
+    useCentralMirror(project.repositories)
+}
