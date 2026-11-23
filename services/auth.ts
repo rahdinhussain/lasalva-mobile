@@ -69,6 +69,8 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
 
 export async function logout(): Promise<void> {
   try {
+    const { removePushTokenFromServer } = await import("./pushNotifications");
+    await removePushTokenFromServer().catch(() => undefined);
     await api.post('/auth/logout');
   } catch (error) {
     // Continue with local logout even if API call fails

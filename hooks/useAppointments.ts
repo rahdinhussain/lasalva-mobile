@@ -24,7 +24,9 @@ export function useAppointments(filters: AppointmentFilters) {
     queryFn: () => getAppointments(filters),
     enabled: isAuthenticated && !!filters.start && !!filters.end,
     staleTime: STALE_TIME.SHORT,
-    refetchInterval: 30000, // Poll every 30 seconds
+    refetchInterval: 120000,
+    refetchIntervalInBackground: false,
+    refetchOnWindowFocus: true,
   });
 
   const serviceById = useMemo(

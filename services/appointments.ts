@@ -103,21 +103,24 @@ export interface CreateAppointmentData {
 
 export async function createAppointment(
   data: CreateAppointmentData
-): Promise<{ appointmentId: string; assignedStaffId: string }> {
+): Promise<{ appointmentId: string; assignedStaffId: string; status?: "PENDING" | "CONFIRMED" }> {
   const response = await api.post<{
     success: boolean;
     appointmentId: string;
     assignedStaffId: string;
+    status?: "PENDING" | "CONFIRMED";
   }>('/appointments/create', data);
   return {
     appointmentId: response.data.appointmentId,
     assignedStaffId: response.data.assignedStaffId,
+    status: response.data.status,
   };
 }
 
 // --- Reschedule ---
 
 export interface RescheduleAppointmentData {
+  rebook?: boolean;
   appointmentId: string;
   startTime: string;
   endTime: string;

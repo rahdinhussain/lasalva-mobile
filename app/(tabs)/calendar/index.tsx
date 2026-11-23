@@ -1,3 +1,5 @@
+import { addDays, endOfMonth, format, startOfMonth, startOfDay } from 'date-fns';
+import { fromZonedTime } from 'date-fns-tz';
 import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,7 +9,7 @@ import { Appointment } from '@/types';
 import {
   getMonthGridRange,
   getDateKeyInTimeZone,
-  getTodayDateInTimeZone,
+  getNowInTimeZone,
 } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
 import { ErrorState } from '@/components/ui';
@@ -35,12 +37,7 @@ import type { ViewMode } from '@/components/calendar/ViewModeToggle';
  */
 function getFetchRange(date: Date, viewMode: ViewMode) {
   if (viewMode === 'list') {
-    // Fetch a wide range for list view (3 months back, 3 months ahead)
-    const start = new Date(date);
-    start.setMonth(start.getMonth() - 3);
-    const end = new Date(date);
-    end.setMonth(end.getMonth() + 3);
-    return { start, end };
+    return { start: startOfMonth(date), end: endOfMonth(date) };
   }
   // month / week / day — always use the broad month-grid range so that
   // day-view navigation never hits a stale or empty narrow-range cache.
@@ -50,8 +47,9 @@ function getFetchRange(date: Date, viewMode: ViewMode) {
 export default function CalendarScreen() {
   const { business } = useBusiness();
   const timeZone = business?.timezone ?? null;
-  const [currentDate, setCurrentDate] = useState(() => getTodayDateInTimeZone(timeZone));
+  const [currentDate, setCurrentDate] = useState(() => getNowInTimeZone(timeZone));
 
+  React.useEffect(() => setCurrentDate(getNowInTimeZone(timeZone)), [timeZone]);
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [detailVisible, setDetailVisible] = useState(false);
@@ -64,17 +62,17 @@ export default function CalendarScreen() {
   const fetchRange = useMemo(() => {
     const { start, end } = getFetchRange(currentDate, viewMode);
     return {
-      start: start.toISOString(),
-      end: end.toISOString(),
+      start: fromZonedTime(start, timeZone || "UTC").toISOString(),
+      end: fromZonedTime(startOfDay(addDays(end, 1)), timeZone || "UTC").toISOString(),
     };
-  }, [currentDate, viewMode]);
+  }, [currentDate, viewMode, timeZone]);
 
   const { appointments, isLoading, error, refetch } = useAppointments(fetchRange);
 
   // Count appointments for the current day (used by DatePicker badge)
   const dayAppointmentCount = useMemo(() => {
     if (!appointments) return 0;
-    const currentDateKey = getDateKeyInTimeZone(currentDate, timeZone);
+    const currentDateKey = format(currentDate, 'yyyy-MM-dd');
     return appointments.filter(
       (apt) => getDateKeyInTimeZone(apt.start_time, timeZone) === currentDateKey
     ).length;
@@ -87,7 +85,7 @@ export default function CalendarScreen() {
   }, [refetch]);
 
   const handleToday = () => {
-    setCurrentDate(getTodayDateInTimeZone(timeZone));
+    setCurrentDate(getNowInTimeZone(timeZone));
   };
 
   const handleAppointmentPress = (appointment: Appointment) => {
@@ -136,7 +134,7 @@ export default function CalendarScreen() {
     <SafeAreaView edges={['top']} className="flex-1 bg-slate-50 dark:bg-slate-900">
       {/* Gradient hero: date navigation + view mode toggle */}
       <GradientHeader>
-        {viewMode !== 'list' && (
+        {(
           <DatePicker
             currentDate={currentDate}
             onDateChange={setCurrentDate}
@@ -200,9 +198,8 @@ export default function CalendarScreen() {
           onRefresh={handleRefresh}
           refreshing={refreshing}
           timeZone={timeZone}
-          useServerSearch
           rangeStart={new Date(fetchRange.start)}
-          rangeEnd={new Date(fetchRange.end)}
+          rangeEnd={new Date(Date.parse(fetchRange.end)-1)}
         />
       )}
 

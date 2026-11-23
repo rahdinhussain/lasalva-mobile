@@ -79,7 +79,7 @@ export function WeekView({
   const appointmentsByDay = useMemo(() => {
     const map: Record<string, Appointment[]> = {};
     for (const day of weekDays) {
-      const key = getDateKeyInTimeZone(day, timeZone);
+      const key = format(day, 'yyyy-MM-dd');
       map[key] = safeAppointments.filter(
         (apt) => getDateKeyInTimeZone(apt.start_time, timeZone) === key
       );
@@ -103,7 +103,7 @@ export function WeekView({
       <View className="flex-row bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800">
         <View style={{ width: TIME_LABEL_WIDTH }} />
         {weekDays.map((day) => {
-          const dayKey = getDateKeyInTimeZone(day, timeZone);
+          const dayKey = format(day, 'yyyy-MM-dd');
           const isTodayDate = dayKey === todayKey;
           const displayDate = parseISO(dayKey);
           return (
@@ -142,7 +142,7 @@ export function WeekView({
       {/* Time grid with appointment blocks */}
       <TimeGrid dates={weekDays} columnWidth={columnWidth} timeZone={timeZone}>
         {weekDays.map((day, dayIndex) => {
-          const key = getDateKeyInTimeZone(day, timeZone);
+          const key = format(day, 'yyyy-MM-dd');
           const dayAppts = appointmentsByDay[key] || [];
           const lanes = computeLanes(dayAppts);
 

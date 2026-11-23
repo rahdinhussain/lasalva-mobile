@@ -19,7 +19,7 @@ export default function ResetPasswordScreen() {
   const [errors, setErrors] = useState<{ password?: string; confirmPassword?: string }>({});
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const validate(): boolean => {
+  const validate = (): boolean => {
     const newErrors: { password?: string; confirmPassword?: string } = {};
 
     if (!password) {

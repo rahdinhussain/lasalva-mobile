@@ -35,7 +35,7 @@ interface DateTimeStepProps {
 const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 function isDayClosed(date: Date, businessHours: BusinessHour[], timeZone?: string | null): boolean {
-  const dayOfWeek = toTimeZoneDate(date, timeZone).getDay(); // 0=Sunday
+  const dayOfWeek = date.getDay(); // 0=Sunday
   const hours = businessHours.find((h) => h.day_of_week === dayOfWeek);
   if (!hours) return false;
   return hours.is_closed === true;
@@ -63,12 +63,12 @@ export function DateTimeStep({
 
   const today = startOfDay(getNowInTimeZone(timeZone));
   const [calendarMonth, setCalendarMonth] = useState(
-    selectedDate ? new Date(selectedDate) : new Date()
+    selectedDate ? parseISO(selectedDate) : getNowInTimeZone(timeZone)
   );
 
   const gridDays = useMemo(() => getMonthGridDays(calendarMonth), [calendarMonth]);
   const todayKey = getDateKeyInTimeZone(new Date(), timeZone);
-  const currentMonthKey = formatInTimeZoneSafe(calendarMonth, timeZone, 'yyyy-MM');
+  const currentMonthKey = format(calendarMonth, 'yyyy-MM');
 
   // Split into 6 weeks of 7 days
   const weeks = useMemo(() => {
@@ -85,8 +85,8 @@ export function DateTimeStep({
   const handleNextMonth = () => setCalendarMonth((prev) => addMonths(prev, 1));
 
   const isCurrentMonth =
-    formatInTimeZoneSafe(calendarMonth, timeZone, 'yyyy-MM') ===
-    formatInTimeZoneSafe(today, timeZone, 'yyyy-MM');
+    format(calendarMonth, 'yyyy-MM') ===
+    format(today, 'yyyy-MM');
 
   return (
     <View className="flex-1 px-4">
@@ -110,11 +110,11 @@ export function DateTimeStep({
 
         <View className="flex-row items-center gap-2">
           <Text className="text-base font-semibold text-slate-900 dark:text-slate-50">
-            {formatInTimeZoneSafe(calendarMonth, timeZone, 'MMMM yyyy')}
+            {format(calendarMonth, 'MMMM yyyy')}
           </Text>
           {!isCurrentMonth && (
             <TouchableOpacity
-              onPress={() => setCalendarMonth(new Date())}
+              onPress={() => setCalendarMonth(getNowInTimeZone(timeZone))}
               className="bg-indigo-50 dark:bg-indigo-500/20 px-2.5 py-0.5 rounded-full"
             >
               <Text className="text-xs font-medium text-indigo-600 dark:text-indigo-400">Today</Text>
@@ -144,7 +144,7 @@ export function DateTimeStep({
       {weeks.map((week, weekIndex) => (
         <View key={weekIndex} className="flex-row">
           {week.map((day) => {
-            const dateStr = getDateKeyInTimeZone(day, timeZone);
+            const dateStr = format(day, 'yyyy-MM-dd');
             const inCurrentMonth = dateStr.startsWith(currentMonthKey);
             const isPast = dateStr < todayKey;
             const isClosed = isDayClosed(day, businessHours, timeZone);

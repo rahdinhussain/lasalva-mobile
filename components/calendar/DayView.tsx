@@ -69,7 +69,7 @@ export function DayView({
 }: DayViewProps) {
   const { width: screenWidth } = useWindowDimensions();
   const gridWidth = screenWidth - TIME_LABEL_WIDTH;
-  const currentDateKey = getDateKeyInTimeZone(currentDate, timeZone);
+  const currentDateKey = format(currentDate, 'yyyy-MM-dd');
 
   const safeAppointments = Array.isArray(appointments) ? appointments : [];
   const dayAppointments = useMemo(

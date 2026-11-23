@@ -55,9 +55,7 @@ export function CustomerDetailsStep({
     if (!customerName.trim()) {
       newErrors.customerName = 'Name is required';
     }
-    if (!customerEmail.trim()) {
-      newErrors.customerEmail = 'Email is required';
-    } else if (!validateEmail(customerEmail.trim())) {
+    if (customerEmail.trim() && !validateEmail(customerEmail.trim())) {
       newErrors.customerEmail = 'Invalid email address';
     }
 
@@ -158,7 +156,7 @@ export function CustomerDetailsStep({
         />
 
         <Input
-          label="Email"
+          label="Email (optional for walk-ins)"
           placeholder="Enter customer email"
           value={customerEmail}
           onChangeText={(v) => {

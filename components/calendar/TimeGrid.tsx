@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import React, { useRef, useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { getDateKeyInTimeZone, getHoursMinutesInTimeZone } from '@/utils/dateUtils';
@@ -43,15 +44,15 @@ export function TimeGrid({
   // that the now-indicator lines up with appointment blocks (which are also
   // positioned using getHoursMinutesInTimeZone).
   const todayKey = getDateKeyInTimeZone(now, timeZone);
-  const hasToday = dates.some((d) => getDateKeyInTimeZone(d, timeZone) === todayKey);
-  const todayIndex = dates.findIndex((d) => getDateKeyInTimeZone(d, timeZone) === todayKey);
+  const hasToday = dates.some((d) => format(d, 'yyyy-MM-dd') === todayKey);
+  const todayIndex = dates.findIndex((d) => format(d, 'yyyy-MM-dd') === todayKey);
 
   const { hours: nowHours, minutes: nowMinutes } = getHoursMinutesInTimeZone(now, timeZone);
   const currentTimeTop = nowHours * HOUR_HEIGHT + (nowMinutes / 60) * HOUR_HEIGHT;
 
   // Auto-scroll to 7 AM (or one hour before "now" when today is in view).
   useEffect(() => {
-    const viewHasToday = dates.some((d) => getDateKeyInTimeZone(d, timeZone) === todayKey);
+    const viewHasToday = dates.some((d) => format(d, 'yyyy-MM-dd') === todayKey);
     const scrollToHour = viewHasToday ? Math.max(nowHours - 1, 0) : 7;
 
     const timeout = setTimeout(() => {

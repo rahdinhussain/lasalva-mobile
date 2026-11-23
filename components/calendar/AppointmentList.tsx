@@ -121,7 +121,7 @@ export function AppointmentList({
     }
 
     // Sort newest first
-    return result.sort(
+    return [...result].sort(
       (a, b) =>
         new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
     );

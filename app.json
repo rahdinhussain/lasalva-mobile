@@ -34,29 +34,7 @@
       "versionCode": 29,
       "edgeToEdgeEnabled": true,
       "softwareKeyboardLayoutMode": "resize",
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "autoVerify": true,
-          "data": [
-            {
-              "scheme": "https",
-              "host": "lasalva.com",
-              "pathPrefix": "/reset-password"
-            },
-            {
-              "scheme": "https",
-              "host": "lasalva.com",
-              "pathPrefix": "/verify"
-            }
-          ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
-        }
-      ],
-      "permissions": [
+      "blockedPermissions": [
         "android.permission.RECORD_AUDIO"
       ]
     },
@@ -67,7 +45,8 @@
     "plugins": [
       "expo-router",
       "./plugins/withFollyCoroutinesFix.js",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true

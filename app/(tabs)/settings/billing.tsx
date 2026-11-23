@@ -40,7 +40,7 @@ export default function BillingSettingsScreen() {
 
   const handleOpenPortal = async () => {
     try {
-      await openBillingPortal('/settings/billing');
+      await openBillingPortal();
     } catch (error) {
       console.error('Failed to open billing portal:', error);
     }

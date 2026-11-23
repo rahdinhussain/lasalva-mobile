@@ -39,63 +39,58 @@ export function DatePicker({
 
   const formatWeekRange = (): string => {
     const { start, end } = getWeekRange(currentDate);
-    const startMonth = formatInTimeZoneSafe(start, timeZone, 'MMM');
-    const endMonth = formatInTimeZoneSafe(end, timeZone, 'MMM');
+    const startMonth = format(start, 'MMM');
+    const endMonth = format(end, 'MMM');
     if (startMonth === endMonth) {
-      return `${formatInTimeZoneSafe(start, timeZone, 'MMM d')} — ${formatInTimeZoneSafe(
-        end,
-        timeZone,
-        'd'
+      return `${format(start, 'MMM d')} — ${format(end, 'd'
       )}`;
     }
-    return `${formatInTimeZoneSafe(start, timeZone, 'MMM d')} — ${formatInTimeZoneSafe(
-      end,
-      timeZone,
-      'MMM d'
+    return `${format(start, 'MMM d')} — ${format(end, 'MMM d'
     )}`;
   };
 
   const getLabel = (): string => {
     switch (viewMode) {
       case 'month':
-        return formatInTimeZoneSafe(currentDate, timeZone, 'MMMM yyyy');
+        return format(currentDate, 'MMMM yyyy');
       case 'week': {
         return formatWeekRange();
       }
       case 'day':
-        return formatInTimeZoneSafe(currentDate, timeZone, 'EEEE, MMM d');
+        return format(currentDate, 'EEEE, MMM d');
       case 'list':
-        return '';
+        return format(currentDate, 'MMMM yyyy');
     }
   };
 
   const isOnCurrentPeriod = (): boolean => {
     switch (viewMode) {
       case 'month': {
-        const currentMonth = formatInTimeZoneSafe(currentDate, timeZone, 'yyyy-MM');
-        const todayMonth = formatInTimeZoneSafe(today, timeZone, 'yyyy-MM');
+        const currentMonth = format(currentDate, 'yyyy-MM');
+        const todayMonth = format(today, 'yyyy-MM');
         return currentMonth === todayMonth;
       }
       case 'week': {
         const currentStart = getWeekRange(currentDate).start;
         const todayStart = getWeekRange(today).start;
         return (
-          getDateKeyInTimeZone(currentStart, timeZone) ===
-          getDateKeyInTimeZone(todayStart, timeZone)
+          format(currentStart, 'yyyy-MM-dd') ===
+          format(todayStart, 'yyyy-MM-dd')
         );
       }
       case 'day':
         return (
-          getDateKeyInTimeZone(currentDate, timeZone) ===
-          getDateKeyInTimeZone(today, timeZone)
+          format(currentDate, 'yyyy-MM-dd') ===
+          format(today, 'yyyy-MM-dd')
         );
       case 'list':
-        return true;
+        return format(currentDate, 'yyyy-MM') === format(today, 'yyyy-MM');
     }
   };
 
   const handlePrev = () => {
     switch (viewMode) {
+      case 'list':
       case 'month':
         onDateChange(navigateMonth(currentDate, 'prev'));
         break;
@@ -110,6 +105,7 @@ export function DatePicker({
 
   const handleNext = () => {
     switch (viewMode) {
+      case 'list':
       case 'month':
         onDateChange(navigateMonth(currentDate, 'next'));
         break;
@@ -122,7 +118,7 @@ export function DatePicker({
     }
   };
 
-  const showNavigation = viewMode !== 'list';
+  const showNavigation = true;
   const showToday = showNavigation && !isOnCurrentPeriod();
 
   const containerClass = onHero

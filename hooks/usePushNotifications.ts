@@ -58,7 +58,7 @@ export function usePushNotifications() {
     const responseSubscription = addNotificationResponseListener((response) => {
       try {
         const data = response?.notification?.request?.content?.data;
-        if (data?.type === 'appointment' && data?.appointmentId) {
+        if (data?.type === 'appointment' && isAuthenticated) {
           router.push('/(tabs)/calendar');
         }
       } catch (e) {
@@ -74,7 +74,7 @@ export function usePushNotifications() {
       responseSubscription.remove();
       receivedSubscription.remove();
     };
-  }, [router]);
+  }, [router, isAuthenticated]);
 
   return {
     pushToken,

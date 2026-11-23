@@ -26,7 +26,7 @@ export function MonthView({
   const gridDays = useMemo(() => getMonthGridDays(currentDate), [currentDate]);
 
   const safeAppointments = Array.isArray(appointments) ? appointments : [];
-  const currentMonthKey = formatInTimeZoneSafe(currentDate, timeZone, 'yyyy-MM');
+  const currentMonthKey = format(currentDate, 'yyyy-MM');
   const todayKey = getDateKeyInTimeZone(new Date(), timeZone);
 
   // Group appointments by date string for fast lookup
@@ -81,7 +81,7 @@ export function MonthView({
       {weeks.map((week, weekIndex) => (
         <View key={weekIndex} className="flex-row border-b border-slate-100 dark:border-slate-800">
           {week.map((day) => {
-            const dateKey = getDateKeyInTimeZone(day, timeZone);
+            const dateKey = format(day, 'yyyy-MM-dd');
             const dayAppts = appointmentsByDate[dateKey] || [];
             const isCurrentMonth = dateKey.startsWith(currentMonthKey);
             const isTodayDate = dateKey === todayKey;

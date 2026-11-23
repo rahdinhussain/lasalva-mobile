@@ -1,3 +1,4 @@
+import { Linking } from 'react-native';
 import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -98,7 +99,7 @@ export function AppointmentDetail({
   };
   const handleOpenReschedule = () => {
     if (!appointment) return;
-    setRescheduleDate(getDateKeyInTimeZone(appointment.start_time, timeZone));
+    setRescheduleDate([getDateKeyInTimeZone(appointment.start_time, timeZone), getDateKeyInTimeZone(new Date(), timeZone)].sort()[1]);
     setRescheduleSlot(null);
     setUseAnyStaff(false);
     setRescheduleVisible(true);
@@ -109,6 +110,7 @@ export function AppointmentDetail({
     try {
       await rescheduleMutation.mutateAsync({
         appointmentId: appointment.id,
+        rebook: ['CANCELLED','NO_SHOW','COMPLETED'].includes(appointment.status),
         startTime: rescheduleSlot.startTime,
         endTime: rescheduleSlot.endTime,
         staffId: useAnyStaff ? undefined : appointment.staff_id,
@@ -219,7 +221,7 @@ export function AppointmentDetail({
             variant="primary"
             fullWidth
             icon={<RefreshCw size={18} color="white" />}
-            onPress={() => handleStatusChange('PENDING')}
+            onPress={handleOpenReschedule}
             loading={updateStatus.isPending}
           >
             Rebook
@@ -406,7 +408,7 @@ export function AppointmentDetail({
               <View>
                 <Text className="text-sm text-slate-500 dark:text-slate-400">Phone</Text>
                 <Text className="text-base font-medium text-slate-900 dark:text-slate-50">
-                  {appointment.customer_phone}
+                  <Text accessibilityRole="link" onPress={() => Linking.openURL("tel:" + appointment.customer_phone?.replace(/[^+0-9]/g, ""))}>{appointment.customer_phone}</Text>
                 </Text>
               </View>
             </View>

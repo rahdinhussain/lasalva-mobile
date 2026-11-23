@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useCallback, useEffect, useState, useMemo } from 'react';
 import {
   View,
   Alert,
@@ -15,7 +15,7 @@ import { X } from 'lucide-react-native';
 import { useBusiness } from '@/context/BusinessContext';
 import { useCreateBooking } from '@/hooks/useBooking';
 import { Service, AvailabilitySlot } from '@/types';
-import { getDateKeyInTimeZone, getNowInTimeZone } from '@/utils/dateUtils';
+import { toDateString, getNowInTimeZone } from '@/utils/dateUtils';
 import { colors } from '@/constants/colors';
 import { StepIndicator } from './StepIndicator';
 import { ServiceStep } from './ServiceStep';
@@ -68,6 +68,7 @@ export function BookingModal({ visible, onClose, initialDate }: BookingModalProp
   const [currentStep, setCurrentStep] = useState<BookingStep>(1);
   const [bookingData, setBookingData] = useState<BookingData>(INITIAL_BOOKING_DATA);
 
+  const attempt = useRef({ signature: "", key: "" });
   const allowChooseStaff = business?.allow_customer_choose_staff ?? false;
 
   const effectiveStep = useMemo(() => {
@@ -78,6 +79,7 @@ export function BookingModal({ visible, onClose, initialDate }: BookingModalProp
   const totalSteps = allowChooseStaff ? 6 : 5;
 
   const resetForm = useCallback(() => {
+    attempt.current = { signature: "", key: "" };
     setCurrentStep(1);
     setBookingData(INITIAL_BOOKING_DATA);
     createBooking.reset();
@@ -109,7 +111,7 @@ export function BookingModal({ visible, onClose, initialDate }: BookingModalProp
       staffId: null,
       staffSelected: false,
       staffName: null,
-      date: null,
+      date: prev.date,
       slot: null,
     }));
   }, []);
@@ -120,7 +122,7 @@ export function BookingModal({ visible, onClose, initialDate }: BookingModalProp
       staffId,
       staffSelected: true,
       staffName,
-      date: null,
+      date: prev.date,
       slot: null,
     }));
   }, []);
@@ -142,15 +144,13 @@ export function BookingModal({ visible, onClose, initialDate }: BookingModalProp
 
   const handleConfirmBooking = useCallback(async () => {
     if (!bookingData.service || !bookingData.slot || !bookingData.date) return;
-    const staffId = bookingData.staffId ?? bookingData.slot.totalStaffIds?.[0] ?? null;
-    if (!staffId) {
-      Alert.alert('No Staff Available', 'Please select a different time slot.');
-      return;
-    }
+    const signature = JSON.stringify(bookingData);
+    if (attempt.current.signature !== signature) attempt.current = { signature, key: `booking_${Date.now()}_${Math.random().toString(36).slice(2)}` };
     try {
       await createBooking.mutateAsync({
         serviceId: bookingData.service.id,
-        staffId,
+        staffId: bookingData.staffId ?? undefined,
+        idempotencyKey: attempt.current.key,
         startTime: bookingData.slot.startTime,
         endTime: bookingData.slot.endTime,
         customerName: bookingData.customerName.trim(),
@@ -159,6 +159,7 @@ export function BookingModal({ visible, onClose, initialDate }: BookingModalProp
       });
       setCurrentStep(6);
     } catch (error: any) {
+      if (error?.status === 409) { setBookingData(prev => ({ ...prev, slot: null })); setCurrentStep(4); }
       Alert.alert(
         'Booking Failed',
         error?.message || 'Unable to complete the booking. Please try again.'
@@ -177,7 +178,7 @@ export function BookingModal({ visible, onClose, initialDate }: BookingModalProp
       if (initialDate >= today) {
         setBookingData((prev) => ({
           ...prev,
-          date: getDateKeyInTimeZone(initialDate, timeZone),
+          date: toDateString(initialDate),
         }));
       }
     }
@@ -297,7 +298,7 @@ export function BookingModal({ visible, onClose, initialDate }: BookingModalProp
                 onBookAnother={handleBookAnother}
                 onClose={handleDismiss}
                 timeZone={timeZone}
-                status={business?.auto_confirm_appointments ? 'CONFIRMED' : 'PENDING'}
+                status={createBooking.data?.status ?? (business?.auto_confirm_appointments ? 'CONFIRMED' : 'PENDING')}
               />
             )}
           </KeyboardAvoidingView>

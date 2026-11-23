@@ -61,10 +61,8 @@ export function useCreateBooking() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: Omit<CreateAppointmentData, 'idempotencyKey'>) => {
-      const idempotencyKey = `booking_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-      return createAppointment({ ...data, idempotencyKey });
-    },
+    mutationFn: createAppointment,
+    onError: () => { void queryClient.invalidateQueries({queryKey: QUERY_KEYS.AVAILABILITY}); },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.APPOINTMENTS });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.AVAILABILITY });

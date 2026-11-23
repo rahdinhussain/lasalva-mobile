@@ -5,19 +5,22 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query';
-import { AuthProvider } from '@/context/AuthContext';
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { BusinessProvider } from '@/context/BusinessContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      retryDelay: 1000,
-    },
-  },
-});
+function SessionData({ children }: React.PropsWithChildren) {
+  const [client] = React.useState(() => new QueryClient({ defaultOptions: { queries: { retry: 1, retryDelay: 1000 } } }));
+  useEffect(() => () => { void client.cancelQueries(); client.clear(); }, [client]);
+  return <QueryClientProvider client={client}><BusinessProvider>{children}</BusinessProvider></QueryClientProvider>;
+}
+function SessionRoot({ children }: React.PropsWithChildren) {
+  const { userId, user, isHydrated } = useAuth();
+  usePushNotifications();
+  return <SessionData key={JSON.stringify([isHydrated, userId, user?.business_id])}>{children}</SessionData>;
+}
 
 // Tell React Query whether the app is in the foreground. On native there is no
 // window-focus event, so without this the 30s appointment polling (and any
@@ -53,9 +56,8 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider>
         <ThemedStatusBar />
-        <QueryClientProvider client={queryClient}>
           <AuthProvider>
-            <BusinessProvider>
+            <SessionRoot>
               <ErrorBoundary>
                 <Stack screenOptions={{ headerShown: false }}>
                   <Stack.Screen name="index" />
@@ -63,9 +65,8 @@ export default function RootLayout() {
                   <Stack.Screen name="(tabs)" />
                 </Stack>
               </ErrorBoundary>
-            </BusinessProvider>
+            </SessionRoot>
           </AuthProvider>
-        </QueryClientProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );

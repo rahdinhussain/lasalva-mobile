@@ -69,7 +69,7 @@ export default function ForgotPasswordScreen() {
               <CheckCircle size={32} color={colors.emerald[500]} />
             </View>
             <Text className="text-xl font-semibold text-slate-900 dark:text-slate-50 text-center">
-              Check your email
+              Open the email link in your browser
             </Text>
             <Text className="text-slate-500 dark:text-slate-400 text-center mt-2">
               We've sent a password reset link to{'\n'}

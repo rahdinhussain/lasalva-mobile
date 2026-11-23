@@ -80,10 +80,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           try {
             const profile = await getProfile();
             if (!isMountedRef.current) return;
-            setState((prev) => ({
-              ...prev,
-              user: profile,
-            }));
+            setState(prev => prev.userId === userId ? { ...prev, user: profile } : prev);
           } catch (error) {
             // During hydration, we don't auto-logout on errors
             // The user has a valid stored token, so keep them logged in
@@ -300,7 +297,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const profile = await getProfile();
       if (isMountedRef.current) {
-        setState((prev) => ({ ...prev, user: profile }));
+        setState(prev => prev.token === state.token ? { ...prev, user: profile } : prev);
       }
     } catch (error) {
       // Don't logout on profile refresh errors
