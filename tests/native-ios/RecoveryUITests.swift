@@ -3,9 +3,9 @@ import XCTest
 @MainActor final class RecoveryUITests: XCTestCase {
     let app = XCUIApplication(bundleIdentifier: "com.lasalva.mobile")
 
-    func field(_ identifier: String, secure: Bool = false) -> XCUIElement {
+    func field(_ identifier: String, secure: Bool = false, timeout: TimeInterval = 20) -> XCUIElement {
         let input = secure ? app.secureTextFields[identifier] : app.textFields[identifier]
-        XCTAssertTrue(input.waitForExistence(timeout: 20), "Field unavailable: \(identifier)")
+        XCTAssertTrue(input.waitForExistence(timeout: timeout), "Field unavailable: \(identifier)")
         return input
     }
 
@@ -69,7 +69,8 @@ import XCTest
     func testResetPasswordKeepsBothFieldsReachable() {
         continueAfterFailure = false
         openExternalRecoveryLink(cold: true)
-        let first = field("reset-password-new-password", secure: true)
+        // The cold simulator process must initialize React Native after system URL confirmation.
+        let first = field("reset-password-new-password", secure: true, timeout: 90)
         first.tap()
         first.typeText("short")
         let confirmation = field("reset-password-confirm-password", secure: true)
