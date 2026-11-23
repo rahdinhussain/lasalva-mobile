@@ -8,7 +8,7 @@ ruby tests/native-ios/project.rb "$project"
 if xcodebuild test -project "$project" -scheme RecoveryUITests -configuration Release \
   -destination "id=$device" -derivedDataPath "$RUNNER_TEMP/lasalva-link-tests" \
   -resultBundlePath "$artifacts/RecoveryUITests.xcresult" -parallel-testing-enabled NO \
-  ARCHS=arm64 ONLY_ACTIVE_ARCH=YES > "$RUNNER_TEMP/lasalva-form-checks.log"; then
+  ARCHS="$(uname -m)" ONLY_ACTIVE_ARCH=YES > "$RUNNER_TEMP/lasalva-form-checks.log"; then
   grep -E "Test Case.*passed|Executed [0-9]+ tests" "$RUNNER_TEMP/lasalva-form-checks.log" | tail -10
 else
   grep -E "error:|Test Case.*failed|XCTAssert|Executed [0-9]+ tests" "$RUNNER_TEMP/lasalva-form-checks.log" | tail -30 || true

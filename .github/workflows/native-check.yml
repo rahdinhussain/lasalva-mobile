@@ -30,7 +30,7 @@ jobs:
           - platform: android
             os: ubuntu-latest
           - platform: ios
-            os: macos-15
+            os: macos-15-intel
     concurrency:
       group: native-${{ matrix.platform }}-${{ github.ref }}
       cancel-in-progress: ${{ matrix.platform == 'ios' }}
@@ -108,7 +108,7 @@ jobs:
         run: |
           npx expo prebuild --platform ios --no-install
           (cd ios && pod install)
-          xcodebuild build -workspace ios/Lasalva.xcworkspace -scheme Lasalva -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/lasalva-ios" ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO > "$RUNNER_TEMP/lasalva-xcode.log" || { grep -Ei 'error:|fatal error:|Multiple commands produce|failed:' "$RUNNER_TEMP/lasalva-xcode.log" | tail -40; exit 1; }
+          xcodebuild build -workspace ios/Lasalva.xcworkspace -scheme Lasalva -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/lasalva-ios" ARCHS="$(uname -m)" ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO > "$RUNNER_TEMP/lasalva-xcode.log" || { grep -Ei 'error:|fatal error:|Multiple commands produce|failed:' "$RUNNER_TEMP/lasalva-xcode.log" | tail -40; exit 1; }
       - name: Save the iOS simulator app
         if: matrix.platform == 'ios'
         run: ditto -c -k --keepParent "$RUNNER_TEMP/lasalva-ios/Build/Products/Release-iphonesimulator/Lasalva.app" "$RUNNER_TEMP/Lasalva-Simulator.zip"

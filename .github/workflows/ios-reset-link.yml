@@ -21,9 +21,12 @@ permissions:
   contents: read
   actions: read
 jobs:
-  links:
-    runs-on: macos-15
-    timeout-minutes: 22
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.source.outputs.run }}
+      runner: ${{ steps.source.outputs.runner }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,8 +36,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REQUESTED_RUN: ${{ inputs.run_id }}
+          BEFORE: ${{ github.event.before }}
         run: |
           run="$REQUESTED_RUN"
+          if [ -z "$run" ] && [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" && ! git diff --quiet "$BEFORE" HEAD -- .github/workflows/native-check.yml; then
+            echo "The native build workflow will test the new simulator artifact."
+            exit 0
+          fi
           if [ -z "$run" ]; then
             run=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=Lasalva-iOS-simulator&per_page=25" --jq '[.artifacts[] | select(.expired == false and .workflow_run.head_branch == "main")][0].workflow_run.id')
           fi
@@ -45,12 +53,24 @@ jobs:
           git diff --quiet "$sha" HEAD -- . ':!.github' ':!tests' ':!.maestro'
           echo "Native application commit $sha from run $run"
           echo "run=$run" >> "$GITHUB_OUTPUT"
+          label=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/jobs?per_page=100" --jq '[.jobs[] | select(.name == "ios login and password recovery" and .conclusion != "cancelled") | .labels[] | select(. == "macos-15-intel" or . == "macos-15")][0]')
+          [[ "$label" = macos-15-intel || "$label" = macos-15 ]]
+          artifact=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/artifacts" --jq '[.artifacts[] | select(.name == "Lasalva-iOS-simulator" and .expired == false)][0].id')
+          [[ "$artifact" =~ ^[0-9]+$ ]]
+          echo "runner=$label" >> "$GITHUB_OUTPUT"
+  links:
+    needs: source
+    if: needs.source.outputs.runner != ''
+    runs-on: ${{ needs.source.outputs.runner }}
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: Lasalva-iOS-simulator
           path: ${{ runner.temp }}/lasalva-artifact
           github-token: ${{ github.token }}
-          run-id: ${{ steps.source.outputs.run }}
+          run-id: ${{ needs.source.outputs.run }}
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
