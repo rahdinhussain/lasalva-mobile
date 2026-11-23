@@ -12,6 +12,9 @@ on:
       - components/ui/Input.tsx
 permissions:
   contents: read
+concurrency:
+  group: native-verification-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   native:
@@ -90,6 +93,15 @@ jobs:
           npx expo prebuild --platform ios --no-install
           (cd ios && pod install)
           xcodebuild -workspace ios/Lasalva.xcworkspace -scheme Lasalva -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/lasalva-ios" ARCHS=arm64 CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=YES build > "$RUNNER_TEMP/lasalva-xcode.log" || { grep -E 'error:|fatal error:' "$RUNNER_TEMP/lasalva-xcode.log" | tail -40; exit 1; }
+      - name: Save the iOS simulator app
+        if: matrix.platform == 'ios'
+        run: ditto -c -k --keepParent "$RUNNER_TEMP/lasalva-ios/Build/Products/Release-iphonesimulator/Lasalva.app" "$RUNNER_TEMP/Lasalva-Simulator.zip"
+      - uses: actions/upload-artifact@v4
+        if: matrix.platform == 'ios'
+        with:
+          name: Lasalva-iOS-simulator
+          path: ${{ runner.temp }}/Lasalva-Simulator.zip
+          retention-days: 7
       - name: Exercise iOS forms
         if: matrix.platform == 'ios'
         run: |
@@ -99,3 +111,11 @@ jobs:
           xcrun simctl bootstatus "$udid" -b
           xcrun simctl install "$udid" "$RUNNER_TEMP/lasalva-ios/Build/Products/Release-iphonesimulator/Lasalva.app"
           maestro --device "$udid" test -e APP_ID=com.lasalva.mobile -e APP_SCHEME=lasalva .maestro/auth.yaml
+      - name: Save failed form checks
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-form-diagnostics
+          path: ~/.maestro/tests/
+          if-no-files-found: ignore
+          retention-days: 3

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Lock, ArrowLeft, CheckCircle } from 'lucide-react-native';
@@ -39,6 +39,7 @@ export default function ResetPasswordScreen() {
   };
 
   const handleSubmit = async () => {
+    Keyboard.dismiss();
     if (!validate()) return;
 
     if (!token) {
@@ -144,6 +145,9 @@ export default function ResetPasswordScreen() {
             <Input
               testID="reset-password-confirm-password"
               label="Confirm password"
+              returnKeyType="done"
+              submitBehavior="blurAndSubmit"
+              onSubmitEditing={handleSubmit}
               placeholder="Confirm new password"
               value={confirmPassword}
               onChangeText={(text) => {

@@ -13,10 +13,14 @@ appId: ${APP_ID}
 - inputText: "dummy"
 - assertVisible:
     id: "login-password"
-- hideKeyboard
 - tapOn: "Show password"
 - assertVisible: "Hide password"
-- tapOn: "Log in"
+- scrollUntilVisible:
+    element:
+      id: "submit-login"
+    direction: DOWN
+- tapOn:
+    id: "submit-login"
 - assertVisible: "Invalid email address"
 - tapOn:
     id: "forgot-password-link"
@@ -26,8 +30,12 @@ appId: ${APP_ID}
 - inputText: "invalid"
 - assertVisible:
     id: "forgot-password-email"
-- hideKeyboard
-- tapOn: "Send reset link"
+- scrollUntilVisible:
+    element:
+      id: "submit-forgot-password"
+    direction: DOWN
+- tapOn:
+    id: "submit-forgot-password"
 - assertVisible: "Invalid email address"
 - openLink: "${APP_SCHEME}://reset-password?token=synthetic-local-test"
 - tapOn:
@@ -45,7 +53,10 @@ appId: ${APP_ID}
 - inputText: "short"
 - assertVisible:
     id: "reset-password-confirm-password"
-- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "submit-new-password"
+    direction: DOWN
 - tapOn:
     id: "submit-new-password"
 - assertVisible: "Password must be at least 8 characters"

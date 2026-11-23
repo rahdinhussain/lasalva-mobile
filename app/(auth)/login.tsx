@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mail, Lock } from 'lucide-react-native';
@@ -35,6 +35,7 @@ export default function LoginScreen() {
   };
 
   const handleLogin = async () => {
+    Keyboard.dismiss();
     if (isLoading) return;
     if (!validate()) return;
 
@@ -103,6 +104,9 @@ export default function LoginScreen() {
             <Input
               testID="login-password"
               label="Password"
+              returnKeyType="done"
+              submitBehavior="blurAndSubmit"
+              onSubmitEditing={handleLogin}
               placeholder="Enter your password"
               value={password}
               onChangeText={(text) => {
@@ -128,6 +132,7 @@ export default function LoginScreen() {
               variant="primary"
               fullWidth
               loading={isLoading}
+              testID="submit-login"
               onPress={handleLogin}
             >
               Log in

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react-native';
@@ -30,6 +30,7 @@ export default function ForgotPasswordScreen() {
   };
 
   const handleSubmit = async () => {
+    Keyboard.dismiss();
     if (!validate()) return;
 
     setIsLoading(true);
@@ -146,6 +147,9 @@ export default function ForgotPasswordScreen() {
             <Input
               testID="forgot-password-email"
               label="Email"
+              returnKeyType="done"
+              submitBehavior="blurAndSubmit"
+              onSubmitEditing={handleSubmit}
               placeholder="Enter your email"
               value={email}
               onChangeText={(text) => {
@@ -164,6 +168,7 @@ export default function ForgotPasswordScreen() {
               variant="primary"
               fullWidth
               loading={isLoading}
+              testID="submit-forgot-password"
               onPress={handleSubmit}
             >
               Send reset link
