@@ -7,6 +7,7 @@ on:
       - .github/workflows/native-check.yml
       - .maestro/**
       - app.config.js
+      - app.json
       - 'app/(auth)/**'
       - components/ui/Input.tsx
 permissions:

@@ -46,7 +46,15 @@
       "expo-router",
       "./plugins/withFollyCoroutinesFix.js",
       "expo-web-browser",
-      "expo-notifications"
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Select photos for your Lasalva profile, team, services, or business.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

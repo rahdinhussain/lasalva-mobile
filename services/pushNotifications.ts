@@ -6,7 +6,8 @@ import api from './api';
 
 const deviceTokenKey = 'lasalva_registered_push_token';
 function supported() {
-  return Platform.OS !== 'web' && Device.isDevice && Constants.appOwnership !== 'expo';
+  const androidPushAvailable = Platform.OS !== 'android' || Constants.expoConfig?.extra?.androidPushConfigured !== false;
+  return Platform.OS !== 'web' && Device.isDevice && Constants.appOwnership !== 'expo' && androidPushAvailable;
 }
 export async function registerForPushNotifications(): Promise<string | null> {
   if (!supported()) return null;
