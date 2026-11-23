@@ -2,9 +2,21 @@ appId: ${APP_ID}
 ---
 - launchApp:
     clearState: true
-- extendedWaitUntil:
-    visible: "Welcome back"
-    timeout: 90000
+# Fresh Android 15 emulators occasionally show a system launcher dialog over Lasalva.
+- retry:
+    maxRetries: 3
+    commands:
+      - runFlow:
+          when:
+            visible:
+              id: "android:id/alertTitle"
+              text: "Quickstep isn't responding"
+          commands:
+            - tapOn:
+                id: "android:id/aerr_close"
+      - extendedWaitUntil:
+          visible: "Welcome back"
+          timeout: 20000
 - tapOn:
     id: "login-email"
 - inputText: "stylist"
