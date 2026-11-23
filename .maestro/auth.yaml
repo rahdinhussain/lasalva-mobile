@@ -15,10 +15,15 @@ appId: ${APP_ID}
     id: "login-password"
 - tapOn: "Show password"
 - assertVisible: "Hide password"
-- scrollUntilVisible:
-    element:
-      id: "submit-login"
-    direction: DOWN
+- runFlow:
+    when:
+      notVisible:
+        id: "submit-login"
+    commands:
+      - swipe:
+          from:
+            id: "login-password"
+          direction: UP
 - tapOn:
     id: "submit-login"
 - assertVisible: "Invalid email address"
@@ -30,10 +35,15 @@ appId: ${APP_ID}
 - inputText: "invalid"
 - assertVisible:
     id: "forgot-password-email"
-- scrollUntilVisible:
-    element:
-      id: "submit-forgot-password"
-    direction: DOWN
+- runFlow:
+    when:
+      notVisible:
+        id: "submit-forgot-password"
+    commands:
+      - swipe:
+          from:
+            id: "forgot-password-email"
+          direction: UP
 - tapOn:
     id: "submit-forgot-password"
 - assertVisible: "Invalid email address"
@@ -53,10 +63,15 @@ appId: ${APP_ID}
 - inputText: "short"
 - assertVisible:
     id: "reset-password-confirm-password"
-- scrollUntilVisible:
-    element:
-      id: "submit-new-password"
-    direction: DOWN
+- runFlow:
+    when:
+      notVisible:
+        id: "submit-new-password"
+    commands:
+      - swipe:
+          from:
+            id: "reset-password-confirm-password"
+          direction: UP
 - tapOn:
     id: "submit-new-password"
 - assertVisible: "Password must be at least 8 characters"

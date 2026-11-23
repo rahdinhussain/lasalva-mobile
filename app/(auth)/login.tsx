@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Keyboard } from 'react-native';
 import { Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AuthFormScrollView } from '@/components/ui/AuthFormScrollView';
 import { Mail, Lock } from 'lucide-react-native';
 import { useAuth } from '@/context/AuthContext';
 import { Button, Input, Card, Logo } from '@/components/ui';
@@ -55,91 +56,77 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
-      {/* iOS: pad the view by the keyboard height. Android: leave it to the
-          window (softwareKeyboardLayoutMode: resize in app.json) — behavior
-          "height" double-counts with edge-to-edge enabled. The ScrollView
-          guarantees inputs can always be scrolled above the keyboard. */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1"
-      >
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 24 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Logo/Header */}
-          <View className="items-center mb-8">
-            <Logo size="lg" className="mb-4" />
-            <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Welcome back</Text>
-            <Text className="text-slate-500 dark:text-slate-400 mt-1">Sign in to your account</Text>
-          </View>
+      <AuthFormScrollView>
+        {/* Logo/Header */}
+        <View className="items-center mb-8">
+          <Logo size="lg" className="mb-4" />
+          <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Welcome back</Text>
+          <Text className="text-slate-500 dark:text-slate-400 mt-1">Sign in to your account</Text>
+        </View>
 
-          {/* Login Card */}
-          <Card className="p-6">
-            {error && (
-              <View className="bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 rounded-xl p-3 mb-4">
-                <Text className="text-rose-700 dark:text-rose-300 text-sm text-center">{error}</Text>
-              </View>
-            )}
+        {/* Login Card */}
+        <Card className="p-6">
+          {error && (
+            <View className="bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 rounded-xl p-3 mb-4">
+              <Text className="text-rose-700 dark:text-rose-300 text-sm text-center">{error}</Text>
+            </View>
+          )}
 
-            <Input
-              testID="login-email"
-              label="Email"
-              placeholder="Enter your email"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                setErrors((prev) => ({ ...prev, email: undefined }));
-              }}
-              error={errors.email}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              leftIcon={<Mail size={20} color={themeColor().textMuted} />}
-              containerClassName="mb-4"
-            />
+          <Input
+            testID="login-email"
+            label="Email"
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={(text) => {
+              setEmail(text);
+              setErrors((prev) => ({ ...prev, email: undefined }));
+            }}
+            error={errors.email}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoComplete="email"
+            leftIcon={<Mail size={20} color={themeColor().textMuted} />}
+            containerClassName="mb-4"
+          />
 
-            <Input
-              testID="login-password"
-              label="Password"
-              returnKeyType="done"
-              submitBehavior="blurAndSubmit"
-              onSubmitEditing={handleLogin}
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                setErrors((prev) => ({ ...prev, password: undefined }));
-              }}
-              error={errors.password}
-              secureTextEntry
-              autoComplete="password"
-              leftIcon={<Lock size={20} color={themeColor().textMuted} />}
-              containerClassName="mb-2"
-            />
+          <Input
+            testID="login-password"
+            label="Password"
+            returnKeyType="done"
+            submitBehavior="blurAndSubmit"
+            onSubmitEditing={handleLogin}
+            placeholder="Enter your password"
+            value={password}
+            onChangeText={(text) => {
+              setPassword(text);
+              setErrors((prev) => ({ ...prev, password: undefined }));
+            }}
+            error={errors.password}
+            secureTextEntry
+            autoComplete="password"
+            leftIcon={<Lock size={20} color={themeColor().textMuted} />}
+            containerClassName="mb-2"
+          />
 
-            <Link href="/(auth)/forgot-password" asChild>
-              <TouchableOpacity testID="forgot-password-link" accessibilityRole="link" className="self-end mb-6">
-                <Text className="text-indigo-600 dark:text-indigo-400 text-sm font-medium">
-                  Forgot password?
-                </Text>
-              </TouchableOpacity>
-            </Link>
+          <Link href="/(auth)/forgot-password" asChild>
+            <TouchableOpacity testID="forgot-password-link" accessibilityRole="link" className="self-end mb-6">
+              <Text className="text-indigo-600 dark:text-indigo-400 text-sm font-medium">
+                Forgot password?
+              </Text>
+            </TouchableOpacity>
+          </Link>
 
-            <Button
-              variant="primary"
-              fullWidth
-              loading={isLoading}
-              testID="submit-login"
-              onPress={handleLogin}
-            >
-              Log in
-            </Button>
-          </Card>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          <Button
+            variant="primary"
+            fullWidth
+            loading={isLoading}
+            testID="submit-login"
+            onPress={handleLogin}
+          >
+            Log in
+          </Button>
+        </Card>
+      </AuthFormScrollView>
     </SafeAreaView>
   );
 }

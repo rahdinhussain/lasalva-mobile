@@ -13,6 +13,8 @@ on:
       - app.json
       - 'app/(auth)/**'
       - components/ui/Input.tsx
+      - components/ui/Button.tsx
+      - components/ui/AuthFormScrollView.tsx
 permissions:
   contents: read
 
@@ -29,7 +31,7 @@ jobs:
             os: macos-15
     concurrency:
       group: native-${{ matrix.platform }}-${{ github.ref }}
-      cancel-in-progress: true
+      cancel-in-progress: false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 85
     env:

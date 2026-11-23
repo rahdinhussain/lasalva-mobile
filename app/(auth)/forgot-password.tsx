@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, Keyboard } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AuthFormScrollView } from '@/components/ui/AuthFormScrollView';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react-native';
 import { forgotPassword } from '@/services/auth';
 import { Button, Input, Card, IconButton, Logo } from '@/components/ui';
@@ -116,66 +117,53 @@ export default function ForgotPasswordScreen() {
         />
       </View>
 
-      {/* iOS: pad by keyboard height. Android: window resize handles it
-          (softwareKeyboardLayoutMode in app.json). ScrollView ensures the
-          input can always be scrolled above the keyboard. */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1"
-      >
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 24 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          <View className="items-center mb-8">
-            <Logo size="md" className="mb-4" />
-            <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Reset password</Text>
-            <Text className="text-slate-500 dark:text-slate-400 mt-1 text-center">
-              Enter your email and we'll send you a link to reset your password
-            </Text>
-          </View>
+      <AuthFormScrollView>
+        <View className="items-center mb-8">
+          <Logo size="md" className="mb-4" />
+          <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">Reset password</Text>
+          <Text className="text-slate-500 dark:text-slate-400 mt-1 text-center">
+            Enter your email and we'll send you a link to reset your password
+          </Text>
+        </View>
 
-          <Card className="p-6">
-            {error && (
-              <View className="bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 rounded-xl p-3 mb-4">
-                <Text className="text-rose-700 dark:text-rose-300 text-sm text-center">{error}</Text>
-              </View>
-            )}
+        <Card className="p-6">
+          {error && (
+            <View className="bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 rounded-xl p-3 mb-4">
+              <Text className="text-rose-700 dark:text-rose-300 text-sm text-center">{error}</Text>
+            </View>
+          )}
 
-            <Input
-              testID="forgot-password-email"
-              label="Email"
-              returnKeyType="done"
-              submitBehavior="blurAndSubmit"
-              onSubmitEditing={handleSubmit}
-              placeholder="Enter your email"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                setEmailError(undefined);
-              }}
-              error={emailError}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              leftIcon={<Mail size={20} color={themeColor().textMuted} />}
-              containerClassName="mb-6"
-            />
+          <Input
+            testID="forgot-password-email"
+            label="Email"
+            returnKeyType="done"
+            submitBehavior="blurAndSubmit"
+            onSubmitEditing={handleSubmit}
+            placeholder="Enter your email"
+            value={email}
+            onChangeText={(text) => {
+              setEmail(text);
+              setEmailError(undefined);
+            }}
+            error={emailError}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoComplete="email"
+            leftIcon={<Mail size={20} color={themeColor().textMuted} />}
+            containerClassName="mb-6"
+          />
 
-            <Button
-              variant="primary"
-              fullWidth
-              loading={isLoading}
-              testID="submit-forgot-password"
-              onPress={handleSubmit}
-            >
-              Send reset link
-            </Button>
-          </Card>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          <Button
+            variant="primary"
+            fullWidth
+            loading={isLoading}
+            testID="submit-forgot-password"
+            onPress={handleSubmit}
+          >
+            Send reset link
+          </Button>
+        </Card>
+      </AuthFormScrollView>
     </SafeAreaView>
   );
 }

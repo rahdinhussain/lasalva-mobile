@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, Keyboard } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AuthFormScrollView } from '@/components/ui/AuthFormScrollView';
 import { Lock, ArrowLeft, CheckCircle } from 'lucide-react-native';
 import { resetPassword } from '@/services/auth';
 import { Button, Input, Card, IconButton, Logo } from '@/components/ui';
@@ -99,79 +100,66 @@ export default function ResetPasswordScreen() {
         />
       </View>
 
-      {/* iOS: pad by keyboard height. Android: window resize handles it
-          (softwareKeyboardLayoutMode in app.json). ScrollView ensures the
-          inputs can always be scrolled above the keyboard. */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1"
-      >
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 24 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          <View className="items-center mb-8">
-            <Logo size="md" className="mb-4" />
-            <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">New password</Text>
-            <Text className="text-slate-500 dark:text-slate-400 mt-1 text-center">
-              Enter your new password below
-            </Text>
-          </View>
+      <AuthFormScrollView>
+        <View className="items-center mb-8">
+          <Logo size="md" className="mb-4" />
+          <Text className="text-2xl font-bold text-slate-900 dark:text-slate-50">New password</Text>
+          <Text className="text-slate-500 dark:text-slate-400 mt-1 text-center">
+            Enter your new password below
+          </Text>
+        </View>
 
-          <Card className="p-6">
-            {error && (
-              <View className="bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 rounded-xl p-3 mb-4">
-                <Text className="text-rose-700 dark:text-rose-300 text-sm text-center">{error}</Text>
-              </View>
-            )}
+        <Card className="p-6">
+          {error && (
+            <View className="bg-rose-50 dark:bg-rose-500/20 border border-rose-200 dark:border-rose-500/40 rounded-xl p-3 mb-4">
+              <Text className="text-rose-700 dark:text-rose-300 text-sm text-center">{error}</Text>
+            </View>
+          )}
 
-            <Input
-              testID="reset-password-new-password"
-              label="New password"
-              placeholder="Enter new password"
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                setErrors((prev) => ({ ...prev, password: undefined }));
-              }}
-              error={errors.password}
-              secureTextEntry
-              leftIcon={<Lock size={20} color={themeColor().textMuted} />}
-              containerClassName="mb-4"
-            />
+          <Input
+            testID="reset-password-new-password"
+            label="New password"
+            placeholder="Enter new password"
+            value={password}
+            onChangeText={(text) => {
+              setPassword(text);
+              setErrors((prev) => ({ ...prev, password: undefined }));
+            }}
+            error={errors.password}
+            secureTextEntry
+            leftIcon={<Lock size={20} color={themeColor().textMuted} />}
+            containerClassName="mb-4"
+          />
 
-            <Input
-              testID="reset-password-confirm-password"
-              label="Confirm password"
-              returnKeyType="done"
-              submitBehavior="blurAndSubmit"
-              onSubmitEditing={handleSubmit}
-              placeholder="Confirm new password"
-              value={confirmPassword}
-              onChangeText={(text) => {
-                setConfirmPassword(text);
-                setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
-              }}
-              error={errors.confirmPassword}
-              secureTextEntry
-              leftIcon={<Lock size={20} color={themeColor().textMuted} />}
-              containerClassName="mb-6"
-            />
+          <Input
+            testID="reset-password-confirm-password"
+            label="Confirm password"
+            returnKeyType="done"
+            submitBehavior="blurAndSubmit"
+            onSubmitEditing={handleSubmit}
+            placeholder="Confirm new password"
+            value={confirmPassword}
+            onChangeText={(text) => {
+              setConfirmPassword(text);
+              setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+            }}
+            error={errors.confirmPassword}
+            secureTextEntry
+            leftIcon={<Lock size={20} color={themeColor().textMuted} />}
+            containerClassName="mb-6"
+          />
 
-            <Button
-              variant="primary"
-              fullWidth
-              loading={isLoading}
-              testID="submit-new-password"
-              onPress={handleSubmit}
-            >
-              Reset password
-            </Button>
-          </Card>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          <Button
+            variant="primary"
+            fullWidth
+            loading={isLoading}
+            testID="submit-new-password"
+            onPress={handleSubmit}
+          >
+            Reset password
+          </Button>
+        </Card>
+      </AuthFormScrollView>
     </SafeAreaView>
   );
 }
